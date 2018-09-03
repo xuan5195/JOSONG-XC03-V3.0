@@ -2,6 +2,7 @@
 ".\flash\obj\main.o"
 ".\flash\obj\stm32f10x_it.o"
 ".\flash\obj\delay.o"
+".\flash\obj\bus_app.o"
 ".\flash\obj\bsp_adc.o"
 ".\flash\obj\bsp_can.o"
 ".\flash\obj\bsp_crc8.o"

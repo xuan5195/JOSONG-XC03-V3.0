@@ -49,3 +49,4 @@
 .\flash\obj\bsp_cs5463.o: ..\..\User\bsp\bsp_hc595.h
 .\flash\obj\bsp_cs5463.o: ..\..\User\bsp\bsp_cd4067.h
 .\flash\obj\bsp_cs5463.o: ..\..\User\bsp\bsp_cd4051.h
+.\flash\obj\bsp_cs5463.o: ..\..\User\bus_app.h

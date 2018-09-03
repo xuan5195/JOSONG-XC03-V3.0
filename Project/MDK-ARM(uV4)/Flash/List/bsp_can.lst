@@ -32176,6 +32176,57 @@ N
 N#endif
 L 60 "..\..\User\bsp\bsp.h" 2
 N
+N#include "bus_app.h"		
+L 1 "..\..\User\bus_app.h" 1
+N#ifndef __BUS_APP_H
+N#define __BUS_APP_H	
+N
+N#include "stm32f10x.h"		
+N
+Nvoid DisplaySendDat(void);
+Nvoid RS485Dat_LED1_ON(void); 
+Nvoid RS485Dat_LED2_ON(void); 
+Nvoid RS485Dat_LED3_ON(void); 
+Nvoid RS485Dat_LED4_ON(void); 
+Nvoid RS485Dat_LED5_ON(void); 
+Nvoid RS485Dat_LED6_ON(void); 
+Nvoid RS485Dat_LED7_ON(void); 
+Nvoid RS485Dat_LED8_ON(void); 
+Nvoid RS485Dat_LED9_ON(void); 
+Nvoid RS485Dat_LED10_ON(void); 
+Nvoid RS485Dat_LED11_ON(void); 
+Nvoid RS485Dat_LED12_ON(void); 
+Nvoid RS485Dat_LED13_ON(void); 
+Nvoid RS485Dat_LED14_ON(void); 
+Nvoid RS485Dat_LED15_ON(void); 
+Nvoid RS485Dat_LED16_ON(void); 
+Nvoid RS485Dat_LED17_ON(void); 
+Nvoid RS485Dat_LED18_ON(void); 
+Nvoid RS485Dat_LED19_ON(void); 
+Nvoid RS485Dat_LED20_ON(void); 
+Nvoid RS485Dat_LED1_OFF(void); 
+Nvoid RS485Dat_LED2_OFF(void); 
+Nvoid RS485Dat_LED3_OFF(void); 
+Nvoid RS485Dat_LED4_OFF(void); 
+Nvoid RS485Dat_LED5_OFF(void); 
+Nvoid RS485Dat_LED6_OFF(void); 
+Nvoid RS485Dat_LED7_OFF(void); 
+Nvoid RS485Dat_LED8_OFF(void); 
+Nvoid RS485Dat_LED9_OFF(void); 
+Nvoid RS485Dat_LED10_OFF(void); 
+Nvoid RS485Dat_LED11_OFF(void); 
+Nvoid RS485Dat_LED12_OFF(void); 
+Nvoid RS485Dat_LED13_OFF(void); 
+Nvoid RS485Dat_LED14_OFF(void); 
+Nvoid RS485Dat_LED15_OFF(void); 
+Nvoid RS485Dat_LED16_OFF(void); 
+Nvoid RS485Dat_LED17_OFF(void); 
+Nvoid RS485Dat_LED18_OFF(void); 
+Nvoid RS485Dat_LED19_OFF(void); 
+Nvoid RS485Dat_LED20_OFF(void); 
+N#endif
+L 62 "..\..\User\bsp\bsp.h" 2
+N
 N#define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
 N#define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
 N

@@ -141,7 +141,7 @@ void SoftReset(void)
 */
 int main(void)
 {
-	uint8_t DHT_Dat[5]={0},Buff[4]={0xFF,0x00,0xFF,0x00};
+	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
 	uint8_t Time_250ms=0;
 	uint8_t KeyDat=0;
 	SystemInit();
@@ -168,6 +168,7 @@ int main(void)
                 if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0){;}
                 Get_InputValue();
 			}
+            DisplaySendDat();
 			KeyDat = bsp_GetKey();
 			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
 			{
@@ -188,22 +189,20 @@ int main(void)
 						printf("  KEY_2_UP!\r\n");
 						break;
 					case KEY_3_DOWN:	//
-						KMON_Show(BKM1RUN);
+                        RS485Dat_LED1_ON();
 						printf("  KEY_3_DOWN!\r\n");
 						break;
 					case KEY_3_UP:		//
-						KMOFF_Show(BKM1RUN);
+                        RS485Dat_LED1_OFF();
 						printf("  KEY_3_UP!\r\n");
 						break;
 					case KEY_4_DOWN:	//
-						printf("  KEY_4_DOWN!\r\n");
-						Buff[0]=0xFF;Buff[1]=0xFF;
-						RS485_SendDat((uint8_t *)Buff);
+                        RS485Dat_LED2_ON();
+						printf("  KEY_4_DOWN!\r\n");						
 						break;
 					case KEY_4_UP:		//
+                        RS485Dat_LED2_OFF();
 						printf("  KEY_4_UP!\r\n");
-						Buff[0]=0x00;Buff[1]=0x00;
-						RS485_SendDat((uint8_t *)Buff);
 						break;
 					default:
 						break;
@@ -215,8 +214,9 @@ int main(void)
 			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
 			{
 				RS485_Count = 0;
-				printf("RS485:%02X%02X %02X%02X%02X %02X %02X %02X%02X.\r\n",
+				//printf("RS485:%02X%02X %02X%02X%02X %02X %02X %02X%02X.\r\n",\
 				RS485Dat[0],RS485Dat[1],RS485Dat[2],RS485Dat[3],RS485Dat[4],RS485Dat[5],RS485Dat[6],RS485Dat[7],RS485Dat[8]); 
+                RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
 			}
 
 		}

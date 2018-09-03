@@ -531,234 +531,202 @@
 
                           AREA ||i.main||, CODE, READONLY, ALIGN=2
 
-                          REQUIRE _printf_pre_padding
-                          REQUIRE _printf_percent
-                          REQUIRE _printf_flags
-                          REQUIRE _printf_widthprec
-                          REQUIRE _printf_x
-                          REQUIRE _printf_longlong_hex
                   main PROC
 ;;;141    */
 ;;;142    int main(void)
-000000  b08a              SUB      sp,sp,#0x28
+000000  b51f              PUSH     {r0-r4,lr}
 ;;;143    {
-;;;144    	uint8_t DHT_Dat[5]={0},Buff[4]={0xFF,0x00,0xFF,0x00};
+;;;144    	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
 000002  2000              MOVS     r0,#0
-000004  9008              STR      r0,[sp,#0x20]
-000006  9009              STR      r0,[sp,#0x24]
-000008  a056              ADR      r0,|L11.356|
-00000a  6800              LDR      r0,[r0,#0]
-00000c  9007              STR      r0,[sp,#0x1c]
+000004  9002              STR      r0,[sp,#8]
+000006  9003              STR      r0,[sp,#0xc]
+000008  9001              STR      r0,[sp,#4]
 ;;;145    	uint8_t Time_250ms=0;
-00000e  2500              MOVS     r5,#0
+00000a  2500              MOVS     r5,#0
 ;;;146    	uint8_t KeyDat=0;
-000010  2400              MOVS     r4,#0
+00000c  2400              MOVS     r4,#0
 ;;;147    	SystemInit();
-000012  f7fffffe          BL       SystemInit
+00000e  f7fffffe          BL       SystemInit
 ;;;148    	
 ;;;149    	InitBoard();		//硬件初始化
-000016  f7fffffe          BL       InitBoard
+000012  f7fffffe          BL       InitBoard
 ;;;150    	BspTm1639_Show(0x01,0x00);	//上电初始化显示
-00001a  2100              MOVS     r1,#0
-00001c  2001              MOVS     r0,#1
-00001e  f7fffffe          BL       BspTm1639_Show
+000016  2100              MOVS     r1,#0
+000018  2001              MOVS     r0,#1
+00001a  f7fffffe          BL       BspTm1639_Show
 ;;;151    	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS1_4tq,CAN_BS2_3tq,75,CAN_Mode_Normal);	//CAN初始化正常模式,波特率60Kbps  //则波特率为:36M/((1+2+1)*150)= 60Kbps CAN_Normal_Init(1,2,1,150,1);   
-000022  2000              MOVS     r0,#0
-000024  234b              MOVS     r3,#0x4b
-000026  2202              MOVS     r2,#2
-000028  2103              MOVS     r1,#3
-00002a  9000              STR      r0,[sp,#0]
-00002c  f7fffffe          BL       CAN_Mode_Init
+00001e  2000              MOVS     r0,#0
+000020  234b              MOVS     r3,#0x4b
+000022  2202              MOVS     r2,#2
+000024  2103              MOVS     r1,#3
+000026  9000              STR      r0,[sp,#0]
+000028  f7fffffe          BL       CAN_Mode_Init
 ;;;152    	printf("CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n");
-000030  a04d              ADR      r0,|L11.360|
-000032  f7fffffe          BL       __2printf
+00002c  a03e              ADR      r0,|L11.296|
+00002e  f7fffffe          BL       __2printf
 ;;;153    	
 ;;;154        printf("-------------------------------------------------------------------\r\n");
-000036  4855              LDR      r0,|L11.396|
-000038  f7fffffe          BL       __2printf
+000032  4846              LDR      r0,|L11.332|
+000034  f7fffffe          BL       __2printf
 ;;;155    	bsp_StartTimer(1, 200);			//定时器1周期 200毫秒
-00003c  21c8              MOVS     r1,#0xc8
-00003e  2001              MOVS     r0,#1
-000040  f7fffffe          BL       bsp_StartTimer
+000038  21c8              MOVS     r1,#0xc8
+00003a  2001              MOVS     r0,#1
+00003c  f7fffffe          BL       bsp_StartTimer
 ;;;156    	KMOFF_Show(ALARMALL);
-000044  f64070ff          MOV      r0,#0xfff
-000048  f7fffffe          BL       KMOFF_Show
+000040  f64070ff          MOV      r0,#0xfff
+000044  f7fffffe          BL       KMOFF_Show
 ;;;157    	HC595_E1_ON();HC595_E2_ON();	
-00004c  2104              MOVS     r1,#4
-00004e  4850              LDR      r0,|L11.400|
-000050  f7fffffe          BL       GPIO_ResetBits
-000054  2108              MOVS     r1,#8
-000056  484e              LDR      r0,|L11.400|
-000058  f7fffffe          BL       GPIO_ResetBits
+000048  2104              MOVS     r1,#4
+00004a  4841              LDR      r0,|L11.336|
+00004c  f7fffffe          BL       GPIO_ResetBits
+000050  2108              MOVS     r1,#8
+000052  483f              LDR      r0,|L11.336|
+000054  f7fffffe          BL       GPIO_ResetBits
 ;;;158    	while (1)
-00005c  e081              B        |L11.354|
-                  |L11.94|
+000058  e064              B        |L11.292|
+                  |L11.90|
 ;;;159    	{
 ;;;160    		CPU_IDLE();
-00005e  f7fffffe          BL       CPU_IDLE
+00005a  f7fffffe          BL       CPU_IDLE
 ;;;161    		if ( bsp_CheckTimer(1) )	//软定时器
-000062  2001              MOVS     r0,#1
-000064  f7fffffe          BL       bsp_CheckTimer
-000068  2800              CMP      r0,#0
-00006a  d07a              BEQ      |L11.354|
+00005e  2001              MOVS     r0,#1
+000060  f7fffffe          BL       bsp_CheckTimer
+000064  2800              CMP      r0,#0
+000066  d05d              BEQ      |L11.292|
 ;;;162    		{
 ;;;163    			bsp_StartTimer(1, 200);	//启动下个定时周期
-00006c  21c8              MOVS     r1,#0xc8
-00006e  2001              MOVS     r0,#1
-000070  f7fffffe          BL       bsp_StartTimer
+000068  21c8              MOVS     r1,#0xc8
+00006a  2001              MOVS     r0,#1
+00006c  f7fffffe          BL       bsp_StartTimer
 ;;;164    			if(Time_250ms<9)	Time_250ms++;
-000074  2d09              CMP      r5,#9
-000076  da02              BGE      |L11.126|
-000078  1c68              ADDS     r0,r5,#1
-00007a  b2c5              UXTB     r5,r0
-00007c  e005              B        |L11.138|
-                  |L11.126|
+000070  2d09              CMP      r5,#9
+000072  da02              BGE      |L11.122|
+000074  1c68              ADDS     r0,r5,#1
+000076  b2c5              UXTB     r5,r0
+000078  e005              B        |L11.134|
+                  |L11.122|
 ;;;165    			else	
 ;;;166    			{	
 ;;;167    				Time_250ms=0;
-00007e  2500              MOVS     r5,#0
+00007a  2500              MOVS     r5,#0
 ;;;168                    if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0){;}
-000080  a808              ADD      r0,sp,#0x20
-000082  f7fffffe          BL       DHT11_Read_Data
+00007c  a802              ADD      r0,sp,#8
+00007e  f7fffffe          BL       DHT11_Read_Data
 ;;;169                    Get_InputValue();
-000086  f7fffffe          BL       Get_InputValue
-                  |L11.138|
+000082  f7fffffe          BL       Get_InputValue
+                  |L11.134|
 ;;;170    			}
-;;;171    			KeyDat = bsp_GetKey();
+;;;171                DisplaySendDat();
+000086  f7fffffe          BL       DisplaySendDat
+;;;172    			KeyDat = bsp_GetKey();
 00008a  f7fffffe          BL       bsp_GetKey
 00008e  4604              MOV      r4,r0
-;;;172    			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
+;;;173    			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
 000090  2c00              CMP      r4,#0
-000092  d042              BEQ      |L11.282|
-;;;173    			{
-;;;174    				switch (KeyDat)
+000092  d034              BEQ      |L11.254|
+;;;174    			{
+;;;175    				switch (KeyDat)
 000094  2c0c              CMP      r4,#0xc
-000096  d23e              BCS      |L11.278|
+000096  d230              BCS      |L11.250|
 000098  e8dff004          TBB      [pc,r4]
-00009c  06070b3d          DCB      0x06,0x07,0x0b,0x3d
-0000a0  0f133d17          DCB      0x0f,0x13,0x3d,0x17
-0000a4  1e3d2531          DCB      0x1e,0x3d,0x25,0x31
-;;;175    				{
-;;;176    					case KEY_NONE:	//无按键按下
-;;;177    						break;
-0000a8  e036              B        |L11.280|
-;;;178    					case KEY_1_DOWN:	//						
-;;;179    						printf("  KEY_1_DOWN!\r\n");
-0000aa  a03a              ADR      r0,|L11.404|
+00009c  06070b2f          DCB      0x06,0x07,0x0b,0x2f
+0000a0  0f132f17          DCB      0x0f,0x13,0x2f,0x17
+0000a4  1d2f2329          DCB      0x1d,0x2f,0x23,0x29
+;;;176    				{
+;;;177    					case KEY_NONE:	//无按键按下
+;;;178    						break;
+0000a8  e028              B        |L11.252|
+;;;179    					case KEY_1_DOWN:	//						
+;;;180    						printf("  KEY_1_DOWN!\r\n");
+0000aa  a02a              ADR      r0,|L11.340|
 0000ac  f7fffffe          BL       __2printf
-;;;180    						break;
-0000b0  e032              B        |L11.280|
-;;;181    					case KEY_1_UP:		//
-;;;182    						printf("  KEY_1_UP!\r\n");
-0000b2  a03c              ADR      r0,|L11.420|
+;;;181    						break;
+0000b0  e024              B        |L11.252|
+;;;182    					case KEY_1_UP:		//
+;;;183    						printf("  KEY_1_UP!\r\n");
+0000b2  a02c              ADR      r0,|L11.356|
 0000b4  f7fffffe          BL       __2printf
-;;;183    						break;
-0000b8  e02e              B        |L11.280|
-;;;184    					case KEY_2_DOWN:	//
-;;;185    						printf("  KEY_2_DOWN!\r\n");						
-0000ba  a03e              ADR      r0,|L11.436|
+;;;184    						break;
+0000b8  e020              B        |L11.252|
+;;;185    					case KEY_2_DOWN:	//
+;;;186    						printf("  KEY_2_DOWN!\r\n");						
+0000ba  a02e              ADR      r0,|L11.372|
 0000bc  f7fffffe          BL       __2printf
-;;;186    						break;
-0000c0  e02a              B        |L11.280|
-;;;187    					case KEY_2_UP:		//
-;;;188    						printf("  KEY_2_UP!\r\n");
-0000c2  a040              ADR      r0,|L11.452|
+;;;187    						break;
+0000c0  e01c              B        |L11.252|
+;;;188    					case KEY_2_UP:		//
+;;;189    						printf("  KEY_2_UP!\r\n");
+0000c2  a030              ADR      r0,|L11.388|
 0000c4  f7fffffe          BL       __2printf
-;;;189    						break;
-0000c8  e026              B        |L11.280|
-;;;190    					case KEY_3_DOWN:	//
-;;;191    						KMON_Show(BKM1RUN);
-0000ca  2008              MOVS     r0,#8
-0000cc  f7fffffe          BL       KMON_Show
-;;;192    						printf("  KEY_3_DOWN!\r\n");
-0000d0  a040              ADR      r0,|L11.468|
-0000d2  f7fffffe          BL       __2printf
-;;;193    						break;
-0000d6  e01f              B        |L11.280|
-;;;194    					case KEY_3_UP:		//
-;;;195    						KMOFF_Show(BKM1RUN);
-0000d8  2008              MOVS     r0,#8
-0000da  f7fffffe          BL       KMOFF_Show
-;;;196    						printf("  KEY_3_UP!\r\n");
-0000de  a041              ADR      r0,|L11.484|
-0000e0  f7fffffe          BL       __2printf
-;;;197    						break;
-0000e4  e018              B        |L11.280|
-;;;198    					case KEY_4_DOWN:	//
-;;;199    						printf("  KEY_4_DOWN!\r\n");
-0000e6  a043              ADR      r0,|L11.500|
+;;;190    						break;
+0000c8  e018              B        |L11.252|
+;;;191    					case KEY_3_DOWN:	//
+;;;192                            RS485Dat_LED1_ON();
+0000ca  f7fffffe          BL       RS485Dat_LED1_ON
+;;;193    						printf("  KEY_3_DOWN!\r\n");
+0000ce  a031              ADR      r0,|L11.404|
+0000d0  f7fffffe          BL       __2printf
+;;;194    						break;
+0000d4  e012              B        |L11.252|
+;;;195    					case KEY_3_UP:		//
+;;;196                            RS485Dat_LED1_OFF();
+0000d6  f7fffffe          BL       RS485Dat_LED1_OFF
+;;;197    						printf("  KEY_3_UP!\r\n");
+0000da  a032              ADR      r0,|L11.420|
+0000dc  f7fffffe          BL       __2printf
+;;;198    						break;
+0000e0  e00c              B        |L11.252|
+;;;199    					case KEY_4_DOWN:	//
+;;;200                            RS485Dat_LED2_ON();
+0000e2  f7fffffe          BL       RS485Dat_LED2_ON
+;;;201    						printf("  KEY_4_DOWN!\r\n");						
+0000e6  a033              ADR      r0,|L11.436|
 0000e8  f7fffffe          BL       __2printf
-;;;200    						Buff[0]=0xFF;Buff[1]=0xFF;
-0000ec  20ff              MOVS     r0,#0xff
-0000ee  f88d001c          STRB     r0,[sp,#0x1c]
-0000f2  f88d001d          STRB     r0,[sp,#0x1d]
-;;;201    						RS485_SendDat((uint8_t *)Buff);
-0000f6  a807              ADD      r0,sp,#0x1c
-0000f8  f7fffffe          BL       RS485_SendDat
 ;;;202    						break;
-0000fc  e00c              B        |L11.280|
+0000ec  e006              B        |L11.252|
 ;;;203    					case KEY_4_UP:		//
-;;;204    						printf("  KEY_4_UP!\r\n");
-0000fe  a041              ADR      r0,|L11.516|
-000100  f7fffffe          BL       __2printf
-;;;205    						Buff[0]=0x00;Buff[1]=0x00;
-000104  2000              MOVS     r0,#0
-000106  f88d001c          STRB     r0,[sp,#0x1c]
-00010a  f88d001d          STRB     r0,[sp,#0x1d]
-;;;206    						RS485_SendDat((uint8_t *)Buff);
-00010e  a807              ADD      r0,sp,#0x1c
-000110  f7fffffe          BL       RS485_SendDat
-;;;207    						break;
-000114  e000              B        |L11.280|
-                  |L11.278|
-;;;208    					default:
-;;;209    						break;
-000116  bf00              NOP      
-                  |L11.280|
-000118  bf00              NOP                            ;177
-                  |L11.282|
-;;;210    				}
-;;;211    			}
+;;;204                            RS485Dat_LED2_OFF();
+0000ee  f7fffffe          BL       RS485Dat_LED2_OFF
+;;;205    						printf("  KEY_4_UP!\r\n");
+0000f2  a034              ADR      r0,|L11.452|
+0000f4  f7fffffe          BL       __2printf
+;;;206    						break;
+0000f8  e000              B        |L11.252|
+                  |L11.250|
+;;;207    					default:
+;;;208    						break;
+0000fa  bf00              NOP      
+                  |L11.252|
+0000fc  bf00              NOP                            ;178
+                  |L11.254|
+;;;209    				}
+;;;210    			}
+;;;211    
 ;;;212    
-;;;213    
-;;;214    			RS485_ReceiveDat();
-00011a  f7fffffe          BL       RS485_ReceiveDat
-;;;215    			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
-00011e  483d              LDR      r0,|L11.532|
-000120  7800              LDRB     r0,[r0,#0]  ; RS485_Count
-000122  f0000080          AND      r0,r0,#0x80
-000126  2880              CMP      r0,#0x80
-000128  d11b              BNE      |L11.354|
-;;;216    			{
-;;;217    				RS485_Count = 0;
-00012a  2000              MOVS     r0,#0
-00012c  4939              LDR      r1,|L11.532|
-00012e  7008              STRB     r0,[r1,#0]
-;;;218    				printf("RS485:%02X%02X %02X%02X%02X %02X %02X %02X%02X.\r\n",
-000130  4839              LDR      r0,|L11.536|
-000132  7a00              LDRB     r0,[r0,#8]  ; RS485Dat
-000134  4938              LDR      r1,|L11.536|
-000136  79c9              LDRB     r1,[r1,#7]  ; RS485Dat
-000138  4a37              LDR      r2,|L11.536|
-00013a  7992              LDRB     r2,[r2,#6]  ; RS485Dat
-00013c  4b36              LDR      r3,|L11.536|
-00013e  795b              LDRB     r3,[r3,#5]  ; RS485Dat
-000140  e9cd3202          STRD     r3,r2,[sp,#8]
-000144  e9cd1004          STRD     r1,r0,[sp,#0x10]
-000148  4833              LDR      r0,|L11.536|
-00014a  7900              LDRB     r0,[r0,#4]  ; RS485Dat
-00014c  4932              LDR      r1,|L11.536|
-00014e  78c9              LDRB     r1,[r1,#3]  ; RS485Dat
-000150  e9cd1000          STRD     r1,r0,[sp,#0]
-000154  4830              LDR      r0,|L11.536|
-000156  7883              LDRB     r3,[r0,#2]  ; RS485Dat
-000158  7842              LDRB     r2,[r0,#1]  ; RS485Dat
-00015a  7801              LDRB     r1,[r0,#0]  ; RS485Dat
-00015c  a02f              ADR      r0,|L11.540|
-00015e  f7fffffe          BL       __2printf
-                  |L11.354|
-000162  e77c              B        |L11.94|
-;;;219    				RS485Dat[0],RS485Dat[1],RS485Dat[2],RS485Dat[3],RS485Dat[4],RS485Dat[5],RS485Dat[6],RS485Dat[7],RS485Dat[8]); 
+;;;213    			RS485_ReceiveDat();
+0000fe  f7fffffe          BL       RS485_ReceiveDat
+;;;214    			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
+000102  4834              LDR      r0,|L11.468|
+000104  7800              LDRB     r0,[r0,#0]  ; RS485_Count
+000106  f0000080          AND      r0,r0,#0x80
+00010a  2880              CMP      r0,#0x80
+00010c  d10a              BNE      |L11.292|
+;;;215    			{
+;;;216    				RS485_Count = 0;
+00010e  2000              MOVS     r0,#0
+000110  4930              LDR      r1,|L11.468|
+000112  7008              STRB     r0,[r1,#0]
+;;;217    				//printf("RS485:%02X%02X %02X%02X%02X %02X %02X %02X%02X.\r\n",\
+;;;218    				RS485Dat[0],RS485Dat[1],RS485Dat[2],RS485Dat[3],RS485Dat[4],RS485Dat[5],RS485Dat[6],RS485Dat[7],RS485Dat[8]); 
+;;;219                    RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
+000114  4830              LDR      r0,|L11.472|
+000116  7900              LDRB     r0,[r0,#4]  ; RS485Dat
+000118  f88d0004          STRB     r0,[sp,#4]
+00011c  482e              LDR      r0,|L11.472|
+00011e  7940              LDRB     r0,[r0,#5]  ; RS485Dat
+000120  f88d0005          STRB     r0,[sp,#5]
+                  |L11.292|
+000124  e799              B        |L11.90|
 ;;;220    			}
 ;;;221    
 ;;;222    		}
@@ -768,91 +736,73 @@
 ;;;226    
                           ENDP
 
-                  |L11.356|
-000164  ff00              DCB      255,0
-000166  ff00              DCB      255,0
-                  |L11.360|
-000168  43414e5f          DCB      "CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n",0
-00016c  4d6f6465
-000170  5f496e69
-000174  742c4341
-000178  4e5f4261
-00017c  75643a20
-000180  36304b62
-000184  70732e2e
-000188  2e0d0a00
-                  |L11.396|
+000126  0000              DCW      0x0000
+                  |L11.296|
+000128  43414e5f          DCB      "CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n",0
+00012c  4d6f6465
+000130  5f496e69
+000134  742c4341
+000138  4e5f4261
+00013c  75643a20
+000140  36304b62
+000144  70732e2e
+000148  2e0d0a00
+                  |L11.332|
                           DCD      ||.conststring||
-                  |L11.400|
+                  |L11.336|
                           DCD      0x40010800
+                  |L11.340|
+000154  20204b45          DCB      "  KEY_1_DOWN!\r\n",0
+000158  595f315f
+00015c  444f574e
+000160  210d0a00
+                  |L11.356|
+000164  20204b45          DCB      "  KEY_1_UP!\r\n",0
+000168  595f315f
+00016c  5550210d
+000170  0a00    
+000172  00                DCB      0
+000173  00                DCB      0
+                  |L11.372|
+000174  20204b45          DCB      "  KEY_2_DOWN!\r\n",0
+000178  595f325f
+00017c  444f574e
+000180  210d0a00
+                  |L11.388|
+000184  20204b45          DCB      "  KEY_2_UP!\r\n",0
+000188  595f325f
+00018c  5550210d
+000190  0a00    
+000192  00                DCB      0
+000193  00                DCB      0
                   |L11.404|
-000194  20204b45          DCB      "  KEY_1_DOWN!\r\n",0
-000198  595f315f
+000194  20204b45          DCB      "  KEY_3_DOWN!\r\n",0
+000198  595f335f
 00019c  444f574e
 0001a0  210d0a00
                   |L11.420|
-0001a4  20204b45          DCB      "  KEY_1_UP!\r\n",0
-0001a8  595f315f
+0001a4  20204b45          DCB      "  KEY_3_UP!\r\n",0
+0001a8  595f335f
 0001ac  5550210d
 0001b0  0a00    
 0001b2  00                DCB      0
 0001b3  00                DCB      0
                   |L11.436|
-0001b4  20204b45          DCB      "  KEY_2_DOWN!\r\n",0
-0001b8  595f325f
+0001b4  20204b45          DCB      "  KEY_4_DOWN!\r\n",0
+0001b8  595f345f
 0001bc  444f574e
 0001c0  210d0a00
                   |L11.452|
-0001c4  20204b45          DCB      "  KEY_2_UP!\r\n",0
-0001c8  595f325f
+0001c4  20204b45          DCB      "  KEY_4_UP!\r\n",0
+0001c8  595f345f
 0001cc  5550210d
 0001d0  0a00    
 0001d2  00                DCB      0
 0001d3  00                DCB      0
                   |L11.468|
-0001d4  20204b45          DCB      "  KEY_3_DOWN!\r\n",0
-0001d8  595f335f
-0001dc  444f574e
-0001e0  210d0a00
-                  |L11.484|
-0001e4  20204b45          DCB      "  KEY_3_UP!\r\n",0
-0001e8  595f335f
-0001ec  5550210d
-0001f0  0a00    
-0001f2  00                DCB      0
-0001f3  00                DCB      0
-                  |L11.500|
-0001f4  20204b45          DCB      "  KEY_4_DOWN!\r\n",0
-0001f8  595f345f
-0001fc  444f574e
-000200  210d0a00
-                  |L11.516|
-000204  20204b45          DCB      "  KEY_4_UP!\r\n",0
-000208  595f345f
-00020c  5550210d
-000210  0a00    
-000212  00                DCB      0
-000213  00                DCB      0
-                  |L11.532|
                           DCD      RS485_Count
-                  |L11.536|
+                  |L11.472|
                           DCD      RS485Dat
-                  |L11.540|
-00021c  52533438          DCB      "RS485:%02X%02X %02X%02X%02X %02X %02X %02X%02X.\r\n",0
-000220  353a2530
-000224  32582530
-000228  32582025
-00022c  30325825
-000230  30325825
-000234  30325820
-000238  25303258
-00023c  20253032
-000240  58202530
-000244  32582530
-000248  32582e0d
-00024c  0a00    
-00024e  00                DCB      0
-00024f  00                DCB      0
 
                           AREA ||.conststring||, DATA, READONLY, MERGE=1, STRINGS, ALIGN=2
 

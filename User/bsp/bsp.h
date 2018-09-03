@@ -58,6 +58,8 @@
 #include "bsp_cd4051.h"		
 #include "bsp_cs5463.h"		
 
+#include "bus_app.h"		
+
 #define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
 #define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
 
