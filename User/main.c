@@ -165,6 +165,8 @@ int main(void)
 			else	
 			{	
 				Time_250ms=0;
+                if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0){;}
+                Get_InputValue();
 			}
 			KeyDat = bsp_GetKey();
 			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
@@ -173,16 +175,14 @@ int main(void)
 				{
 					case KEY_NONE:	//无按键按下
 						break;
-					case KEY_1_DOWN:	//
-						if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0){;}
+					case KEY_1_DOWN:	//						
 						printf("  KEY_1_DOWN!\r\n");
 						break;
 					case KEY_1_UP:		//
 						printf("  KEY_1_UP!\r\n");
 						break;
 					case KEY_2_DOWN:	//
-						printf("  KEY_2_DOWN!\r\n");
-						Get_InputValue();
+						printf("  KEY_2_DOWN!\r\n");						
 						break;
 					case KEY_2_UP:		//
 						printf("  KEY_2_UP!\r\n");
