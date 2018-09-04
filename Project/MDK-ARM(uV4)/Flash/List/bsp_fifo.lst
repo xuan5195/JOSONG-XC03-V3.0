@@ -31456,7 +31456,7 @@ N
 Nvoid BspTm1639_Config(void); 
 Nvoid BspTm1639_Writebyte(uint8_t datx);
 Nvoid BspTM1639_ClearALL(void);	//清显示数据 
-Nvoid BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate);
+Nvoid BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate);
 Nvoid BspTm1639_ShowSNDat(uint8_t ShowMode,uint8_t *ShowDate);
 N
 N#endif
@@ -31944,6 +31944,7 @@ N
 Nvoid bsp_HC595_Config(void);
 Nvoid KMON_Show(u16 ShowDat);
 Nvoid KMOFF_Show(u16 ShowDat);
+Nvoid KMOutUpdat(void);
 N		 				    
 N#endif
 L 57 "..\..\User\bsp\bsp.h" 2
@@ -32231,7 +32232,32 @@ N#define __CHECK_APP_H
 N
 N#include "stm32f10x.h"		
 N
-Nvoid ReadInputDat(void);
+Ntypedef struct 
+N{
+N	uint8_t Statue;         //运行状态
+N	uint8_t Power_Statue;   //动力电状态，220V脉冲检测
+N	uint8_t Work_Check;     //工作检测，220V脉冲检测
+N	uint8_t Phase_Check;    //断相/过载检测，开关信号
+N	uint8_t KM1_Point;      //KM1触点状态
+N	uint8_t KM2_Point;      //KM2触点状态
+N	uint8_t KM3_Point;      //KM3触点状态
+N	uint8_t KM1_Coil;       //KM1线圈状态
+N	uint8_t KM2_Coil;       //KM2线圈状态
+N	uint8_t KM3_Coil;       //KM3线圈状态
+N	uint16_t Timer_Count;	//水泵低速延时时间计数 递减方式	
+N}MotorChar; //电机特性结构体
+N
+N#ifdef GLOBAL_APP
+S	#define APP_EXT
+N#else
+N	#define APP_EXT extern 
+N#endif
+NAPP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
+Xextern MotorChar gAp,gBp;  
+N
+N
+Nvoid ReadInputDat(uint8_t _ApDat,uint8_t _BpDat);
+Nvoid KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
 N
 N
 N#endif

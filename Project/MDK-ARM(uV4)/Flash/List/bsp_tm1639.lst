@@ -29806,7 +29806,7 @@ N
 Nvoid BspTm1639_Config(void); 
 Nvoid BspTm1639_Writebyte(uint8_t datx);
 Nvoid BspTM1639_ClearALL(void);	//清显示数据 
-Nvoid BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate);
+Nvoid BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate);
 Nvoid BspTm1639_ShowSNDat(uint8_t ShowMode,uint8_t *ShowDate);
 N
 N#endif
@@ -31944,6 +31944,7 @@ N
 Nvoid bsp_HC595_Config(void);
 Nvoid KMON_Show(u16 ShowDat);
 Nvoid KMOFF_Show(u16 ShowDat);
+Nvoid KMOutUpdat(void);
 N		 				    
 N#endif
 L 57 "..\..\User\bsp\bsp.h" 2
@@ -32231,7 +32232,32 @@ N#define __CHECK_APP_H
 N
 N#include "stm32f10x.h"		
 N
-Nvoid ReadInputDat(void);
+Ntypedef struct 
+N{
+N	uint8_t Statue;         //运行状态
+N	uint8_t Power_Statue;   //动力电状态，220V脉冲检测
+N	uint8_t Work_Check;     //工作检测，220V脉冲检测
+N	uint8_t Phase_Check;    //断相/过载检测，开关信号
+N	uint8_t KM1_Point;      //KM1触点状态
+N	uint8_t KM2_Point;      //KM2触点状态
+N	uint8_t KM3_Point;      //KM3触点状态
+N	uint8_t KM1_Coil;       //KM1线圈状态
+N	uint8_t KM2_Coil;       //KM2线圈状态
+N	uint8_t KM3_Coil;       //KM3线圈状态
+N	uint16_t Timer_Count;	//水泵低速延时时间计数 递减方式	
+N}MotorChar; //电机特性结构体
+N
+N#ifdef GLOBAL_APP
+S	#define APP_EXT
+N#else
+N	#define APP_EXT extern 
+N#endif
+NAPP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
+Xextern MotorChar gAp,gBp;  
+N
+N
+Nvoid ReadInputDat(uint8_t _ApDat,uint8_t _BpDat);
+Nvoid KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
 N
 N
 N#endif
@@ -32260,9 +32286,11 @@ L 5 "..\..\User\bsp\bsp_tm1639.c" 2
 N
 Nuint8_t OldShowMode=0;	//缓存数据显示模式，用于清屏
 Nuint32_t OldShowDate=0;	//缓存数据显示模式，防止数据重复更新占用系统时间
-Nstatic uint8_t table[16]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
-N//extern uint8_t Logic_ADD;	//逻辑地址
-N//extern uint8_t gErrorShow;	//异常显示代码 在服务器未更新前显示使用，这样不会出现E000
+Nconst uint8_t table[16]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
+Nconst uint8_t Table_S[] = {0x77,0x7C,0x39,0x58,0x5E,0x79,0x71,0x3D,	//AbCcdEFG
+N                           0x76,0x74,0x0F,0x0E,0x75,0x38,0x37,0x54,	//HhIJKLMn
+N                           0x5C,0x73,0x67,0x31,0x49,0x78,				//oPqrSt
+N                           0x3E,0x1C,0x7E,0x64,0x6E,0x5A};    			//UvWXYZ
 N
 Nvoid BspTm1639_Delay(__IO uint16_t z) 
 Xvoid BspTm1639_Delay(volatile uint16_t z) 
@@ -32312,9 +32340,9 @@ N		BspTm1639_Delay(1);
 N	}
 N}
 N
-Nvoid BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate)
+Nvoid BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate)
 N{
-N 	uint8_t i,udat;
+N 	uint8_t i;
 N 	if((OldShowMode==ShowMode)&&(OldShowDate==ShowDate));	//数据、模式相同不刷新
 N 	else
 N 	{
@@ -32325,13 +32353,7 @@ N		BspTm1639_Writebyte(MD_AUTO);	//设置为地址自动加1写显示数据
 X		BspTm1639_Writebyte(0x40);	
 N		TM1639_STB_High();
 X		GPIO_SetBits(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x1000)), ((uint16_t)0x0008));
-N		if(ShowMode==0x02)
-N		{
-N			BspTm1639_Writebyte(DIG0);
-X			BspTm1639_Writebyte(0xC0);
-N			for(i=0;i<16;i++)	BspTm1639_Writebyte(0x00);
-N		}
-N		else if(ShowMode==0x01)	//上电初始化显示值
+N        if(ShowMode==0xA1)	//上电初始化显示值
 N		{
 N			BspTm1639_Writebyte(DIG0);
 X			BspTm1639_Writebyte(0xC0);
@@ -32342,75 +32364,19 @@ N				BspTm1639_Writebyte(0x09);	BspTm1639_Writebyte(0x00);
 N			}
 N			BspTm1639_Writebyte(0x09);	BspTm1639_Writebyte(0x03);		
 N		}
-N		else if(ShowMode==0x06)	//显示代码，用于安装检测使用
-N		{
-N			BspTm1639_Writebyte(DIG0);
-X			BspTm1639_Writebyte(0xC0);
-N			for(i=0;i<3;i++)
-N			{
-N				BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x04);
-N			}
-N			//VERSION 显示固件版本号
-N			udat = VERSION&0x0F;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-X			udat = 0x01&0x0F;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			udat = (VERSION&0xF0)>>4;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-X			udat = (0x01&0xF0)>>4;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			for(i=0;i<3;i++)
-N			{
-N				BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x04);
-N			}
-N		}
-N		else if(ShowMode==0x03)
+N		else    //显示代码
 N		{
 N			BspTm1639_Writebyte(DIG0);
 X			BspTm1639_Writebyte(0xC0);
 N			BspTm1639_Writebyte(table[ShowDate%10]);		BspTm1639_Writebyte(table[ShowDate%10]>>4);
 N			BspTm1639_Writebyte(table[ShowDate/10%10]);		BspTm1639_Writebyte(table[ShowDate/10%10]>>4);
 N			BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
-N			BspTm1639_Writebyte(table[0]);					BspTm1639_Writebyte(table[0]>>4|0x08);
-N			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG4
-N			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG5
-N			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG4
-N			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG5
-N		}
-N		else if(ShowMode==0x04)
-N		{
-N			BspTm1639_Writebyte(DIG0);
-X			BspTm1639_Writebyte(0xC0);
-N			ShowDate = ShowDate & 0x00FFFFFF;	//清高位，高位为版本号不是金额
-N			if(ShowDate<1000000)
-N			{
-N			    udat = ShowDate%10;			BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			    udat = ShowDate/10%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			    udat = ShowDate/100%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			    udat = ShowDate/1000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4|0x08);//个位
-N			    udat = ShowDate/10000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);//十位
-N			    udat = ShowDate/100000%10;	BspTm1639_Writebyte(table[udat]);   BspTm1639_Writebyte(table[udat]>>4);//百位       
-N			}
-N			else
-N			{
-N			    udat = ShowDate/10%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			    udat = ShowDate/100%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			    udat = ShowDate/1000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4|0x08);//个位
-N			    udat = ShowDate/10000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);//十位
-N			    udat = ShowDate/100000%10;	BspTm1639_Writebyte(table[udat]);   BspTm1639_Writebyte(table[udat]>>4);//百位       
-N			    udat = ShowDate/1000000%10;	BspTm1639_Writebyte(table[udat]);   BspTm1639_Writebyte(table[udat]>>4);//千位       
-N			}
-N			BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x00); //DIG6
-N			BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x00); //DIG7
-N		}
-N		else if(ShowMode==0x05)
-N		{
-N			BspTm1639_Writebyte(DIG0);
-X			BspTm1639_Writebyte(0xC0);
-N			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);
-N			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);
-N			udat = 0x00;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			udat = 0x00;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			udat = 0x00;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			udat = 0x0E;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-N			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);//DIG6
-N			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);//DIG7
+N            if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4|0x08); }  //电压U
+N            else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08); }  //电流A
+N            else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4|0x08); }  //温度C
+N            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4|0x08); }  //湿度F
+N            else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4|0x08); }  //压力P
+N            else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4|0x08); }  //流量L
 N		}
 N		TM1639_STB_High();
 X		GPIO_SetBits(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x1000)), ((uint16_t)0x0008));

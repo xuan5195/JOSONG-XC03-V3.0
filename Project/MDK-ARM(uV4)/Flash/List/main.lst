@@ -31456,7 +31456,7 @@ N
 Nvoid BspTm1639_Config(void); 
 Nvoid BspTm1639_Writebyte(uint8_t datx);
 Nvoid BspTM1639_ClearALL(void);	//清显示数据 
-Nvoid BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate);
+Nvoid BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate);
 Nvoid BspTm1639_ShowSNDat(uint8_t ShowMode,uint8_t *ShowDate);
 N
 N#endif
@@ -31944,6 +31944,7 @@ N
 Nvoid bsp_HC595_Config(void);
 Nvoid KMON_Show(u16 ShowDat);
 Nvoid KMOFF_Show(u16 ShowDat);
+Nvoid KMOutUpdat(void);
 N		 				    
 N#endif
 L 57 "..\..\User\bsp\bsp.h" 2
@@ -32231,7 +32232,32 @@ N#define __CHECK_APP_H
 N
 N#include "stm32f10x.h"		
 N
-Nvoid ReadInputDat(void);
+Ntypedef struct 
+N{
+N	uint8_t Statue;         //运行状态
+N	uint8_t Power_Statue;   //动力电状态，220V脉冲检测
+N	uint8_t Work_Check;     //工作检测，220V脉冲检测
+N	uint8_t Phase_Check;    //断相/过载检测，开关信号
+N	uint8_t KM1_Point;      //KM1触点状态
+N	uint8_t KM2_Point;      //KM2触点状态
+N	uint8_t KM3_Point;      //KM3触点状态
+N	uint8_t KM1_Coil;       //KM1线圈状态
+N	uint8_t KM2_Coil;       //KM2线圈状态
+N	uint8_t KM3_Coil;       //KM3线圈状态
+N	uint16_t Timer_Count;	//水泵低速延时时间计数 递减方式	
+N}MotorChar; //电机特性结构体
+N
+N#ifdef GLOBAL_APP
+S	#define APP_EXT
+N#else
+N	#define APP_EXT extern 
+N#endif
+NAPP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
+Xextern MotorChar gAp,gBp;  
+N
+N
+Nvoid ReadInputDat(uint8_t _ApDat,uint8_t _BpDat);
+Nvoid KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
 N
 N
 N#endif
@@ -32270,7 +32296,10 @@ Nuint8_t g_RxMessage[8]={0};	//CAN接收数据
 Nuint8_t g_RxMessFlag=0;		//CAN接收数据 标志
 Nuint8_t OutFlag=0;	//放水标志,上电标志
 Nuint8_t InPutCount=0;		//输入脉冲计数
+Nuint8_t g_ShowUpDateFlag=0;		//显示更新标志
 Nuint32_t g_RunningTime=0;		//运行时间
+Nuint16_t g_ShowDat[6]={0};
+Nuint8_t StartTimerFlag = 0x00;  //用于自动启动切换定时标志量
 Nextern CQ_FIFO_T s_gCQ;				//消息FIFO变量,结构体 */
 Nextern uint8_t RS485_Count;
 Nextern uint8_t RS485Dat[10];
@@ -32387,11 +32416,13 @@ N	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
 N	uint8_t Time_250ms=0;
 N	uint8_t KeyDat=0;
 N    uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
+N    uint8_t OldRunMode=0;
+N    uint8_t RunStape = 0;   //0低速，1高速;
 N    KMDat ApRun,BpRun;      //A/B泵 运行状态    
 N	SystemInit();
 N	
 N	InitBoard();		//硬件初始化
-N	BspTm1639_Show(0x01,0x00);	//上电初始化显示
+N	BspTm1639_Show(0xA0,0x00);	//上电初始化显示
 N	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS1_4tq,CAN_BS2_3tq,75,CAN_Mode_Normal);	//CAN初始化正常模式,波特率60Kbps  //则波特率为:36M/((1+2+1)*150)= 60Kbps CAN_Normal_Init(1,2,1,150,1);   
 X	CAN_Mode_Init(((uint8_t)0x00),((uint8_t)0x03),((uint8_t)0x02),75,((uint8_t)0x00));	
 N	printf("CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n");
@@ -32405,7 +32436,11 @@ X	GPIO_ResetBits(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0800)
 N    RS485Dat_LED1_ON();	//远程通信指示灯
 N    RS485Dat_LED2_ON(); //主板通信指示灯	
 N    RS485Dat_LED12_ON();//A泵停止指示灯
+N    RS485Dat_LED13_ON();//A泵停止指示灯
+N    RS485Dat_LED14_ON();//A泵停止指示灯
 N    RS485Dat_LED18_ON();//B泵停止指示灯
+N    RS485Dat_LED19_ON();//B泵停止指示灯
+N    RS485Dat_LED20_ON();//B泵停止指示灯
 N    RS485Dat_LED16_ON();//手动模式指示灯
 N    while (1)
 N	{
@@ -32417,11 +32452,13 @@ N			if(Time_250ms<20)	Time_250ms++;
 N			else	
 N			{	
 N				Time_250ms=0;
-N                if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0){;}
+N                if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0)
+N                {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
 N                Get_InputValue();
 N			}
+N            BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
 N            //ReadDat_CD4067();
-N            ReadInputDat();
+N            ReadInputDat(ApRun.Statue,BpRun.Statue);
 N            DisplaySendDat();
 N			KeyDat = bsp_GetKey();
 N			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
@@ -32443,11 +32480,9 @@ N					case KEY_2_UP:		//
 N						printf("  KEY_2_UP!\r\n");
 N						break;
 N					case KEY_3_DOWN:	//
-N                        RS485Dat_LED1_ON();
 N						printf("  KEY_3_DOWN!\r\n");
 N						break;
 N					case KEY_3_UP:		//
-N                        RS485Dat_LED1_OFF();
 N						printf("  KEY_3_UP!\r\n");
 N						break;
 N					case KEY_4_DOWN:	//
@@ -32470,62 +32505,100 @@ N				RS485_Count = 0;
 N                RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
 N                if((RS485Dat_Key[0]!=0x00)||(RS485Dat_Key[1]!=0x00))
 N                printf("RS485_ReceiveDat(),%02X,%02X.\r\n",RS485Dat_Key[0],RS485Dat_Key[1]);
-N                if(RS485Dat_Key[1]&0x01==0x01){;}       //系统复位
+N                if((RS485Dat_Key[1]&0x01)==0x01){;}       //系统复位
 N                else if((RS485Dat_Key[1]&0x08)==0x08){RunMode=1;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主一备二
 N                else if((RS485Dat_Key[1]&0x10)==0x10){RunMode=0;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //手动模式
 N                else if((RS485Dat_Key[1]&0x20)==0x20){RunMode=2;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主二备一
 N			}
-N            if(RunMode==0)  //手动模式
+N            if(RunMode==0)      //手动模式,直接操作继电器输出
 N            {
+N                RS485Dat_LED15_OFF();RS485Dat_LED16_ON();RS485Dat_LED17_OFF();
 N                if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
 N                {   
 N                    ApRun.Statue=Stop;
-N                    printf("手动模式,A泵停止.\r\n");
 N                    KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
 X                    KMOFF_Show(0x0001);KMOFF_Show(0x0002);KMOFF_Show(0x0004);
 N                }  
 N                else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
 N                {   
 N                    ApRun.Statue=Slow;     
-N                    printf("手动模式,A泵低速.\r\n");
 N                    KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
 X                    KMON_Show(0x0001); KMON_Show(0x0002); KMOFF_Show(0x0004);
 N                }  
 N                else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
 N                {   
 N                    ApRun.Statue=HighSpeed;
-N                    printf("手动模式,A泵高速.\r\n");
 N                    KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
 X                    KMON_Show(0x0001); KMOFF_Show(0x0002);KMON_Show(0x0004); 
 N                }  
 N                else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
 N                {   
 N                    BpRun.Statue=Stop;     
-N                    printf("手动模式,B泵停止.\r\n");
 N                    KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
 X                    KMOFF_Show(0x0008);KMOFF_Show(0x0010);KMOFF_Show(0x0020);
 N                }  
 N                else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
 N                {   
 N                    BpRun.Statue=Slow;     
-N                    printf("手动模式,B泵低速.\r\n");
 N                    KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
 X                    KMON_Show(0x0008); KMON_Show(0x0010); KMOFF_Show(0x0020);
 N                }  
 N                else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
 N                {   
 N                    BpRun.Statue=HighSpeed;
-N                    printf("手动模式,B泵高速.\r\n");
 N                    KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
 X                    KMON_Show(0x0008); KMOFF_Show(0x0010);KMON_Show(0x0020); 
 N                }                 
 N            }
-N
-N		}
+N            else if(RunMode==1)  //主一备二
+N            {
+N                RS485Dat_LED15_ON();RS485Dat_LED16_OFF();RS485Dat_LED17_OFF();
+N            }
+N            else if(RunMode==2)  //主二备一
+N            {
+N                RS485Dat_LED15_OFF();RS485Dat_LED16_OFF();RS485Dat_LED17_ON();
+N            }
+N            if(RunMode!=OldRunMode) //运行模式切换，把运行模式全部转为停止
+N            {
+N                OldRunMode = RunMode;StartTimerFlag = 0x00;
+N                ApRun.Statue = Stop;
+N                KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+X                KMOFF_Show(0x0001);KMOFF_Show(0x0002);KMOFF_Show(0x0004);
+N                BpRun.Statue = Stop;     
+N                KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+X                KMOFF_Show(0x0008);KMOFF_Show(0x0010);KMOFF_Show(0x0020);
+N            }
+N            else if(RunMode!=0)  //自动模式
+N            {
+N                if((Read_Optocoupler(8)==0)||(Read_Optocoupler(9)==0)) //远控1/远控2检测
+N                {
+N                    if(StartTimerFlag==0x00)
+N                    {
+N                        RunStape = 1;
+N                        StartTimerFlag=0xAA;        //标记进入启动，开启定时功能
+N                        KMAutoRUN(RunMode,RunStape);//自动启动控制
+N                    }
+N                    else if(StartTimerFlag==0xBB)   //进入第二阶段，定时时间到，该定时在定时器中实现
+N                    {
+N                        RunStape = 2;
+N                        StartTimerFlag=0xCC;        //标记进入高速运行
+N                        KMAutoRUN(RunMode,RunStape);//自动启动控制                        
+N                    }
+N                }
+N                else
+N                {
+N                    if(StartTimerFlag==0xCC)
+N                    {
+N                        RunStape = 0;
+N                        StartTimerFlag = 0x00;
+N                        KMAutoRUN(RunMode,RunStape);//自动启动控制
+N                    }
+N                }
+N            }
+N        }
+N        KMOutUpdat();   //统一更新继电器输出
 N
 N	}
-W "..\..\User\main.c" 127 11 variable "ApRun" was set but never used
-W "..\..\User\main.c" 127 17 variable "BpRun" was set but never used
 N}
 N
 N/*
@@ -32565,15 +32638,34 @@ N	bsp_InitCQVar();
 N}
 N
 Nextern void SysTick_ISR(void);	/* 声明调用外部的函数 */
-Nuint8_t Time_count=0;
+Nuint16_t Time_count=0,KMTime_count=0;
+Nuint8_t KMTime_Sec=0;
 N//定时器3中断服务程序
 Nvoid TIM3_IRQHandler(void)   //TIM3中断
 N{
-N	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)  //TIM3更新中断 20ms中断
+N	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)  //TIM3更新中断 1ms中断
 X	if (TIM_GetITStatus(((TIM_TypeDef *) (((uint32_t)0x40000000) + 0x0400)), ((uint16_t)0x0001)) != RESET)  
 N	{
-N		if(Time_count>200)	Time_count=0;
+N		if(Time_count>3000) //3秒周期产生
+N        {
+N            Time_count = 0;
+N            g_ShowUpDateFlag = (++g_ShowUpDateFlag)%6;  //0-1-2-3-4-5-0
+N        }
 N		Time_count++;
+N        if(StartTimerFlag==0xAA)    
+N        {
+N            KMTime_count++;
+N            if(KMTime_count>1000) //1秒周期定时
+N            {
+N                KMTime_count = 0;
+N                KMTime_Sec++;
+N                if(KMTime_Sec>6)    StartTimerFlag = 0xBB;  //定时时间到
+N            }
+N        }
+N        else if(StartTimerFlag==0x00)
+N        {
+N            KMTime_count = 0;   KMTime_Sec = 0;
+N        }
 N		SysTick_ISR();	//这个函数在bsp_timer.c中 
 N		if((Time_count%10)==0)			bsp_KeyScan();	//每10ms扫描按键一次
 N		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  	//清除TIMx更新中断标志 					

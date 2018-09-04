@@ -597,6 +597,8 @@ void CS546x_Init(unsigned char IsReadEEP)
 		CS546x_SET_CS;
 	}
 }
+extern uint16_t g_ShowDat[6];
+
 //Channal 检测通道
 void Get_InputValue(void)
 {
@@ -613,7 +615,7 @@ void Get_InputValue(void)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf("A V:%d.%dV , I:%dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf("A V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
             CS546x_ResetStaReg();
             Channal++;
         }
@@ -628,26 +630,28 @@ void Get_InputValue(void)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf("B V:%d.%dV , I:%dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
             CS546x_ResetStaReg();
             Channal++;
         }
     }
     else if(Channal==Channal_C)
     {
-        SetInput_CSCD4051Switch(IV_C);	//B相电压通道选择
-        SetInput_IICD4051Switch(II_C);	//B相电流通道选择
+        SetInput_CSCD4051Switch(IV_C);	//C相电压通道选择
+        SetInput_IICD4051Switch(II_C);	//C相电流通道选择
         delay_us(30);					//必要延时
         CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         if(0x01==(CS546x_Sta&0x01))  
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf("C V:%d.%dV , I:%dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
             CS546x_ResetStaReg();
             Channal=Channal_A;
         }
     }
+    g_ShowDat[0] = (uint16_t)Voltage_VA.u16[0]/10;    //电压
+    g_ShowDat[1] = (uint16_t)Voltage_IA.u32;          //电压
 }
 
 

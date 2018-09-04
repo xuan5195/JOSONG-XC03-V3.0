@@ -35,5 +35,6 @@
 void bsp_HC595_Config(void);
 void KMON_Show(u16 ShowDat);
 void KMOFF_Show(u16 ShowDat);
+void KMOutUpdat(void);
 		 				    
 #endif

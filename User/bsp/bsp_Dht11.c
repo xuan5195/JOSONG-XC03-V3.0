@@ -118,7 +118,7 @@ uint8_t DHT11_Read_Data(uint8_t *buf)
 			printf("Read Date Check Error!\r\n");
 			return 1;
 		}
-		printf(">>DHT11_Read_Data H:%d.%d; T:%d.%d.\r\n",buf[0],buf[1],buf[2],buf[3]);
+		//printf(">>DHT11_Read_Data H:%d.%d; T:%d.%d.\r\n",buf[0],buf[1],buf[2],buf[3]);
 	}
 	else	return 1;
 	return 0;	    

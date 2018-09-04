@@ -55,10 +55,10 @@ void RS485Dat_LED13_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[1]&(~0x10);}	//A泵低速指
 void RS485Dat_LED14_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[1]&(~0x20);}	//A泵高速指示灯
 void RS485Dat_LED15_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[1]&(~0x40);}	//主一备二指示灯
 void RS485Dat_LED16_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[1]&(~0x80);}	//手动模式指示灯
-void RS485Dat_LED17_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[2]&(~0x01);}	//主二备一指示灯
-void RS485Dat_LED18_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[2]&(~0x02);}	//B泵停止指示灯
-void RS485Dat_LED19_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[2]&(~0x04);}	//B泵低速指示灯
-void RS485Dat_LED20_OFF()	{RS485Dat_LED[1]=RS485Dat_LED[2]&(~0x08);}	//B泵高速指示灯
+void RS485Dat_LED17_OFF()	{RS485Dat_LED[2]=RS485Dat_LED[2]&(~0x01);}	//主二备一指示灯
+void RS485Dat_LED18_OFF()	{RS485Dat_LED[2]=RS485Dat_LED[2]&(~0x02);}	//B泵停止指示灯
+void RS485Dat_LED19_OFF()	{RS485Dat_LED[2]=RS485Dat_LED[2]&(~0x04);}	//B泵低速指示灯
+void RS485Dat_LED20_OFF()	{RS485Dat_LED[2]=RS485Dat_LED[2]&(~0x08);}	//B泵高速指示灯
 
 //b.远程板业务处理，CAN通信
 

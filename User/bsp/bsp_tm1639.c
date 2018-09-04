@@ -5,9 +5,11 @@
 
 uint8_t OldShowMode=0;	//缓存数据显示模式，用于清屏
 uint32_t OldShowDate=0;	//缓存数据显示模式，防止数据重复更新占用系统时间
-static uint8_t table[16]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
-//extern uint8_t Logic_ADD;	//逻辑地址
-//extern uint8_t gErrorShow;	//异常显示代码 在服务器未更新前显示使用，这样不会出现E000
+const uint8_t table[16]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
+const uint8_t Table_S[] = {0x77,0x7C,0x39,0x58,0x5E,0x79,0x71,0x3D,	//AbCcdEFG
+                           0x76,0x74,0x0F,0x0E,0x75,0x38,0x37,0x54,	//HhIJKLMn
+                           0x5C,0x73,0x67,0x31,0x49,0x78,				//oPqrSt
+                           0x3E,0x1C,0x7E,0x64,0x6E,0x5A};    			//UvWXYZ
 
 void BspTm1639_Delay(__IO uint16_t z) 
 { 
@@ -47,9 +49,9 @@ void BspTm1639_Writebyte(uint8_t datx)
 	}
 }
 
-void BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate)
+void BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate)
 {
- 	uint8_t i,udat;
+ 	uint8_t i;
  	if((OldShowMode==ShowMode)&&(OldShowDate==ShowDate));	//数据、模式相同不刷新
  	else
  	{
@@ -58,12 +60,7 @@ void BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate)
 		OldShowDate = ShowDate;		//		
 		BspTm1639_Writebyte(MD_AUTO);	//设置为地址自动加1写显示数据
 		TM1639_STB_High();
-		if(ShowMode==0x02)
-		{
-			BspTm1639_Writebyte(DIG0);
-			for(i=0;i<16;i++)	BspTm1639_Writebyte(0x00);
-		}
-		else if(ShowMode==0x01)	//上电初始化显示值
+        if(ShowMode==0xA1)	//上电初始化显示值
 		{
 			BspTm1639_Writebyte(DIG0);
 			BspTm1639_Writebyte(0x0F);	BspTm1639_Writebyte(0x00);
@@ -73,69 +70,18 @@ void BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate)
 			}
 			BspTm1639_Writebyte(0x09);	BspTm1639_Writebyte(0x03);		
 		}
-		else if(ShowMode==0x06)	//显示代码，用于安装检测使用
-		{
-			BspTm1639_Writebyte(DIG0);
-			for(i=0;i<3;i++)
-			{
-				BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x04);
-			}
-			//VERSION 显示固件版本号
-			udat = VERSION&0x0F;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			udat = (VERSION&0xF0)>>4;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			for(i=0;i<3;i++)
-			{
-				BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x04);
-			}
-		}
-		else if(ShowMode==0x03)
+		else    //显示代码
 		{
 			BspTm1639_Writebyte(DIG0);
 			BspTm1639_Writebyte(table[ShowDate%10]);		BspTm1639_Writebyte(table[ShowDate%10]>>4);
 			BspTm1639_Writebyte(table[ShowDate/10%10]);		BspTm1639_Writebyte(table[ShowDate/10%10]>>4);
 			BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
-			BspTm1639_Writebyte(table[0]);					BspTm1639_Writebyte(table[0]>>4|0x08);
-			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG4
-			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG5
-			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG4
-			BspTm1639_Writebyte(0x00);						BspTm1639_Writebyte(0x00);//DIG5
-		}
-		else if(ShowMode==0x04)
-		{
-			BspTm1639_Writebyte(DIG0);
-			ShowDate = ShowDate & 0x00FFFFFF;	//清高位，高位为版本号不是金额
-			if(ShowDate<1000000)
-			{
-			    udat = ShowDate%10;			BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			    udat = ShowDate/10%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			    udat = ShowDate/100%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			    udat = ShowDate/1000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4|0x08);//个位
-			    udat = ShowDate/10000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);//十位
-			    udat = ShowDate/100000%10;	BspTm1639_Writebyte(table[udat]);   BspTm1639_Writebyte(table[udat]>>4);//百位       
-			}
-			else
-			{
-			    udat = ShowDate/10%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			    udat = ShowDate/100%10;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			    udat = ShowDate/1000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4|0x08);//个位
-			    udat = ShowDate/10000%10;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);//十位
-			    udat = ShowDate/100000%10;	BspTm1639_Writebyte(table[udat]);   BspTm1639_Writebyte(table[udat]>>4);//百位       
-			    udat = ShowDate/1000000%10;	BspTm1639_Writebyte(table[udat]);   BspTm1639_Writebyte(table[udat]>>4);//千位       
-			}
-			BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x00); //DIG6
-			BspTm1639_Writebyte(0x00);	BspTm1639_Writebyte(0x00); //DIG7
-		}
-		else if(ShowMode==0x05)
-		{
-			BspTm1639_Writebyte(DIG0);
-			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);
-			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);
-			udat = 0x00;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			udat = 0x00;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			udat = 0x00;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			udat = 0x0E;				BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);//DIG6
-			udat = 0x00;				BspTm1639_Writebyte(udat);			BspTm1639_Writebyte(udat);//DIG7
+            if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4|0x08); }  //电压U
+            else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08); }  //电流A
+            else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4|0x08); }  //温度C
+            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4|0x08); }  //湿度F
+            else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4|0x08); }  //压力P
+            else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4|0x08); }  //流量L
 		}
 		TM1639_STB_High();
 		BspTm1639_Writebyte(LEVEL_USE);

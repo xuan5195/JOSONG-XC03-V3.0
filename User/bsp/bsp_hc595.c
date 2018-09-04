@@ -2,13 +2,13 @@
 #include "bsp_hc595.h"		
 #include "bsp.h"
 
-static uint16_t g_LedShowDat=0;
+static uint16_t g_LedShowDat=0,Old_LedShowDat=0;
 static void HC595_Delay(u16 z) 
 { 
 	u8 x;
 	while(z--)
 	{
-		for(x=10;x>0;x--);
+		for(x=15;x>0;x--);
 	}
 }
 void bsp_HC595_Config(void)
@@ -53,13 +53,25 @@ static void BspLed_Show(u16 ShowDat)//0100= 0000 0100 //0200//0400
 void KMON_Show(u16 ShowDat)
 {
 	g_LedShowDat = g_LedShowDat&(~ShowDat);
-	printf("g_LedShowDat: %02X...\r\n",g_LedShowDat);
-    BspLed_Show(g_LedShowDat);
+//	printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
+//    BspLed_Show(g_LedShowDat);
 }
 void KMOFF_Show(u16 ShowDat)
 {
     g_LedShowDat = g_LedShowDat|ShowDat;
-	printf("g_LedShowDat: %02X...\r\n",g_LedShowDat);
-    BspLed_Show(g_LedShowDat);
+//	printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
+//    BspLed_Show(g_LedShowDat);
+}
+
+void KMOutUpdat(void)
+{
+    if(Old_LedShowDat!=g_LedShowDat)
+    {
+        BspLed_Show(0x0FFF);
+        Old_LedShowDat=g_LedShowDat;
+        printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
+        delay_ms(100);
+        BspLed_Show(g_LedShowDat);
+    }
 }
 

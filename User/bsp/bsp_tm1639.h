@@ -39,7 +39,7 @@
 void BspTm1639_Config(void); 
 void BspTm1639_Writebyte(uint8_t datx);
 void BspTM1639_ClearALL(void);	//清显示数据 
-void BspTm1639_Show(uint8_t ShowMode,uint32_t ShowDate);
+void BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate);
 void BspTm1639_ShowSNDat(uint8_t ShowMode,uint8_t *ShowDate);
 
 #endif

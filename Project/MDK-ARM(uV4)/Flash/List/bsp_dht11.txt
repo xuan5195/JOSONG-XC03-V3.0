@@ -323,13 +323,10 @@
 
                           AREA ||i.DHT11_Read_Data||, CODE, READONLY, ALIGN=2
 
-                          REQUIRE _printf_percent
-                          REQUIRE _printf_d
-                          REQUIRE _printf_int_dec
                   DHT11_Read_Data PROC
 ;;;103    */
 ;;;104    uint8_t DHT11_Read_Data(uint8_t *buf)    
-000000  b538              PUSH     {r3-r5,lr}
+000000  b570              PUSH     {r4-r6,lr}
 ;;;105    {        
 000002  4604              MOV      r4,r0
 ;;;106    	uint8_t i;
@@ -338,92 +335,69 @@
 000004  f7fffffe          BL       DHT11_Rst
 ;;;109    	if(DHT11_Check()==0)
 000008  f7fffffe          BL       DHT11_Check
-00000c  2800              CMP      r0,#0
-00000e  d121              BNE      |L5.84|
+00000c  b9c0              CBNZ     r0,|L5.64|
 ;;;110    	{	
 ;;;111    		for(i=0;i<5;i++)//读取40位数据
-000010  2500              MOVS     r5,#0
-000012  e004              B        |L5.30|
-                  |L5.20|
+00000e  2500              MOVS     r5,#0
+000010  e004              B        |L5.28|
+                  |L5.18|
 ;;;112    		{
 ;;;113    			buf[i]=DHT11_Read_Byte();			
-000014  f7fffffe          BL       DHT11_Read_Byte
-000018  5560              STRB     r0,[r4,r5]
-00001a  1c68              ADDS     r0,r5,#1              ;111
-00001c  b2c5              UXTB     r5,r0                 ;111
-                  |L5.30|
-00001e  2d05              CMP      r5,#5                 ;111
-000020  dbf8              BLT      |L5.20|
+000012  f7fffffe          BL       DHT11_Read_Byte
+000016  5560              STRB     r0,[r4,r5]
+000018  1c68              ADDS     r0,r5,#1              ;111
+00001a  b2c5              UXTB     r5,r0                 ;111
+                  |L5.28|
+00001c  2d05              CMP      r5,#5                 ;111
+00001e  dbf8              BLT      |L5.18|
 ;;;114    		}
 ;;;115    		//printf("0x%02X 0x%02X 0x%02X 0x%02X 0x%02X.",buf[0],buf[1],buf[2],buf[3],buf[4]);
 ;;;116    		if(buf[4] != ((uint8_t)(buf[0]+buf[1]+buf[2]+buf[3])))
-000022  7820              LDRB     r0,[r4,#0]
-000024  7861              LDRB     r1,[r4,#1]
-000026  4408              ADD      r0,r0,r1
-000028  78a1              LDRB     r1,[r4,#2]
-00002a  4408              ADD      r0,r0,r1
-00002c  78e1              LDRB     r1,[r4,#3]
-00002e  4408              ADD      r0,r0,r1
-000030  b2c0              UXTB     r0,r0
-000032  7921              LDRB     r1,[r4,#4]
-000034  4288              CMP      r0,r1
-000036  d004              BEQ      |L5.66|
+000020  7820              LDRB     r0,[r4,#0]
+000022  7861              LDRB     r1,[r4,#1]
+000024  4408              ADD      r0,r0,r1
+000026  78a1              LDRB     r1,[r4,#2]
+000028  4408              ADD      r0,r0,r1
+00002a  78e1              LDRB     r1,[r4,#3]
+00002c  4408              ADD      r0,r0,r1
+00002e  b2c0              UXTB     r0,r0
+000030  7921              LDRB     r1,[r4,#4]
+000032  4288              CMP      r0,r1
+000034  d006              BEQ      |L5.68|
 ;;;117    		{
 ;;;118    			printf("Read Date Check Error!\r\n");
-000038  a008              ADR      r0,|L5.92|
-00003a  f7fffffe          BL       __2printf
+000036  a004              ADR      r0,|L5.72|
+000038  f7fffffe          BL       __2printf
 ;;;119    			return 1;
-00003e  2001              MOVS     r0,#1
-                  |L5.64|
+00003c  2001              MOVS     r0,#1
+                  |L5.62|
 ;;;120    		}
-;;;121    		printf(">>DHT11_Read_Data H:%d.%d; T:%d.%d.\r\n",buf[0],buf[1],buf[2],buf[3]);
+;;;121    		//printf(">>DHT11_Read_Data H:%d.%d; T:%d.%d.\r\n",buf[0],buf[1],buf[2],buf[3]);
 ;;;122    	}
 ;;;123    	else	return 1;
 ;;;124    	return 0;	    
 ;;;125    }
-000040  bd38              POP      {r3-r5,pc}
-                  |L5.66|
-000042  78e0              LDRB     r0,[r4,#3]            ;121
-000044  9000              STR      r0,[sp,#0]            ;121
-000046  78a3              LDRB     r3,[r4,#2]            ;121
-000048  7862              LDRB     r2,[r4,#1]            ;121
-00004a  7821              LDRB     r1,[r4,#0]            ;121
-00004c  a00a              ADR      r0,|L5.120|
-00004e  f7fffffe          BL       __2printf
-000052  e001              B        |L5.88|
-                  |L5.84|
-000054  2001              MOVS     r0,#1                 ;123
-000056  e7f3              B        |L5.64|
-                  |L5.88|
-000058  2000              MOVS     r0,#0                 ;124
-00005a  e7f1              B        |L5.64|
+00003e  bd70              POP      {r4-r6,pc}
+                  |L5.64|
+000040  2001              MOVS     r0,#1                 ;123
+000042  e7fc              B        |L5.62|
+                  |L5.68|
+000044  2000              MOVS     r0,#0                 ;124
+000046  e7fa              B        |L5.62|
 ;;;126    
                           ENDP
 
-                  |L5.92|
-00005c  52656164          DCB      "Read Date Check Error!\r\n",0
-000060  20446174
-000064  65204368
-000068  65636b20
-00006c  4572726f
-000070  72210d0a
-000074  00      
-000075  00                DCB      0
-000076  00                DCB      0
-000077  00                DCB      0
-                  |L5.120|
-000078  3e3e4448          DCB      ">>DHT11_Read_Data H:%d.%d; T:%d.%d.\r\n",0
-00007c  5431315f
-000080  52656164
-000084  5f446174
-000088  6120483a
-00008c  25642e25
-000090  643b2054
-000094  3a25642e
-000098  25642e0d
-00009c  0a00    
-00009e  00                DCB      0
-00009f  00                DCB      0
+                  |L5.72|
+000048  52656164          DCB      "Read Date Check Error!\r\n",0
+00004c  20446174
+000050  65204368
+000054  65636b20
+000058  4572726f
+00005c  72210d0a
+000060  00      
+000061  00                DCB      0
+000062  00                DCB      0
+000063  00                DCB      0
 
                           AREA ||i.DHT11_Rst||, CODE, READONLY, ALIGN=2
 
