@@ -27,5 +27,6 @@
 void BspInput_CD4067_Config(void); 
 uint8_t Read_InputDevDat(uint8_t uAreaDat); 
 uint8_t Read_Optocoupler(uint8_t uAreaDat);
+void ReadDat_CD4067(void);
 		 				    
 #endif

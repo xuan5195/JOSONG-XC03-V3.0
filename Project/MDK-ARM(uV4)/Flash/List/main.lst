@@ -1,27 +1,6 @@
 L 1 "..\..\User\main.c"
 N//更新说明：
-N//2018.01.24  V5.1 增加在未注册时也能够远程复位
-N//2018.01.26  V5.1 增加在未注册时3min自动软复位，提高带电接入卡机时上线成功率
-N//2018.01.27  V5.1 修复上卡金额为0、错误代码E300时，刷卡造成放水不停止、不计费及显示金额错误等问题。
-N//2018.02.03  V5.1 增加在刷卡过程与服务器通信上金额界面闪烁一下。
-N//2018.02.23  V5.2 修改CAN波特率为60kbps;失联软复位时间由原来3min改为15Sec。
-N//2018.03.12  V5.3 增加上电主动外发本机SN用于主动注册，发送次数为10次。
-N//2018.04.21  V0.1 测试版本修改及优化Flash存储问题，将原始值改为全0；
-N//2018.04.24  V0.2 增加插卡/拔卡数据记录，存储起始地址0x0800D000,空间10K，存储容量800条；
-N//2018.04.25  V0.2 增加钱包备份，并兼容老版本；
-N//2018.04.26  V0.3 增加本次刷卡总扣费金额，并对比异常提交"拔卡不扣款动作";金额为600,000,服务器收到该金额时，以服务器为准
-N//2018.04.26  V0.3 增加DRCCYCLE计费周期后，提交一次"拔卡数据包";
-N//2018.04.26  V0.3 增加核对SN及逻辑地址广播,不一致软件复位;
-N//2018.05.01  V0.4 增加时钟接收，时钟存储到运行日志，串口打印日志，CAN取日志数据;
-N//2018.05.09  V0.5 二张卡同时插入并在移动让卡二次重复读写过程中，提交金额与卡号交错问题;
-N//2018.05.10  V0.5 修复二个钱包金额不一致时造成卡错误问题;
-N//2018.05.10  V0.5 卡机刚上电时，用日志中的时钟递增跑-->改为时钟为0时，不跑时钟
-N//2018.05.16  V0.5 将日志由原12Byte改为16Byte，增加用水量值2Byte，其余留空。
-N//2018.05.16  V0.5 将DecSum>200时,进入关阀，等待重新插卡。
-N//2018.05.16  V0.6 版本号55改为56； 修复刚开卡时第一次插卡金额错误问题。
-N//                 修改日志问题，将插卡\拔卡\连续消费移到BufDat[14]上去，详见格式文档。
-N//2018.05.18  V0.6 连续消费不提交服务器，只作日志;
-N//2018.07.04  V0.6 修复卡高位为00时，无法服务器充值;
+N
 N
 N#include "bsp.h"
 L 1 "..\..\User\bsp\bsp.h" 1
@@ -31999,6 +31978,7 @@ N
 Nvoid BspInput_CD4067_Config(void); 
 Nuint8_t Read_InputDevDat(uint8_t uAreaDat); 
 Nuint8_t Read_Optocoupler(uint8_t uAreaDat);
+Nvoid ReadDat_CD4067(void);
 N		 				    
 N#endif
 L 58 "..\..\User\bsp\bsp.h" 2
@@ -32244,13 +32224,39 @@ Nvoid RS485Dat_LED19_OFF(void);
 Nvoid RS485Dat_LED20_OFF(void); 
 N#endif
 L 62 "..\..\User\bsp\bsp.h" 2
+N#include "check_app.h"		
+L 1 "..\..\User\check_app.h" 1
+N#ifndef __CHECK_APP_H
+N#define __CHECK_APP_H	
+N
+N#include "stm32f10x.h"		
+N
+Nvoid ReadInputDat(void);
+N
+N
+N#endif
+L 63 "..\..\User\bsp\bsp.h" 2
 N
 N#define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
 N#define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
 N
+Ntypedef enum
+N{
+N	Stop = 0,   //停止
+N    Slow,       //低速
+N    HighSpeed,  //高速
+N    Error,      //错误
+N}Run_Statue;
+N
+Ntypedef struct 
+N{
+N	uint8_t Statue;     //运行状态 Stop,Slow,HighSpeed,Error
+N	uint8_t OldStatue;  //记录上一次状态
+N}KMDat;
+N
 N#endif
 N
-L 26 "..\..\User\main.c" 2
+L 5 "..\..\User\main.c" 2
 N#include <stdio.h>
 N#include <string.h>
 N#include <stdlib.h>
@@ -32380,6 +32386,8 @@ N{
 N	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
 N	uint8_t Time_250ms=0;
 N	uint8_t KeyDat=0;
+N    uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
+N    KMDat ApRun,BpRun;      //A/B泵 运行状态    
 N	SystemInit();
 N	
 N	InitBoard();		//硬件初始化
@@ -32392,21 +32400,28 @@ N    printf("-------------------------------------------------------------------
 N	bsp_StartTimer(1, 200);			//定时器1周期 200毫秒
 N	KMOFF_Show(ALARMALL);
 X	KMOFF_Show(0x0FFF);
-N	HC595_E1_ON();HC595_E2_ON();	
-X	GPIO_ResetBits(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0800)), ((uint16_t)0x0004));GPIO_ResetBits(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0800)), ((uint16_t)0x0008));	
-N	while (1)
+N	HC595_E1_ON();HC595_E2_ON();
+X	GPIO_ResetBits(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0800)), ((uint16_t)0x0004));GPIO_ResetBits(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0800)), ((uint16_t)0x0008));
+N    RS485Dat_LED1_ON();	//远程通信指示灯
+N    RS485Dat_LED2_ON(); //主板通信指示灯	
+N    RS485Dat_LED12_ON();//A泵停止指示灯
+N    RS485Dat_LED18_ON();//B泵停止指示灯
+N    RS485Dat_LED16_ON();//手动模式指示灯
+N    while (1)
 N	{
 N		CPU_IDLE();
 N		if ( bsp_CheckTimer(1) )	//软定时器
 N		{
 N			bsp_StartTimer(1, 200);	//启动下个定时周期
-N			if(Time_250ms<9)	Time_250ms++;
+N			if(Time_250ms<20)	Time_250ms++;
 N			else	
 N			{	
 N				Time_250ms=0;
 N                if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0){;}
 N                Get_InputValue();
 N			}
+N            //ReadDat_CD4067();
+N            ReadInputDat();
 N            DisplaySendDat();
 N			KeyDat = bsp_GetKey();
 N			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
@@ -32448,21 +32463,69 @@ N						break;
 N				}
 N			}
 N
-N
 N			RS485_ReceiveDat();
 N			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
 N			{
 N				RS485_Count = 0;
-N				//printf("RS485:%02X%02X %02X%02X%02X %02X %02X %02X%02X.\r\n",\
-N				RS485Dat[0],RS485Dat[1],RS485Dat[2],RS485Dat[3],RS485Dat[4],RS485Dat[5],RS485Dat[6],RS485Dat[7],RS485Dat[8]); 
-X				
 N                RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
+N                if((RS485Dat_Key[0]!=0x00)||(RS485Dat_Key[1]!=0x00))
+N                printf("RS485_ReceiveDat(),%02X,%02X.\r\n",RS485Dat_Key[0],RS485Dat_Key[1]);
+N                if(RS485Dat_Key[1]&0x01==0x01){;}       //系统复位
+N                else if((RS485Dat_Key[1]&0x08)==0x08){RunMode=1;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主一备二
+N                else if((RS485Dat_Key[1]&0x10)==0x10){RunMode=0;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //手动模式
+N                else if((RS485Dat_Key[1]&0x20)==0x20){RunMode=2;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主二备一
 N			}
+N            if(RunMode==0)  //手动模式
+N            {
+N                if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
+N                {   
+N                    ApRun.Statue=Stop;
+N                    printf("手动模式,A泵停止.\r\n");
+N                    KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+X                    KMOFF_Show(0x0001);KMOFF_Show(0x0002);KMOFF_Show(0x0004);
+N                }  
+N                else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
+N                {   
+N                    ApRun.Statue=Slow;     
+N                    printf("手动模式,A泵低速.\r\n");
+N                    KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
+X                    KMON_Show(0x0001); KMON_Show(0x0002); KMOFF_Show(0x0004);
+N                }  
+N                else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
+N                {   
+N                    ApRun.Statue=HighSpeed;
+N                    printf("手动模式,A泵高速.\r\n");
+N                    KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
+X                    KMON_Show(0x0001); KMOFF_Show(0x0002);KMON_Show(0x0004); 
+N                }  
+N                else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
+N                {   
+N                    BpRun.Statue=Stop;     
+N                    printf("手动模式,B泵停止.\r\n");
+N                    KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+X                    KMOFF_Show(0x0008);KMOFF_Show(0x0010);KMOFF_Show(0x0020);
+N                }  
+N                else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
+N                {   
+N                    BpRun.Statue=Slow;     
+N                    printf("手动模式,B泵低速.\r\n");
+N                    KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
+X                    KMON_Show(0x0008); KMON_Show(0x0010); KMOFF_Show(0x0020);
+N                }  
+N                else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
+N                {   
+N                    BpRun.Statue=HighSpeed;
+N                    printf("手动模式,B泵高速.\r\n");
+N                    KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
+X                    KMON_Show(0x0008); KMOFF_Show(0x0010);KMON_Show(0x0020); 
+N                }                 
+N            }
 N
 N		}
 N
 N	}
-W "..\..\User\main.c" 144 25 variable "RS485Dat_Key" was set but never used
+W "..\..\User\main.c" 127 11 variable "ApRun" was set but never used
+W "..\..\User\main.c" 127 17 variable "BpRun" was set but never used
 N}
 N
 N/*

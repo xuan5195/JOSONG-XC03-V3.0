@@ -399,6 +399,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\bus_app.c</FilePath>
             </File>
+            <File>
+              <FileName>check_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\check_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -963,6 +968,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\bus_app.c</FilePath>
             </File>
+            <File>
+              <FileName>check_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\check_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1526,6 +1536,11 @@
               <FileName>bus_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bus_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>check_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\check_app.c</FilePath>
             </File>
           </Files>
         </Group>

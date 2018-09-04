@@ -31981,6 +31981,7 @@ N
 Nvoid BspInput_CD4067_Config(void); 
 Nuint8_t Read_InputDevDat(uint8_t uAreaDat); 
 Nuint8_t Read_Optocoupler(uint8_t uAreaDat);
+Nvoid ReadDat_CD4067(void);
 N		 				    
 N#endif
 L 58 "..\..\User\bsp\bsp.h" 2
@@ -32226,9 +32227,35 @@ Nvoid RS485Dat_LED19_OFF(void);
 Nvoid RS485Dat_LED20_OFF(void); 
 N#endif
 L 62 "..\..\User\bsp\bsp.h" 2
+N#include "check_app.h"		
+L 1 "..\..\User\check_app.h" 1
+N#ifndef __CHECK_APP_H
+N#define __CHECK_APP_H	
+N
+N#include "stm32f10x.h"		
+N
+Nvoid ReadInputDat(void);
+N
+N
+N#endif
+L 63 "..\..\User\bsp\bsp.h" 2
 N
 N#define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
 N#define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
+N
+Ntypedef enum
+N{
+N	Stop = 0,   //停止
+N    Slow,       //低速
+N    HighSpeed,  //高速
+N    Error,      //错误
+N}Run_Statue;
+N
+Ntypedef struct 
+N{
+N	uint8_t Statue;     //运行状态 Stop,Slow,HighSpeed,Error
+N	uint8_t OldStatue;  //记录上一次状态
+N}KMDat;
 N
 N#endif
 N

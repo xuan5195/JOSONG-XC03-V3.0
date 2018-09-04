@@ -28706,14 +28706,55 @@ Nu8 CD4051Read_Optocoupler(uint8_t uAreaDat);
 N		 				    
 N#endif
 L 3 "..\..\User\bsp\bsp_cd4051.c" 2
+N#include "delay.h"
+L 1 "..\..\User\delay.h" 1
+N#ifndef __DELAY_H
+N#define __DELAY_H 			   
+N#include "stm32f10x.h"
 N
-Nstatic void BspInput_CD4051_Delay(u16 z) 
+Nvoid delay_init(void);
+Nvoid delay_ms(uint16_t nms);
+Nvoid delay_us(uint32_t nus);
+N
+N#endif
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+L 4 "..\..\User\bsp\bsp_cd4051.c" 2
+N
+Nvoid BspInput_CD4051_Delay_us(u16 z) 
 N{ 
-N	u8 x;
-N	while(z--)
-N	{
-N		for(x=8;x>0;x--);
-N	}
+N    delay_us(z);
+N}
+Nvoid BspInput_CD4051_Delay_ms(u16 z) 
+N{ 
+N    delay_ms(z);
 N}
 N
 Nvoid BspInput_CD4051_Config(void) 
@@ -28846,9 +28887,9 @@ N*	∑µ ªÿ ÷µ: 0£¨π‚ÒÓ”–¥•∑¢£ª1£¨Õ‚≤øŒﬁ¥•∑¢–≈∫≈
 N*	±∏ 	  ◊¢£∫
 N*					ºÏ≤‚–≈∫≈”Îøÿ÷∆µ„∂‘”¶πÿœµ»Áœ¬
 N*
-N*					02		A±√KM1«∞µºµ„µÁ—π–≈∫≈
-N*					01		A±√KM2«∞µºµ„µÁ—π–≈∫≈
 N*					00		A±√KM3«∞µºµ„µÁ—π–≈∫≈
+N*					01		A±√KM2«∞µºµ„µÁ—π–≈∫≈
+N*					02		A±√KM1«∞µºµ„µÁ—π–≈∫≈
 N*					03		B±√KM1«∞µºµ„µÁ—π–≈∫≈
 N*					04		B±√KM2«∞µºµ„µÁ—π–≈∫≈
 N*					05		B±√KM3«∞µºµ„µÁ—π–≈∫≈
@@ -28858,27 +28899,51 @@ N*				  220VµÁ—π£¨∆µ¬ Œ™50hzº¥20ms£¨“ª∏ˆ÷‹∆⁄ƒ⁄÷ª”–5ms ±º‰ø…“‘µºÕ®π‚ÒÓ£¨∆‰À¸ ±º‰≤
 N*				  “Ú∂¯–Ë“™Ã¯π˝’‚∂Œ≤ªµºÕ® ±º‰
 N*********************************************************************************************************
 N*/
-Nu8 Read_Input_KPDevDat(uint8_t uAreaDat)  
+Nu8 Read_Input_KPDevDat(uint8_t _no)  
 N{
-N	u8 i;
-N
-N	SetInput_KPCD4051Switch(uAreaDat);
-N	BspInput_CD4051_Delay(20);
-N	if(uAreaDat<6)
+N    static u8 Count[6]={10,10,10,10,10,10},OldState[6]={0};
+N	if(_no<6) 
 N	{
-N		if(Read_InputData_KP()==1)   //∏ﬂµÁ∆Ω£¨–Ë“™Ω¯“ª≤Ω¥¶¿Ì£¨ºÏ≤‚“ª∏ˆ÷‹∆⁄£¨≤Èø¥÷‹∆⁄ƒ⁄ «∑Ò”–ºÏ≤‚µΩ–≈∫≈
-X		if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==1)   
+N        SetInput_KPCD4051Switch(_no);
+N        BspInput_CD4051_Delay_us(50);
+N        if(Read_InputData_KP()==0)
+X        if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0)
+N        {
+N            Count[_no] = 10; OldState[_no] = 0;
+N            return OldState[_no];
+N        }
+N		else   //∏ﬂµÁ∆Ω£¨–Ë“™Ω¯“ª≤Ω¥¶¿Ì,’˝≥£ «µÕµÁ∆Ω
 N		{
-N			for(i=0;i<10;i++)
-N			{
-N				
-N				if(Read_InputData_KP()==0)	return 0;
-X				if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0)	return 0;
-N				BspInput_CD4051_Delay(50);
-N			}	
-N		}
+N            if(Count[_no]>0)
+N            {
+N                BspInput_CD4051_Delay_ms(3);
+N                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+X                if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+N                BspInput_CD4051_Delay_ms(3);
+N                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+X                if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+N                BspInput_CD4051_Delay_ms(3);
+N                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+X                if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+N                BspInput_CD4051_Delay_ms(5);
+N                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+X                if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+N                BspInput_CD4051_Delay_ms(5);
+N                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+X                if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+N                BspInput_CD4051_Delay_ms(5);
+N                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+X                if(GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000))==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+N                else                       {   Count[_no]--;    return OldState[_no];            }
+N            }
+N            else
+N            {
+N                Count[_no] = 10; OldState[_no] = 1;
+N                return OldState[_no];
+N            }
+N		}       
 N	}
-N	return 1;
+N	return 0xEF;
 N}
 N
 N/*
@@ -28895,8 +28960,42 @@ N*/
 Nu8 CD4051Read_Optocoupler(uint8_t uAreaDat)  
 N{	
 N	SetInput_KPCD4051Switch(uAreaDat);
-N	BspInput_CD4051_Delay(20);
+N	BspInput_CD4051_Delay_us(20);
 N	return Read_InputData_KP();
 X	return GPIO_ReadInputDataBit(((GPIO_TypeDef *) ((((uint32_t)0x40000000) + 0x10000) + 0x0C00)),((uint16_t)0x8000));
 N}
+N
+N/*
+N*********************************************************************************************************
+N*	∫Ø  ˝ √˚: CD4051InputChk_Pro
+N*	π¶ƒ‹Àµ√˜: ºÏ≤‚Ω”¥•∆˜«∞µºµ„ «∑Ò”–µÁ—π£®º¥÷˜∞Â…œºÃµÁ∆˜ø™πÿµ„ «∑Ò”–220v£©
+N*	–Œ 	  ≤Œ: Œﬁ
+N*	∑µ ªÿ ÷µ: Œﬁ 
+N*	±∏ 	  ◊¢£∫
+N*					ºÏ≤‚–≈∫≈”Îøÿ÷∆µ„∂‘”¶πÿœµ»Áœ¬
+N*
+N 
+N*					06		1∫≈Õ‚≤ø”¶¥,µÕµÁ∆Ω’˝≥£
+N*					07		2∫≈Õ‚≤ø”¶¥,µÕµÁ∆Ω’˝≥£
+N*	Àµ√˜£∫”…”⁄œ»ºÏ≤‚A±√ª·”–“Ï≥££¨¥˝Ω‚æˆ
+N*********************************************************************************************************
+N*/
+Nvoid CD4051InputChk_Pro()
+N{
+N	static u8 KMChk_Step=1;
+N
+N//	if(CD4051Read_Optocoupler(6)){;}  	//1∫≈ Œﬁ‘¥”¶¥–≈∫≈
+N//	if(CD4051Read_Optocoupler(7)){;}  	//2∫≈ Œﬁ‘¥”¶¥–≈∫≈
+N		
+N    if(Read_Input_KPDevDat(2)){;} //A±√KM1«∞µºµ„µÁ—π–≈∫≈	
+N    if(Read_Input_KPDevDat(1)){;} //A±√KM2«∞µºµ„µÁ—π–≈∫≈
+N    if(Read_Input_KPDevDat(0)){;} //A±√KM3«∞µºµ„µÁ—π–≈∫≈
+N    if(Read_Input_KPDevDat(3)){;} //B±√KM1«∞µºµ„µÁ—π–≈∫≈	
+N    if(Read_Input_KPDevDat(4)){;} //B±√KM2«∞µºµ„µÁ—π–≈∫≈
+N    if(Read_Input_KPDevDat(5)){;} //B±√KM3«∞µºµ„µÁ—π–≈∫≈
+N
+N	
+W "..\..\User\bsp\bsp_cd4051.c" 202 12 variable "KMChk_Step" was declared but never referenced
+N}
+N
 N

@@ -28,3 +28,4 @@
 .\flash\obj\bsp_cd4051.o: ..\..\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h
 .\flash\obj\bsp_cd4051.o: ..\..\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
 .\flash\obj\bsp_cd4051.o: ..\..\User\bsp\bsp_cd4051.h
+.\flash\obj\bsp_cd4051.o: ..\..\User\delay.h

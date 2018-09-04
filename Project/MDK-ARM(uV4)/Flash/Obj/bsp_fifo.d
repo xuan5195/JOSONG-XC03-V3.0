@@ -50,3 +50,4 @@
 .\flash\obj\bsp_fifo.o: ..\..\User\bsp\bsp_cd4051.h
 .\flash\obj\bsp_fifo.o: ..\..\User\bsp\bsp_cs5463.h
 .\flash\obj\bsp_fifo.o: ..\..\User\bus_app.h
+.\flash\obj\bsp_fifo.o: ..\..\User\check_app.h

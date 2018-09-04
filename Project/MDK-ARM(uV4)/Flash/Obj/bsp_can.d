@@ -50,3 +50,4 @@
 .\flash\obj\bsp_can.o: ..\..\User\bsp\bsp_cd4051.h
 .\flash\obj\bsp_can.o: ..\..\User\bsp\bsp_cs5463.h
 .\flash\obj\bsp_can.o: ..\..\User\bus_app.h
+.\flash\obj\bsp_can.o: ..\..\User\check_app.h

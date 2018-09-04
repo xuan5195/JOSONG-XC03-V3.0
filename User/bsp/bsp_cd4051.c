@@ -1,13 +1,14 @@
 #include "stm32f10x.h"		
 #include "bsp_cd4051.h"		
+#include "delay.h"
 
-static void BspInput_CD4051_Delay(u16 z) 
+void BspInput_CD4051_Delay_us(u16 z) 
 { 
-	u8 x;
-	while(z--)
-	{
-		for(x=8;x>0;x--);
-	}
+    delay_us(z);
+}
+void BspInput_CD4051_Delay_ms(u16 z) 
+{ 
+    delay_ms(z);
 }
 
 void BspInput_CD4051_Config(void) 
@@ -111,9 +112,9 @@ static void SetInput_KPCD4051Switch(uint8_t uSetDat)
 *	备 	  注：
 *					检测信号与控制点对应关系如下
 *
-*					02		A泵KM1前导点电压信号
-*					01		A泵KM2前导点电压信号
 *					00		A泵KM3前导点电压信号
+*					01		A泵KM2前导点电压信号
+*					02		A泵KM1前导点电压信号
 *					03		B泵KM1前导点电压信号
 *					04		B泵KM2前导点电压信号
 *					05		B泵KM3前导点电压信号
@@ -123,25 +124,44 @@ static void SetInput_KPCD4051Switch(uint8_t uSetDat)
 *				  因而需要跳过这段不导通时间
 *********************************************************************************************************
 */
-u8 Read_Input_KPDevDat(uint8_t uAreaDat)  
+u8 Read_Input_KPDevDat(uint8_t _no)  
 {
-	u8 i;
-
-	SetInput_KPCD4051Switch(uAreaDat);
-	BspInput_CD4051_Delay(20);
-	if(uAreaDat<6)
+    static u8 Count[6]={10,10,10,10,10,10},OldState[6]={0};
+	if(_no<6) 
 	{
-		if(Read_InputData_KP()==1)   //高电平，需要进一步处理，检测一个周期，查看周期内是否有检测到信号
+        SetInput_KPCD4051Switch(_no);
+        BspInput_CD4051_Delay_us(50);
+        if(Read_InputData_KP()==0)
+        {
+            Count[_no] = 10; OldState[_no] = 0;
+            return OldState[_no];
+        }
+		else   //高电平，需要进一步处理,正常是低电平
 		{
-			for(i=0;i<10;i++)
-			{
-				
-				if(Read_InputData_KP()==0)	return 0;
-				BspInput_CD4051_Delay(50);
-			}	
-		}
+            if(Count[_no]>0)
+            {
+                BspInput_CD4051_Delay_ms(3);
+                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4051_Delay_ms(3);
+                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4051_Delay_ms(3);
+                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4051_Delay_ms(5);
+                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4051_Delay_ms(5);
+                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4051_Delay_ms(5);
+                if(Read_InputData_KP()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                else                       {   Count[_no]--;    return OldState[_no];            }
+            }
+            else
+            {
+                Count[_no] = 10; OldState[_no] = 1;
+                return OldState[_no];
+            }
+		}       
 	}
-	return 1;
+	return 0xEF;
 }
 
 /*
@@ -158,7 +178,40 @@ u8 Read_Input_KPDevDat(uint8_t uAreaDat)
 u8 CD4051Read_Optocoupler(uint8_t uAreaDat)  
 {	
 	SetInput_KPCD4051Switch(uAreaDat);
-	BspInput_CD4051_Delay(20);
+	BspInput_CD4051_Delay_us(20);
 	return Read_InputData_KP();
 }
+
+/*
+*********************************************************************************************************
+*	函 数 名: CD4051InputChk_Pro
+*	功能说明: 检测接触器前导点是否有电压（即主板上继电器开关点是否有220v）
+*	形 	  参: 无
+*	返 回 值: 无 
+*	备 	  注：
+*					检测信号与控制点对应关系如下
+*
+ 
+*					06		1号外部应答,低电平正常
+*					07		2号外部应答,低电平正常
+*	说明：由于先检测A泵会有异常，待解决
+*********************************************************************************************************
+*/
+void CD4051InputChk_Pro()
+{
+	static u8 KMChk_Step=1;
+
+//	if(CD4051Read_Optocoupler(6)){;}  	//1号 无源应答信号
+//	if(CD4051Read_Optocoupler(7)){;}  	//2号 无源应答信号
+		
+    if(Read_Input_KPDevDat(2)){;} //A泵KM1前导点电压信号	
+    if(Read_Input_KPDevDat(1)){;} //A泵KM2前导点电压信号
+    if(Read_Input_KPDevDat(0)){;} //A泵KM3前导点电压信号
+    if(Read_Input_KPDevDat(3)){;} //B泵KM1前导点电压信号	
+    if(Read_Input_KPDevDat(4)){;} //B泵KM2前导点电压信号
+    if(Read_Input_KPDevDat(5)){;} //B泵KM3前导点电压信号
+
+	
+}
+
 

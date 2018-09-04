@@ -1,13 +1,14 @@
 #include "stm32f10x.h"		
 #include "bsp_cd4067.h"		
+#include "bsp.h"
 
-static void BspInput_CD4067_Delay(u16 z) 
+void BspInput_CD4067_Delay_us(u16 z) 
 { 
-	u8 x;
-	while(z--)
-	{
-		for(x=8;x>0;x--);
-	}
+    delay_us(z);
+}
+void BspInput_CD4067_Delay_ms(u16 z) 
+{ 
+    delay_ms(z);
 }
 
 void BspInput_CD4067_Config(void) 
@@ -95,23 +96,44 @@ static void SetInput_CD4067Switch(uint8_t uSetDat)
 *				  因而需要跳过这段不导通时间
 *********************************************************************************************************
 */
-u8 Read_InputDevDat(uint8_t uAreaDat)  //
+u8 Count[4]={10,10,10,10},OldState[4]={0};
+u8 Read_InputDevDat(uint8_t _no)  
 {
-	u8 i;	
-	SetInput_CD4067Switch(uAreaDat);
-	BspInput_CD4067_Delay(5);
-	if(uAreaDat<4) 
+	if(_no<4) 
 	{
-		if(Read_InputData()==1)   //高电平，需要进一步处理,正常是低电平
+        SetInput_CD4067Switch(_no);
+        BspInput_CD4067_Delay_us(20);
+        if(Read_InputData()==0)
+        {
+            Count[_no] = 10; OldState[_no] = 0;
+            return OldState[_no];
+        }
+		else   //高电平，需要进一步处理,正常是低电平
 		{
-			for(i=0;i<10;i++)
-			{
-				if(Read_InputData()==0)	return 0;
-				BspInput_CD4067_Delay(5);
-			}	
-		}
+            if(Count[_no]>0)
+            {
+                BspInput_CD4067_Delay_ms(3);
+                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4067_Delay_ms(3);
+                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4067_Delay_ms(3);
+                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4067_Delay_ms(5);
+                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4067_Delay_ms(5);
+                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                BspInput_CD4067_Delay_ms(5);
+                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                else                    {   Count[_no]--;    return OldState[_no];            }
+            }
+            else
+            {
+                Count[_no] = 10; OldState[_no] = 1;
+                return OldState[_no];
+            }
+		}       
 	}
-	return 1;
+	return 0xEF;
 }
 
 
@@ -129,8 +151,45 @@ u8 Read_InputDevDat(uint8_t uAreaDat)  //
 u8 Read_Optocoupler(uint8_t uAreaDat)  //
 {	
 	SetInput_CD4067Switch(uAreaDat);
-	BspInput_CD4067_Delay(5);
+	BspInput_CD4067_Delay_us(50);
 	return Read_InputData();
+}
+
+
+void ReadDat_CD4067(void)
+{
+    uint8_t ApPowerDat=0,BpPowerDat=0;
+    uint8_t ApKMDat=0,BpKMDat=0;
+    if((Read_Optocoupler(RDKMA1)==1)||(Read_Optocoupler(RDKMA2)==1) || (Read_Optocoupler(RDKMA3)==1))
+    {   ApKMDat=0xAA;           }//A泵接触器反馈异常
+    else
+    {   ApKMDat=0x00;           }//A泵接触器反馈正常
+	if((Read_Optocoupler(RDKMB1)==1)||(Read_Optocoupler(RDKMB2)==1) || (Read_Optocoupler(RDKMB3)==1))
+    {   BpKMDat=0xAA;           }//B泵接触器反馈异常
+    else
+    {   BpKMDat=0x00;           }//B泵接触器反馈正常
+    ApPowerDat = Read_InputDevDat(2);//A泵动力电；0->异常;1->正常 
+    BpPowerDat = Read_InputDevDat(3);//B泵动力电；0->异常;1->正常 
+    
+    if((ApPowerDat==0)&&(ApKMDat==0x00))    {   RS485Dat_LED7_OFF();    } //主一故障指示灯
+    else                                    {   RS485Dat_LED7_ON();     }
+    if((BpPowerDat==0)&&(BpKMDat==0x00))    {   RS485Dat_LED8_OFF();    } //主二故障指示灯        
+    else                                    {   RS485Dat_LED8_ON();     }		
+
+    if((ApPowerDat==0)&&(BpPowerDat==0))    {   RS485Dat_LED4_ON();     } //动力电指示灯  
+    else                                    {   RS485Dat_LED4_OFF();    } 
+    
+    if(Read_Optocoupler(4))//缺水检测,正常有水
+    {
+        RS485Dat_LED10_OFF();	//缺水    指示灯
+    }        
+    else				   //缺水检测,异常缺水
+    {
+        RS485Dat_LED10_ON();	//缺水    指示灯    
+    }
+//    if(Read_Optocoupler(5))//箱内进水检测，正常，未进水
+//    else				   //箱内进水检测，异常，主机自动手动不能启动水泵
+
 }
 
 

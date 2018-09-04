@@ -5,463 +5,729 @@
                           AREA ||i.BspInput_CD4067_Config||, CODE, READONLY, ALIGN=2
 
                   BspInput_CD4067_Config PROC
-;;;12     
-;;;13     void BspInput_CD4067_Config(void) 
+;;;13     
+;;;14     void BspInput_CD4067_Config(void) 
 000000  b508              PUSH     {r3,lr}
-;;;14     {
-;;;15     	GPIO_InitTypeDef GPIO_InitStructure;
-;;;16     	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE); 
+;;;15     {
+;;;16     	GPIO_InitTypeDef GPIO_InitStructure;
+;;;17     	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE); 
 000002  2101              MOVS     r1,#1
 000004  2010              MOVS     r0,#0x10
 000006  f7fffffe          BL       RCC_APB2PeriphClockCmd
-;;;17     	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9;
+;;;18     	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9;
 00000a  f44f7070          MOV      r0,#0x3c0
 00000e  f8ad0000          STRH     r0,[sp,#0]
-;;;18     	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+;;;19     	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 000012  2010              MOVS     r0,#0x10
 000014  f88d0003          STRB     r0,[sp,#3]
-;;;19     	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+;;;20     	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 000018  2003              MOVS     r0,#3
 00001a  f88d0002          STRB     r0,[sp,#2]
-;;;20     	GPIO_Init(GPIOC, &GPIO_InitStructure);
+;;;21     	GPIO_Init(GPIOC, &GPIO_InitStructure);
 00001e  4669              MOV      r1,sp
 000020  4806              LDR      r0,|L1.60|
 000022  f7fffffe          BL       GPIO_Init
-;;;21     	
-;;;22     	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+;;;22     	
+;;;23     	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 000026  2010              MOVS     r0,#0x10
 000028  f8ad0000          STRH     r0,[sp,#0]
-;;;23     	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
+;;;24     	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
 00002c  2048              MOVS     r0,#0x48
 00002e  f88d0003          STRB     r0,[sp,#3]
-;;;24     	GPIO_Init(GPIOC, &GPIO_InitStructure);
+;;;25     	GPIO_Init(GPIOC, &GPIO_InitStructure);
 000032  4669              MOV      r1,sp
 000034  4801              LDR      r0,|L1.60|
 000036  f7fffffe          BL       GPIO_Init
-;;;25     }
+;;;26     }
 00003a  bd08              POP      {r3,pc}
-;;;26     
+;;;27     
                           ENDP
 
                   |L1.60|
                           DCD      0x40011000
 
-                          AREA ||i.BspInput_CD4067_Delay||, CODE, READONLY, ALIGN=1
+                          AREA ||i.BspInput_CD4067_Delay_ms||, CODE, READONLY, ALIGN=1
 
-                  BspInput_CD4067_Delay PROC
-;;;3      
-;;;4      static void BspInput_CD4067_Delay(u16 z) 
-000000  4601              MOV      r1,r0
-;;;5      { 
-;;;6      	u8 x;
-;;;7      	while(z--)
-000002  e005              B        |L2.16|
-                  |L2.4|
-;;;8      	{
-;;;9      		for(x=8;x>0;x--);
-000004  2008              MOVS     r0,#8
-000006  e001              B        |L2.12|
-                  |L2.8|
-000008  1e42              SUBS     r2,r0,#1
-00000a  b2d0              UXTB     r0,r2
-                  |L2.12|
-00000c  2800              CMP      r0,#0
-00000e  dcfb              BGT      |L2.8|
-                  |L2.16|
-000010  1e0a              SUBS     r2,r1,#0              ;7
-000012  f1a10301          SUB      r3,r1,#1              ;7
-000016  b299              UXTH     r1,r3                 ;7
-000018  d1f4              BNE      |L2.4|
-;;;10     	}
-;;;11     }
-00001a  4770              BX       lr
-;;;12     
+                  BspInput_CD4067_Delay_ms PROC
+;;;8      }
+;;;9      void BspInput_CD4067_Delay_ms(u16 z) 
+000000  b510              PUSH     {r4,lr}
+;;;10     { 
+000002  4604              MOV      r4,r0
+;;;11         delay_ms(z);
+000004  4620              MOV      r0,r4
+000006  f7fffffe          BL       delay_ms
+;;;12     }
+00000a  bd10              POP      {r4,pc}
+;;;13     
+                          ENDP
+
+
+                          AREA ||i.BspInput_CD4067_Delay_us||, CODE, READONLY, ALIGN=1
+
+                  BspInput_CD4067_Delay_us PROC
+;;;4      
+;;;5      void BspInput_CD4067_Delay_us(u16 z) 
+000000  b510              PUSH     {r4,lr}
+;;;6      { 
+000002  4604              MOV      r4,r0
+;;;7          delay_us(z);
+000004  4620              MOV      r0,r4
+000006  f7fffffe          BL       delay_us
+;;;8      }
+00000a  bd10              POP      {r4,pc}
+;;;9      void BspInput_CD4067_Delay_ms(u16 z) 
+                          ENDP
+
+
+                          AREA ||i.ReadDat_CD4067||, CODE, READONLY, ALIGN=1
+
+                  ReadDat_CD4067 PROC
+;;;158    
+;;;159    void ReadDat_CD4067(void)
+000000  e92d41f0          PUSH     {r4-r8,lr}
+;;;160    {
+;;;161        uint8_t ApPowerDat=0,BpPowerDat=0;
+000004  2400              MOVS     r4,#0
+000006  2500              MOVS     r5,#0
+;;;162        uint8_t ApKMDat=0,BpKMDat=0;
+000008  2600              MOVS     r6,#0
+00000a  2700              MOVS     r7,#0
+;;;163        if((Read_Optocoupler(RDKMA1)==1)||(Read_Optocoupler(RDKMA2)==1) || (Read_Optocoupler(RDKMA3)==1))
+00000c  200a              MOVS     r0,#0xa
+00000e  f7fffffe          BL       Read_Optocoupler
+000012  2801              CMP      r0,#1
+000014  d009              BEQ      |L4.42|
+000016  200b              MOVS     r0,#0xb
+000018  f7fffffe          BL       Read_Optocoupler
+00001c  2801              CMP      r0,#1
+00001e  d004              BEQ      |L4.42|
+000020  200c              MOVS     r0,#0xc
+000022  f7fffffe          BL       Read_Optocoupler
+000026  2801              CMP      r0,#1
+000028  d101              BNE      |L4.46|
+                  |L4.42|
+;;;164        {   ApKMDat=0xAA;           }//A泵接触器反馈异常
+00002a  26aa              MOVS     r6,#0xaa
+00002c  e000              B        |L4.48|
+                  |L4.46|
+;;;165        else
+;;;166        {   ApKMDat=0x00;           }//A泵接触器反馈正常
+00002e  2600              MOVS     r6,#0
+                  |L4.48|
+;;;167    	if((Read_Optocoupler(RDKMB1)==1)||(Read_Optocoupler(RDKMB2)==1) || (Read_Optocoupler(RDKMB3)==1))
+000030  200d              MOVS     r0,#0xd
+000032  f7fffffe          BL       Read_Optocoupler
+000036  2801              CMP      r0,#1
+000038  d009              BEQ      |L4.78|
+00003a  200e              MOVS     r0,#0xe
+00003c  f7fffffe          BL       Read_Optocoupler
+000040  2801              CMP      r0,#1
+000042  d004              BEQ      |L4.78|
+000044  200f              MOVS     r0,#0xf
+000046  f7fffffe          BL       Read_Optocoupler
+00004a  2801              CMP      r0,#1
+00004c  d101              BNE      |L4.82|
+                  |L4.78|
+;;;168        {   BpKMDat=0xAA;           }//B泵接触器反馈异常
+00004e  27aa              MOVS     r7,#0xaa
+000050  e000              B        |L4.84|
+                  |L4.82|
+;;;169        else
+;;;170        {   BpKMDat=0x00;           }//B泵接触器反馈正常
+000052  2700              MOVS     r7,#0
+                  |L4.84|
+;;;171        ApPowerDat = Read_InputDevDat(2);//A泵动力电；0->异常;1->正常 
+000054  2002              MOVS     r0,#2
+000056  f7fffffe          BL       Read_InputDevDat
+00005a  4604              MOV      r4,r0
+;;;172        BpPowerDat = Read_InputDevDat(3);//B泵动力电；0->异常;1->正常 
+00005c  2003              MOVS     r0,#3
+00005e  f7fffffe          BL       Read_InputDevDat
+000062  4605              MOV      r5,r0
+;;;173        
+;;;174        if((ApPowerDat==0)&&(ApKMDat==0x00))    {   RS485Dat_LED7_OFF();    } //主一故障指示灯
+000064  b91c              CBNZ     r4,|L4.110|
+000066  b916              CBNZ     r6,|L4.110|
+000068  f7fffffe          BL       RS485Dat_LED7_OFF
+00006c  e001              B        |L4.114|
+                  |L4.110|
+;;;175        else                                    {   RS485Dat_LED7_ON();     }
+00006e  f7fffffe          BL       RS485Dat_LED7_ON
+                  |L4.114|
+;;;176        if((BpPowerDat==0)&&(BpKMDat==0x00))    {   RS485Dat_LED8_OFF();    } //主二故障指示灯        
+000072  b91d              CBNZ     r5,|L4.124|
+000074  b917              CBNZ     r7,|L4.124|
+000076  f7fffffe          BL       RS485Dat_LED8_OFF
+00007a  e001              B        |L4.128|
+                  |L4.124|
+;;;177        else                                    {   RS485Dat_LED8_ON();     }		
+00007c  f7fffffe          BL       RS485Dat_LED8_ON
+                  |L4.128|
+;;;178    
+;;;179        if((ApPowerDat==0)&&(BpPowerDat==0))    {   RS485Dat_LED4_ON();     } //动力电指示灯  
+000080  b91c              CBNZ     r4,|L4.138|
+000082  b915              CBNZ     r5,|L4.138|
+000084  f7fffffe          BL       RS485Dat_LED4_ON
+000088  e001              B        |L4.142|
+                  |L4.138|
+;;;180        else                                    {   RS485Dat_LED4_OFF();    } 
+00008a  f7fffffe          BL       RS485Dat_LED4_OFF
+                  |L4.142|
+;;;181        
+;;;182        if(Read_Optocoupler(4))//缺水检测,正常有水
+00008e  2004              MOVS     r0,#4
+000090  f7fffffe          BL       Read_Optocoupler
+000094  b110              CBZ      r0,|L4.156|
+;;;183        {
+;;;184            RS485Dat_LED10_OFF();	//缺水    指示灯
+000096  f7fffffe          BL       RS485Dat_LED10_OFF
+00009a  e001              B        |L4.160|
+                  |L4.156|
+;;;185        }        
+;;;186        else				   //缺水检测,异常缺水
+;;;187        {
+;;;188            RS485Dat_LED10_ON();	//缺水    指示灯    
+00009c  f7fffffe          BL       RS485Dat_LED10_ON
+                  |L4.160|
+;;;189        }
+;;;190    //    if(Read_Optocoupler(5))//箱内进水检测，正常，未进水
+;;;191    //    else				   //箱内进水检测，异常，主机自动手动不能启动水泵
+;;;192    
+;;;193    }
+0000a0  e8bd81f0          POP      {r4-r8,pc}
+;;;194    
                           ENDP
 
 
                           AREA ||i.Read_InputDevDat||, CODE, READONLY, ALIGN=2
 
                   Read_InputDevDat PROC
-;;;97     */
-;;;98     u8 Read_InputDevDat(uint8_t uAreaDat)  //
-000000  b570              PUSH     {r4-r6,lr}
-;;;99     {
-000002  4605              MOV      r5,r0
-;;;100    	u8 i;	
-;;;101    	SetInput_CD4067Switch(uAreaDat);
-000004  4628              MOV      r0,r5
-000006  f7fffffe          BL       SetInput_CD4067Switch
-;;;102    	BspInput_CD4067_Delay(5);
-00000a  2005              MOVS     r0,#5
-00000c  f7fffffe          BL       BspInput_CD4067_Delay
-;;;103    	if(uAreaDat<4) 
-000010  2d04              CMP      r5,#4
-000012  da15              BGE      |L3.64|
-;;;104    	{
-;;;105    		if(Read_InputData()==1)   //高电平，需要进一步处理,正常是低电平
+;;;99     u8 Count[4]={10,10,10,10},OldState[4]={0};
+;;;100    u8 Read_InputDevDat(uint8_t _no)  
+000000  b510              PUSH     {r4,lr}
+;;;101    {
+000002  4604              MOV      r4,r0
+;;;102    	if(_no<4) 
+000004  2c04              CMP      r4,#4
+000006  da7d              BGE      |L5.260|
+;;;103    	{
+;;;104            SetInput_CD4067Switch(_no);
+000008  4620              MOV      r0,r4
+00000a  f7fffffe          BL       SetInput_CD4067Switch
+;;;105            BspInput_CD4067_Delay_us(20);
+00000e  2014              MOVS     r0,#0x14
+000010  f7fffffe          BL       BspInput_CD4067_Delay_us
+;;;106            if(Read_InputData()==0)
 000014  2110              MOVS     r1,#0x10
-000016  480b              LDR      r0,|L3.68|
+000016  4846              LDR      r0,|L5.304|
 000018  f7fffffe          BL       GPIO_ReadInputDataBit
-00001c  2801              CMP      r0,#1
-00001e  d10f              BNE      |L3.64|
-;;;106    		{
-;;;107    			for(i=0;i<10;i++)
-000020  2400              MOVS     r4,#0
-000022  e00b              B        |L3.60|
-                  |L3.36|
-;;;108    			{
-;;;109    				if(Read_InputData()==0)	return 0;
-000024  2110              MOVS     r1,#0x10
-000026  4807              LDR      r0,|L3.68|
-000028  f7fffffe          BL       GPIO_ReadInputDataBit
-00002c  b908              CBNZ     r0,|L3.50|
-00002e  2000              MOVS     r0,#0
-                  |L3.48|
-;;;110    				BspInput_CD4067_Delay(5);
-;;;111    			}	
-;;;112    		}
-;;;113    	}
-;;;114    	return 1;
-;;;115    }
-000030  bd70              POP      {r4-r6,pc}
-                  |L3.50|
-000032  2005              MOVS     r0,#5                 ;110
-000034  f7fffffe          BL       BspInput_CD4067_Delay
-000038  1c60              ADDS     r0,r4,#1              ;107
-00003a  b2c4              UXTB     r4,r0                 ;107
-                  |L3.60|
-00003c  2c0a              CMP      r4,#0xa               ;107
-00003e  dbf1              BLT      |L3.36|
-                  |L3.64|
-000040  2001              MOVS     r0,#1                 ;114
-000042  e7f5              B        |L3.48|
-;;;116    
+00001c  b940              CBNZ     r0,|L5.48|
+;;;107            {
+;;;108                Count[_no] = 10; OldState[_no] = 0;
+00001e  200a              MOVS     r0,#0xa
+000020  4944              LDR      r1,|L5.308|
+000022  5508              STRB     r0,[r1,r4]
+000024  2000              MOVS     r0,#0
+000026  4944              LDR      r1,|L5.312|
+000028  5508              STRB     r0,[r1,r4]
+;;;109                return OldState[_no];
+00002a  4608              MOV      r0,r1
+00002c  5d00              LDRB     r0,[r0,r4]
+                  |L5.46|
+;;;110            }
+;;;111    		else   //高电平，需要进一步处理,正常是低电平
+;;;112    		{
+;;;113                if(Count[_no]>0)
+;;;114                {
+;;;115                    BspInput_CD4067_Delay_ms(3);
+;;;116                    if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+;;;117                    BspInput_CD4067_Delay_ms(3);
+;;;118                    if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+;;;119                    BspInput_CD4067_Delay_ms(3);
+;;;120                    if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+;;;121                    BspInput_CD4067_Delay_ms(5);
+;;;122                    if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+;;;123                    BspInput_CD4067_Delay_ms(5);
+;;;124                    if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+;;;125                    BspInput_CD4067_Delay_ms(5);
+;;;126                    if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+;;;127                    else                    {   Count[_no]--;    return OldState[_no];            }
+;;;128                }
+;;;129                else
+;;;130                {
+;;;131                    Count[_no] = 10; OldState[_no] = 1;
+;;;132                    return OldState[_no];
+;;;133                }
+;;;134    		}       
+;;;135    	}
+;;;136    	return 0xEF;
+;;;137    }
+00002e  bd10              POP      {r4,pc}
+                  |L5.48|
+000030  4840              LDR      r0,|L5.308|
+000032  5d00              LDRB     r0,[r0,r4]            ;113
+000034  2800              CMP      r0,#0                 ;113
+000036  dd6f              BLE      |L5.280|
+000038  2003              MOVS     r0,#3                 ;115
+00003a  f7fffffe          BL       BspInput_CD4067_Delay_ms
+00003e  2110              MOVS     r1,#0x10              ;116
+000040  483b              LDR      r0,|L5.304|
+000042  f7fffffe          BL       GPIO_ReadInputDataBit
+000046  b940              CBNZ     r0,|L5.90|
+000048  200a              MOVS     r0,#0xa               ;116
+00004a  493a              LDR      r1,|L5.308|
+00004c  5508              STRB     r0,[r1,r4]            ;116
+00004e  2000              MOVS     r0,#0                 ;116
+000050  4939              LDR      r1,|L5.312|
+000052  5508              STRB     r0,[r1,r4]            ;116
+000054  4608              MOV      r0,r1                 ;116
+000056  5d00              LDRB     r0,[r0,r4]            ;116
+000058  e7e9              B        |L5.46|
+                  |L5.90|
+00005a  2003              MOVS     r0,#3                 ;117
+00005c  f7fffffe          BL       BspInput_CD4067_Delay_ms
+000060  2110              MOVS     r1,#0x10              ;118
+000062  4833              LDR      r0,|L5.304|
+000064  f7fffffe          BL       GPIO_ReadInputDataBit
+000068  b940              CBNZ     r0,|L5.124|
+00006a  200a              MOVS     r0,#0xa               ;118
+00006c  4931              LDR      r1,|L5.308|
+00006e  5508              STRB     r0,[r1,r4]            ;118
+000070  2000              MOVS     r0,#0                 ;118
+000072  4931              LDR      r1,|L5.312|
+000074  5508              STRB     r0,[r1,r4]            ;118
+000076  4608              MOV      r0,r1                 ;118
+000078  5d00              LDRB     r0,[r0,r4]            ;118
+00007a  e7d8              B        |L5.46|
+                  |L5.124|
+00007c  2003              MOVS     r0,#3                 ;119
+00007e  f7fffffe          BL       BspInput_CD4067_Delay_ms
+000082  2110              MOVS     r1,#0x10              ;120
+000084  482a              LDR      r0,|L5.304|
+000086  f7fffffe          BL       GPIO_ReadInputDataBit
+00008a  b940              CBNZ     r0,|L5.158|
+00008c  200a              MOVS     r0,#0xa               ;120
+00008e  4929              LDR      r1,|L5.308|
+000090  5508              STRB     r0,[r1,r4]            ;120
+000092  2000              MOVS     r0,#0                 ;120
+000094  4928              LDR      r1,|L5.312|
+000096  5508              STRB     r0,[r1,r4]            ;120
+000098  4608              MOV      r0,r1                 ;120
+00009a  5d00              LDRB     r0,[r0,r4]            ;120
+00009c  e7c7              B        |L5.46|
+                  |L5.158|
+00009e  2005              MOVS     r0,#5                 ;121
+0000a0  f7fffffe          BL       BspInput_CD4067_Delay_ms
+0000a4  2110              MOVS     r1,#0x10              ;122
+0000a6  4822              LDR      r0,|L5.304|
+0000a8  f7fffffe          BL       GPIO_ReadInputDataBit
+0000ac  b940              CBNZ     r0,|L5.192|
+0000ae  200a              MOVS     r0,#0xa               ;122
+0000b0  4920              LDR      r1,|L5.308|
+0000b2  5508              STRB     r0,[r1,r4]            ;122
+0000b4  2000              MOVS     r0,#0                 ;122
+0000b6  4920              LDR      r1,|L5.312|
+0000b8  5508              STRB     r0,[r1,r4]            ;122
+0000ba  4608              MOV      r0,r1                 ;122
+0000bc  5d00              LDRB     r0,[r0,r4]            ;122
+0000be  e7b6              B        |L5.46|
+                  |L5.192|
+0000c0  2005              MOVS     r0,#5                 ;123
+0000c2  f7fffffe          BL       BspInput_CD4067_Delay_ms
+0000c6  2110              MOVS     r1,#0x10              ;124
+0000c8  4819              LDR      r0,|L5.304|
+0000ca  f7fffffe          BL       GPIO_ReadInputDataBit
+0000ce  b940              CBNZ     r0,|L5.226|
+0000d0  200a              MOVS     r0,#0xa               ;124
+0000d2  4918              LDR      r1,|L5.308|
+0000d4  5508              STRB     r0,[r1,r4]            ;124
+0000d6  2000              MOVS     r0,#0                 ;124
+0000d8  4917              LDR      r1,|L5.312|
+0000da  5508              STRB     r0,[r1,r4]            ;124
+0000dc  4608              MOV      r0,r1                 ;124
+0000de  5d00              LDRB     r0,[r0,r4]            ;124
+0000e0  e7a5              B        |L5.46|
+                  |L5.226|
+0000e2  2005              MOVS     r0,#5                 ;125
+0000e4  f7fffffe          BL       BspInput_CD4067_Delay_ms
+0000e8  2110              MOVS     r1,#0x10              ;126
+0000ea  4811              LDR      r0,|L5.304|
+0000ec  f7fffffe          BL       GPIO_ReadInputDataBit
+0000f0  b948              CBNZ     r0,|L5.262|
+0000f2  200a              MOVS     r0,#0xa               ;126
+0000f4  490f              LDR      r1,|L5.308|
+0000f6  5508              STRB     r0,[r1,r4]            ;126
+0000f8  2000              MOVS     r0,#0                 ;126
+0000fa  490f              LDR      r1,|L5.312|
+0000fc  5508              STRB     r0,[r1,r4]            ;126
+0000fe  4608              MOV      r0,r1                 ;126
+000100  5d00              LDRB     r0,[r0,r4]            ;126
+000102  e794              B        |L5.46|
+                  |L5.260|
+000104  e011              B        |L5.298|
+                  |L5.262|
+000106  480b              LDR      r0,|L5.308|
+000108  5d00              LDRB     r0,[r0,r4]            ;127
+00010a  1e40              SUBS     r0,r0,#1              ;127
+00010c  4909              LDR      r1,|L5.308|
+00010e  5508              STRB     r0,[r1,r4]            ;127
+000110  4809              LDR      r0,|L5.312|
+000112  5d00              LDRB     r0,[r0,r4]            ;127
+000114  e78b              B        |L5.46|
+000116  e7ff              B        |L5.280|
+                  |L5.280|
+000118  200a              MOVS     r0,#0xa               ;131
+00011a  4906              LDR      r1,|L5.308|
+00011c  5508              STRB     r0,[r1,r4]            ;131
+00011e  2001              MOVS     r0,#1                 ;131
+000120  4905              LDR      r1,|L5.312|
+000122  5508              STRB     r0,[r1,r4]            ;131
+000124  4608              MOV      r0,r1                 ;132
+000126  5d00              LDRB     r0,[r0,r4]            ;132
+000128  e781              B        |L5.46|
+                  |L5.298|
+00012a  20ef              MOVS     r0,#0xef              ;136
+00012c  e77f              B        |L5.46|
+;;;138    
                           ENDP
 
-                  |L3.68|
+00012e  0000              DCW      0x0000
+                  |L5.304|
                           DCD      0x40011000
+                  |L5.308|
+                          DCD      Count
+                  |L5.312|
+                          DCD      OldState
 
                           AREA ||i.Read_Optocoupler||, CODE, READONLY, ALIGN=2
 
                   Read_Optocoupler PROC
-;;;128    */
-;;;129    u8 Read_Optocoupler(uint8_t uAreaDat)  //
+;;;150    */
+;;;151    u8 Read_Optocoupler(uint8_t uAreaDat)  //
 000000  b510              PUSH     {r4,lr}
-;;;130    {	
+;;;152    {	
 000002  4604              MOV      r4,r0
-;;;131    	SetInput_CD4067Switch(uAreaDat);
+;;;153    	SetInput_CD4067Switch(uAreaDat);
 000004  4620              MOV      r0,r4
 000006  f7fffffe          BL       SetInput_CD4067Switch
-;;;132    	BspInput_CD4067_Delay(5);
-00000a  2005              MOVS     r0,#5
-00000c  f7fffffe          BL       BspInput_CD4067_Delay
-;;;133    	return Read_InputData();
+;;;154    	BspInput_CD4067_Delay_us(50);
+00000a  2032              MOVS     r0,#0x32
+00000c  f7fffffe          BL       BspInput_CD4067_Delay_us
+;;;155    	return Read_InputData();
 000010  2110              MOVS     r1,#0x10
-000012  4802              LDR      r0,|L4.28|
+000012  4802              LDR      r0,|L6.28|
 000014  f7fffffe          BL       GPIO_ReadInputDataBit
-;;;134    }
+;;;156    }
 000018  bd10              POP      {r4,pc}
-;;;135    
+;;;157    
                           ENDP
 
 00001a  0000              DCW      0x0000
-                  |L4.28|
+                  |L6.28|
                           DCD      0x40011000
 
                           AREA ||i.SetInput_CD4067Switch||, CODE, READONLY, ALIGN=2
 
                   SetInput_CD4067Switch PROC
-;;;26     
-;;;27     static void SetInput_CD4067Switch(uint8_t uSetDat)
+;;;27     
+;;;28     static void SetInput_CD4067Switch(uint8_t uSetDat)
 000000  b510              PUSH     {r4,lr}
-;;;28     {
+;;;29     {
 000002  4604              MOV      r4,r0
-;;;29         switch (uSetDat)
+;;;30         switch (uSetDat)
 000004  2c10              CMP      r4,#0x10
-000006  d27b              BCS      |L5.256|
+000006  d27b              BCS      |L7.256|
 000008  e8dff004          TBB      [pc,r4]
 00000c  081b2e41          DCB      0x08,0x1b,0x2e,0x41
 000010  54677b8e          DCB      0x54,0x67,0x7b,0x8e
 000014  a1b4c7da          DCB      0xa1,0xb4,0xc7,0xda
 000018  f1efeeed          DCB      0xf1,0xef,0xee,0xed
-;;;30         {
-;;;31             case 0:
-;;;32                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
+;;;31         {
+;;;32             case 0:
+;;;33                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
 00001c  f44f7100          MOV      r1,#0x200
-000020  489a              LDR      r0,|L5.652|
+000020  489a              LDR      r0,|L7.652|
 000022  f7fffffe          BL       GPIO_ResetBits
 000026  f44f7180          MOV      r1,#0x100
-00002a  4898              LDR      r0,|L5.652|
+00002a  4898              LDR      r0,|L7.652|
 00002c  f7fffffe          BL       GPIO_ResetBits
 000030  2180              MOVS     r1,#0x80
-000032  4896              LDR      r0,|L5.652|
+000032  4896              LDR      r0,|L7.652|
 000034  f7fffffe          BL       GPIO_ResetBits
 000038  2140              MOVS     r1,#0x40
-00003a  4894              LDR      r0,|L5.652|
+00003a  4894              LDR      r0,|L7.652|
 00003c  f7fffffe          BL       GPIO_ResetBits
-;;;33                 break;
-000040  e122              B        |L5.648|
-;;;34             case 1:
-;;;35                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
+;;;34                 break;
+000040  e122              B        |L7.648|
+;;;35             case 1:
+;;;36                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
 000042  f44f7100          MOV      r1,#0x200
-000046  4891              LDR      r0,|L5.652|
+000046  4891              LDR      r0,|L7.652|
 000048  f7fffffe          BL       GPIO_SetBits
 00004c  f44f7180          MOV      r1,#0x100
-000050  488e              LDR      r0,|L5.652|
+000050  488e              LDR      r0,|L7.652|
 000052  f7fffffe          BL       GPIO_ResetBits
 000056  2180              MOVS     r1,#0x80
-000058  488c              LDR      r0,|L5.652|
+000058  488c              LDR      r0,|L7.652|
 00005a  f7fffffe          BL       GPIO_ResetBits
 00005e  2140              MOVS     r1,#0x40
-000060  488a              LDR      r0,|L5.652|
+000060  488a              LDR      r0,|L7.652|
 000062  f7fffffe          BL       GPIO_ResetBits
-;;;36                 break;
-000066  e10f              B        |L5.648|
-;;;37             case 2:
-;;;38                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
+;;;37                 break;
+000066  e10f              B        |L7.648|
+;;;38             case 2:
+;;;39                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
 000068  f44f7100          MOV      r1,#0x200
-00006c  4887              LDR      r0,|L5.652|
+00006c  4887              LDR      r0,|L7.652|
 00006e  f7fffffe          BL       GPIO_ResetBits
 000072  f44f7180          MOV      r1,#0x100
-000076  4885              LDR      r0,|L5.652|
+000076  4885              LDR      r0,|L7.652|
 000078  f7fffffe          BL       GPIO_SetBits
 00007c  2180              MOVS     r1,#0x80
-00007e  4883              LDR      r0,|L5.652|
+00007e  4883              LDR      r0,|L7.652|
 000080  f7fffffe          BL       GPIO_ResetBits
 000084  2140              MOVS     r1,#0x40
-000086  4881              LDR      r0,|L5.652|
+000086  4881              LDR      r0,|L7.652|
 000088  f7fffffe          BL       GPIO_ResetBits
-;;;39                 break;
-00008c  e0fc              B        |L5.648|
-;;;40             case 3:
-;;;41                 Iutput_CD4067A_High();	Iutput_CD4067B_High(); 	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
+;;;40                 break;
+00008c  e0fc              B        |L7.648|
+;;;41             case 3:
+;;;42                 Iutput_CD4067A_High();	Iutput_CD4067B_High(); 	Iutput_CD4067C_Low();	Iutput_CD4067D_Low();
 00008e  f44f7100          MOV      r1,#0x200
-000092  487e              LDR      r0,|L5.652|
+000092  487e              LDR      r0,|L7.652|
 000094  f7fffffe          BL       GPIO_SetBits
 000098  f44f7180          MOV      r1,#0x100
-00009c  487b              LDR      r0,|L5.652|
+00009c  487b              LDR      r0,|L7.652|
 00009e  f7fffffe          BL       GPIO_SetBits
 0000a2  2180              MOVS     r1,#0x80
-0000a4  4879              LDR      r0,|L5.652|
+0000a4  4879              LDR      r0,|L7.652|
 0000a6  f7fffffe          BL       GPIO_ResetBits
 0000aa  2140              MOVS     r1,#0x40
-0000ac  4877              LDR      r0,|L5.652|
+0000ac  4877              LDR      r0,|L7.652|
 0000ae  f7fffffe          BL       GPIO_ResetBits
-;;;42                 break;
-0000b2  e0e9              B        |L5.648|
-;;;43             case 4:
-;;;44                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
+;;;43                 break;
+0000b2  e0e9              B        |L7.648|
+;;;44             case 4:
+;;;45                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
 0000b4  f44f7100          MOV      r1,#0x200
-0000b8  4874              LDR      r0,|L5.652|
+0000b8  4874              LDR      r0,|L7.652|
 0000ba  f7fffffe          BL       GPIO_ResetBits
 0000be  f44f7180          MOV      r1,#0x100
-0000c2  4872              LDR      r0,|L5.652|
+0000c2  4872              LDR      r0,|L7.652|
 0000c4  f7fffffe          BL       GPIO_ResetBits
 0000c8  2180              MOVS     r1,#0x80
-0000ca  4870              LDR      r0,|L5.652|
+0000ca  4870              LDR      r0,|L7.652|
 0000cc  f7fffffe          BL       GPIO_SetBits
 0000d0  2140              MOVS     r1,#0x40
-0000d2  486e              LDR      r0,|L5.652|
+0000d2  486e              LDR      r0,|L7.652|
 0000d4  f7fffffe          BL       GPIO_ResetBits
-;;;45                 break;
-0000d8  e0d6              B        |L5.648|
-;;;46             case 5:
-;;;47                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
+;;;46                 break;
+0000d8  e0d6              B        |L7.648|
+;;;47             case 5:
+;;;48                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
 0000da  f44f7100          MOV      r1,#0x200
-0000de  486b              LDR      r0,|L5.652|
+0000de  486b              LDR      r0,|L7.652|
 0000e0  f7fffffe          BL       GPIO_SetBits
 0000e4  f44f7180          MOV      r1,#0x100
-0000e8  4868              LDR      r0,|L5.652|
+0000e8  4868              LDR      r0,|L7.652|
 0000ea  f7fffffe          BL       GPIO_ResetBits
 0000ee  2180              MOVS     r1,#0x80
-0000f0  4866              LDR      r0,|L5.652|
+0000f0  4866              LDR      r0,|L7.652|
 0000f2  f7fffffe          BL       GPIO_SetBits
 0000f6  2140              MOVS     r1,#0x40
-0000f8  4864              LDR      r0,|L5.652|
+0000f8  4864              LDR      r0,|L7.652|
 0000fa  f7fffffe          BL       GPIO_ResetBits
-;;;48                 break;
-0000fe  e0c3              B        |L5.648|
-                  |L5.256|
-000100  e0c1              B        |L5.646|
-;;;49             case 6:
-;;;50                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
+;;;49                 break;
+0000fe  e0c3              B        |L7.648|
+                  |L7.256|
+000100  e0c1              B        |L7.646|
+;;;50             case 6:
+;;;51                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
 000102  f44f7100          MOV      r1,#0x200
-000106  4861              LDR      r0,|L5.652|
+000106  4861              LDR      r0,|L7.652|
 000108  f7fffffe          BL       GPIO_ResetBits
 00010c  f44f7180          MOV      r1,#0x100
-000110  485e              LDR      r0,|L5.652|
+000110  485e              LDR      r0,|L7.652|
 000112  f7fffffe          BL       GPIO_SetBits
 000116  2180              MOVS     r1,#0x80
-000118  485c              LDR      r0,|L5.652|
+000118  485c              LDR      r0,|L7.652|
 00011a  f7fffffe          BL       GPIO_SetBits
 00011e  2140              MOVS     r1,#0x40
-000120  485a              LDR      r0,|L5.652|
+000120  485a              LDR      r0,|L7.652|
 000122  f7fffffe          BL       GPIO_ResetBits
-;;;51                 break;
-000126  e0af              B        |L5.648|
-;;;52             case 7:
-;;;53                 Iutput_CD4067A_High();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
+;;;52                 break;
+000126  e0af              B        |L7.648|
+;;;53             case 7:
+;;;54                 Iutput_CD4067A_High();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_Low();
 000128  f44f7100          MOV      r1,#0x200
-00012c  4857              LDR      r0,|L5.652|
+00012c  4857              LDR      r0,|L7.652|
 00012e  f7fffffe          BL       GPIO_SetBits
 000132  f44f7180          MOV      r1,#0x100
-000136  4855              LDR      r0,|L5.652|
+000136  4855              LDR      r0,|L7.652|
 000138  f7fffffe          BL       GPIO_SetBits
 00013c  2180              MOVS     r1,#0x80
-00013e  4853              LDR      r0,|L5.652|
+00013e  4853              LDR      r0,|L7.652|
 000140  f7fffffe          BL       GPIO_SetBits
 000144  2140              MOVS     r1,#0x40
-000146  4851              LDR      r0,|L5.652|
+000146  4851              LDR      r0,|L7.652|
 000148  f7fffffe          BL       GPIO_ResetBits
-;;;54                 break;
-00014c  e09c              B        |L5.648|
-;;;55             case 8:
-;;;56                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
+;;;55                 break;
+00014c  e09c              B        |L7.648|
+;;;56             case 8:
+;;;57                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
 00014e  f44f7100          MOV      r1,#0x200
-000152  484e              LDR      r0,|L5.652|
+000152  484e              LDR      r0,|L7.652|
 000154  f7fffffe          BL       GPIO_ResetBits
 000158  f44f7180          MOV      r1,#0x100
-00015c  484b              LDR      r0,|L5.652|
+00015c  484b              LDR      r0,|L7.652|
 00015e  f7fffffe          BL       GPIO_ResetBits
 000162  2180              MOVS     r1,#0x80
-000164  4849              LDR      r0,|L5.652|
+000164  4849              LDR      r0,|L7.652|
 000166  f7fffffe          BL       GPIO_ResetBits
 00016a  2140              MOVS     r1,#0x40
-00016c  4847              LDR      r0,|L5.652|
+00016c  4847              LDR      r0,|L7.652|
 00016e  f7fffffe          BL       GPIO_SetBits
-;;;57                 break;
-000172  e089              B        |L5.648|
-;;;58             case 9:
-;;;59                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
+;;;58                 break;
+000172  e089              B        |L7.648|
+;;;59             case 9:
+;;;60                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
 000174  f44f7100          MOV      r1,#0x200
-000178  4844              LDR      r0,|L5.652|
+000178  4844              LDR      r0,|L7.652|
 00017a  f7fffffe          BL       GPIO_SetBits
 00017e  f44f7180          MOV      r1,#0x100
-000182  4842              LDR      r0,|L5.652|
+000182  4842              LDR      r0,|L7.652|
 000184  f7fffffe          BL       GPIO_ResetBits
 000188  2180              MOVS     r1,#0x80
-00018a  4840              LDR      r0,|L5.652|
+00018a  4840              LDR      r0,|L7.652|
 00018c  f7fffffe          BL       GPIO_ResetBits
 000190  2140              MOVS     r1,#0x40
-000192  483e              LDR      r0,|L5.652|
+000192  483e              LDR      r0,|L7.652|
 000194  f7fffffe          BL       GPIO_SetBits
-;;;60                 break;
-000198  e076              B        |L5.648|
-;;;61             case 10:
-;;;62                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
+;;;61                 break;
+000198  e076              B        |L7.648|
+;;;62             case 10:
+;;;63                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
 00019a  f44f7100          MOV      r1,#0x200
-00019e  483b              LDR      r0,|L5.652|
+00019e  483b              LDR      r0,|L7.652|
 0001a0  f7fffffe          BL       GPIO_ResetBits
 0001a4  f44f7180          MOV      r1,#0x100
-0001a8  4838              LDR      r0,|L5.652|
+0001a8  4838              LDR      r0,|L7.652|
 0001aa  f7fffffe          BL       GPIO_SetBits
 0001ae  2180              MOVS     r1,#0x80
-0001b0  4836              LDR      r0,|L5.652|
+0001b0  4836              LDR      r0,|L7.652|
 0001b2  f7fffffe          BL       GPIO_ResetBits
 0001b6  2140              MOVS     r1,#0x40
-0001b8  4834              LDR      r0,|L5.652|
+0001b8  4834              LDR      r0,|L7.652|
 0001ba  f7fffffe          BL       GPIO_SetBits
-;;;63                 break;
-0001be  e063              B        |L5.648|
-;;;64             case 11:
-;;;65                 Iutput_CD4067A_High();	Iutput_CD4067B_High(); 	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
+;;;64                 break;
+0001be  e063              B        |L7.648|
+;;;65             case 11:
+;;;66                 Iutput_CD4067A_High();	Iutput_CD4067B_High(); 	Iutput_CD4067C_Low();	Iutput_CD4067D_High();
 0001c0  f44f7100          MOV      r1,#0x200
-0001c4  4831              LDR      r0,|L5.652|
+0001c4  4831              LDR      r0,|L7.652|
 0001c6  f7fffffe          BL       GPIO_SetBits
 0001ca  f44f7180          MOV      r1,#0x100
-0001ce  482f              LDR      r0,|L5.652|
+0001ce  482f              LDR      r0,|L7.652|
 0001d0  f7fffffe          BL       GPIO_SetBits
 0001d4  2180              MOVS     r1,#0x80
-0001d6  482d              LDR      r0,|L5.652|
+0001d6  482d              LDR      r0,|L7.652|
 0001d8  f7fffffe          BL       GPIO_ResetBits
 0001dc  2140              MOVS     r1,#0x40
-0001de  482b              LDR      r0,|L5.652|
+0001de  482b              LDR      r0,|L7.652|
 0001e0  f7fffffe          BL       GPIO_SetBits
-;;;66                 break;
-0001e4  e050              B        |L5.648|
-0001e6  e03b              B        |L5.608|
-0001e8  e027              B        |L5.570|
-0001ea  e013              B        |L5.532|
-0001ec  e7ff              B        |L5.494|
-                  |L5.494|
-;;;67             case 12:
-;;;68                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
+;;;67                 break;
+0001e4  e050              B        |L7.648|
+0001e6  e03b              B        |L7.608|
+0001e8  e027              B        |L7.570|
+0001ea  e013              B        |L7.532|
+0001ec  e7ff              B        |L7.494|
+                  |L7.494|
+;;;68             case 12:
+;;;69                 Iutput_CD4067A_Low();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
 0001ee  f44f7100          MOV      r1,#0x200
-0001f2  4826              LDR      r0,|L5.652|
+0001f2  4826              LDR      r0,|L7.652|
 0001f4  f7fffffe          BL       GPIO_ResetBits
 0001f8  f44f7180          MOV      r1,#0x100
-0001fc  4823              LDR      r0,|L5.652|
+0001fc  4823              LDR      r0,|L7.652|
 0001fe  f7fffffe          BL       GPIO_ResetBits
 000202  2180              MOVS     r1,#0x80
-000204  4821              LDR      r0,|L5.652|
+000204  4821              LDR      r0,|L7.652|
 000206  f7fffffe          BL       GPIO_SetBits
 00020a  2140              MOVS     r1,#0x40
-00020c  481f              LDR      r0,|L5.652|
+00020c  481f              LDR      r0,|L7.652|
 00020e  f7fffffe          BL       GPIO_SetBits
-;;;69                 break;
-000212  e039              B        |L5.648|
-                  |L5.532|
-;;;70             case 13:
-;;;71                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
+;;;70                 break;
+000212  e039              B        |L7.648|
+                  |L7.532|
+;;;71             case 13:
+;;;72                 Iutput_CD4067A_High();	Iutput_CD4067B_Low();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
 000214  f44f7100          MOV      r1,#0x200
-000218  481c              LDR      r0,|L5.652|
+000218  481c              LDR      r0,|L7.652|
 00021a  f7fffffe          BL       GPIO_SetBits
 00021e  f44f7180          MOV      r1,#0x100
-000222  481a              LDR      r0,|L5.652|
+000222  481a              LDR      r0,|L7.652|
 000224  f7fffffe          BL       GPIO_ResetBits
 000228  2180              MOVS     r1,#0x80
-00022a  4818              LDR      r0,|L5.652|
+00022a  4818              LDR      r0,|L7.652|
 00022c  f7fffffe          BL       GPIO_SetBits
 000230  2140              MOVS     r1,#0x40
-000232  4816              LDR      r0,|L5.652|
+000232  4816              LDR      r0,|L7.652|
 000234  f7fffffe          BL       GPIO_SetBits
-;;;72                 break;
-000238  e026              B        |L5.648|
-                  |L5.570|
-;;;73             case 14:
-;;;74                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
+;;;73                 break;
+000238  e026              B        |L7.648|
+                  |L7.570|
+;;;74             case 14:
+;;;75                 Iutput_CD4067A_Low();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
 00023a  f44f7100          MOV      r1,#0x200
-00023e  4813              LDR      r0,|L5.652|
+00023e  4813              LDR      r0,|L7.652|
 000240  f7fffffe          BL       GPIO_ResetBits
 000244  f44f7180          MOV      r1,#0x100
-000248  4810              LDR      r0,|L5.652|
+000248  4810              LDR      r0,|L7.652|
 00024a  f7fffffe          BL       GPIO_SetBits
 00024e  2180              MOVS     r1,#0x80
-000250  480e              LDR      r0,|L5.652|
+000250  480e              LDR      r0,|L7.652|
 000252  f7fffffe          BL       GPIO_SetBits
 000256  2140              MOVS     r1,#0x40
-000258  480c              LDR      r0,|L5.652|
+000258  480c              LDR      r0,|L7.652|
 00025a  f7fffffe          BL       GPIO_SetBits
-;;;75                 break;
-00025e  e013              B        |L5.648|
-                  |L5.608|
-;;;76             case 15:
-;;;77                 Iutput_CD4067A_High();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
+;;;76                 break;
+00025e  e013              B        |L7.648|
+                  |L7.608|
+;;;77             case 15:
+;;;78                 Iutput_CD4067A_High();	Iutput_CD4067B_High();	Iutput_CD4067C_High();	Iutput_CD4067D_High();
 000260  f44f7100          MOV      r1,#0x200
-000264  4809              LDR      r0,|L5.652|
+000264  4809              LDR      r0,|L7.652|
 000266  f7fffffe          BL       GPIO_SetBits
 00026a  f44f7180          MOV      r1,#0x100
-00026e  4807              LDR      r0,|L5.652|
+00026e  4807              LDR      r0,|L7.652|
 000270  f7fffffe          BL       GPIO_SetBits
 000274  2180              MOVS     r1,#0x80
-000276  4805              LDR      r0,|L5.652|
+000276  4805              LDR      r0,|L7.652|
 000278  f7fffffe          BL       GPIO_SetBits
 00027c  2140              MOVS     r1,#0x40
-00027e  4803              LDR      r0,|L5.652|
+00027e  4803              LDR      r0,|L7.652|
 000280  f7fffffe          BL       GPIO_SetBits
-;;;78                 break;
-000284  e000              B        |L5.648|
-                  |L5.646|
-;;;79            default:
-;;;80                 break;
+;;;79                 break;
+000284  e000              B        |L7.648|
+                  |L7.646|
+;;;80            default:
+;;;81                 break;
 000286  bf00              NOP      
-                  |L5.648|
-000288  bf00              NOP                            ;33
-;;;81         }
-;;;82     }
+                  |L7.648|
+000288  bf00              NOP                            ;34
+;;;82         }
+;;;83     }
 00028a  bd10              POP      {r4,pc}
-;;;83     
+;;;84     
                           ENDP
 
-                  |L5.652|
+                  |L7.652|
                           DCD      0x40011000
+
+                          AREA ||.data||, DATA, ALIGN=0
+
+                  Count
+000000  0a0a0a0a          DCB      0x0a,0x0a,0x0a,0x0a
+                  OldState
+000004  00000000          DCB      0x00,0x00,0x00,0x00
