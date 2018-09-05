@@ -460,11 +460,6 @@
               <FilePath>..\..\User\bsp\bsp_stmflash.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_logfile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\bsp_logfile.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_fifo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\bsp_fifo.c</FilePath>
@@ -1029,11 +1024,6 @@
               <FilePath>..\..\User\bsp\bsp_stmflash.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_logfile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\bsp_logfile.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_fifo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\bsp_fifo.c</FilePath>
@@ -1596,11 +1586,6 @@
               <FileName>bsp_stmflash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\bsp_stmflash.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_logfile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\bsp_logfile.c</FilePath>
             </File>
             <File>
               <FileName>bsp_fifo.c</FileName>

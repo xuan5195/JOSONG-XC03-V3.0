@@ -22,7 +22,8 @@ extern uint8_t RS485_Count;
 extern uint8_t RS485Dat[10];
 extern MotorChar gAp,gBp;  //A/B泵相关信息
 extern uint8_t Menu;
-
+uint8_t g_TM1639Flag;
+uint8_t g_KeyNoneCount;
 void NVIC_Configuration(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
@@ -123,7 +124,6 @@ int main(void)
 	SystemInit();
 	
 	InitBoard();		//硬件初始化
-	BspTm1639_Show(0xA0,0x00);	//上电初始化显示
 	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS1_4tq,CAN_BS2_3tq,75,CAN_Mode_Normal);	//CAN初始化正常模式,波特率60Kbps  //则波特率为:36M/((1+2+1)*150)= 60Kbps CAN_Normal_Init(1,2,1,150,1);   
 	printf("CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n");
 	
@@ -154,10 +154,8 @@ int main(void)
                 {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
                 Get_InputValue();
 			}
-            if(Menu==Menu_Idle) BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
             ReadInputDat();     //读取A/B泵全部状态，存放在结构体中
             DisplaySendDat();   //RS485数据发送
-            SetParam();
 			RS485_ReceiveDat();
 			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
 			{
@@ -251,7 +249,9 @@ int main(void)
             }
         }
         KMOutUpdat();   //统一更新继电器输出
-
+        SetParam();     //设置修改参数
+        if(Menu==Menu_Idle) BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
+        else                BspTm1639_ShowParam(g_TM1639Flag,Menu,gParamDat[Menu]);
 	}
 }
 
@@ -276,14 +276,17 @@ static void InitBoard(void)
 	printf("\r\nStarting Up...\r\nJOSONG-XS03 V3.0...\r\n");
 	printf("VersionNo: %02X...\r\n",VERSION);
 	printf("SystemCoreClock: %d...\r\n",SystemCoreClock);
-	delay_ms(500);
+	delay_ms(100);
 	BspTm1639_Config();	        //TM1639初始化
+	BspTm1639_Show(0xA1,0x00);	//上电初始化显示
 	BspDht11_Config();			//温湿度传感器初始化
 	bsp_HC595_Config();			//HC595初始化 用于继电器输出
 	BspInput_CD4067_Config();	//CD4067初始化 用于信号采集
 	BspInput_CD4051_Config();	//CD4051*3
 	Bsp_CS5463_Config();
 	CS546x_Init(0);
+    Read_Flash_Dat();   //读出Flash数据
+    delay_ms(500);
 	TIM3_Int_Init(99,720-1);  	//以100khz的频率计数，0.01ms中断，计数到100 *0.01ms 为1ms 
 //	TIM2_Cap_Init(0xFFFF,72-1);	//以1Mhz的频率计数 
  	Adc_Init();		  		    //ADC初始化
@@ -304,6 +307,9 @@ void TIM3_IRQHandler(void)   //TIM3中断
             g_ShowUpDateFlag = (++g_ShowUpDateFlag)%6;  //0-1-2-3-4-5-0
         }
 		Time_count++;
+        if((Time_count%1000==750)&&(g_TM1639Flag==0))    g_TM1639Flag = 1;
+        if((Time_count%1000==  1)&&(g_TM1639Flag==1))    g_TM1639Flag = 0;
+        if(Time_count%1000==1)  {  if(g_KeyNoneCount>0)  g_KeyNoneCount--;  }
         if(StartTimerFlag==0xAA)    
         {
             KMTime_count++;

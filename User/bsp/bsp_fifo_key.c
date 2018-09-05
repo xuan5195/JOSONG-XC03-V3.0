@@ -276,6 +276,9 @@ static void bsp_InitKeyVar(void)
 	s_tBtn[1].IsKeyDownFunc = IsKeyDown2;
 	s_tBtn[2].IsKeyDownFunc = IsKeyDown3;
 	s_tBtn[3].IsKeyDownFunc = IsKeyDown4;
+    
+    bsp_SetKeyParam(1, 50, 15); //将+键修改为支持连发 500ms长按，150ms连发
+    bsp_SetKeyParam(2, 50, 15); //将-键修改为支持连发 500ms长按，150ms连发
 
 }
 

@@ -48,7 +48,6 @@
 #include "bsp_crc8.h"
 #include "bsp_adc.h"
 #include "bsp_stmflash.h"
-#include "bsp_logfile.h"
 #include "bsp_fifo.h"
 #include "bsp_fifo_key.h"
 #include "bsp_Dht11.h"

@@ -6,6 +6,8 @@
 #include "check_app.h"		
 #include "bsp.h"
 
+extern uint8_t g_KeyNoneCount;
+
 void ReadInputDat(void)
 {
     gAp.KM1_Point = Read_Optocoupler(KMA1_PointNo);//KM1触点状态 NC常闭触点 0->闭合；1->断开
@@ -154,41 +156,54 @@ void SetParam(void)
         {
             case KEY_NONE:	//无按键按下
                 break;
-            case KEY_1_DOWN:	//						
-                printf("  KEY_1_DOWN!\r\n");
+            case KEY_1_DOWN:							
                 if(Menu==Menu_Fb)
-                {
-                    Menu = Menu_Idle;       //退出参考设置
-                }
-                else if(Menu!=Menu_Idle)
-                {
-                    Menu++;       //菜单模式+1
-                }
-                break;
-            case KEY_1_LONG:	//						
-                printf("  KEY_1_LONG!\r\n");
-                if(Menu==Menu_Idle)
                 {
                     Menu = Menu_Ua;       //电压上限
                 }
+                else if(Menu!=Menu_Idle)
+                {
+                    Menu++;	//菜单模式+1
+                }
                 break;
-            case KEY_2_DOWN:	//
-                printf("  KEY_2_DOWN!\r\n");						
+            case KEY_1_LONG:							
+                if(Menu==Menu_Idle)
+                {
+                    printf("进入设置菜单.\r\n");
+                    Menu = Menu_Ua;       //电压上限
+                }
                 break;
-            case KEY_3_DOWN:	//
-                printf("  KEY_3_DOWN!\r\n");
+            case KEY_2_DOWN:
+                gParamDat[Menu]++;
+                if(Menu==Menu_A)    //电流最大值600A
+                {   if(gParamDat[Menu]>600)  gParamDat[Menu]=600; }
+                else if((Menu==Menu_Ua)||(Menu==Menu_Ub)||(Menu==Menu_Aa)||(Menu==Menu_Ab))
+                {   if(gParamDat[Menu]>10)  gParamDat[Menu]=10; }
+                else //if((Menu==Menu_Ca)||(Menu==Menu_Cb)||(Menu==Menu_Ha)||(Menu==Menu_Hb))
+                {   if(gParamDat[Menu]>99)  gParamDat[Menu]=99; }
                 break;
-            case KEY_4_DOWN:	//
+            case KEY_3_DOWN:	
+                gParamDat[Menu]--;
+                if(gParamDat[Menu]==0)  gParamDat[Menu]=0;
+                break;
+            case KEY_4_DOWN:	
                 if(Menu!=Menu_Idle)
                 {
-                    Menu=Menu_Idle; //保存参数退出
+                    Write_Flash_Dat();  //写Flash数据
+                    Menu=Menu_Idle;     //保存参数退出
+                    printf("保存,退出菜单.\r\n");
                 }
-                printf("  KEY_4_DOWN!\r\n");						
                 break;
             default:
                 break;
         }
+        g_KeyNoneCount=40;    //无按键按下，退出参数设置
     }
-
+    if((g_KeyNoneCount<5)&&(Menu!=Menu_Idle))
+    {   
+        g_KeyNoneCount=0;
+        Menu=Menu_Idle;     //不保存参数退出
+        printf("不保存,退出菜单.\r\n");
+    }
 }
 

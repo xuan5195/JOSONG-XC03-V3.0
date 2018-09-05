@@ -10,7 +10,6 @@ u32 STMFLASH_ReadLenByte(u32 ReadAddr,u16 Len);						//Ö¸¶¨µØÖ·¿ªÊ¼¶ÁÈ¡Ö¸¶¨³¤¶ÈÊ
 void STMFLASH_Read(u32 ReadAddr,u8 *pBuffer,u16 NumToRead);   		//´ÓÖ¸¶¨µØÖ·¿ªÊ¼¶Á³öÖ¸¶¨³¤¶ÈµÄÊý¾Ý
 void Read_Flash_Dat(void);
 void Write_Flash_Dat(void);
-void Clear_Flash_Dat(void);
 
 #endif
 

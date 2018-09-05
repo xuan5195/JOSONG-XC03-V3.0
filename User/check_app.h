@@ -33,10 +33,13 @@ typedef enum
 {
 	Menu_Idle = 0, //待机状态 数码管循环显示 电压、电流、温度、湿度、压力、流量
     Menu_Work,     //水泵工作   水泵工作，只循环显示电压、电流
+    Menu_U,        //电压值
     Menu_Ua,       //电压上限
     Menu_Ub,       //电压下限
+    Menu_A,        //电流值
     Menu_Aa,       //电流上限
     Menu_Ab,       //电流下限
+    Menu_Ac,       //电流变比
     Menu_Ca,       //温度上限
     Menu_Cb,       //温度下限
     Menu_Ha,       //湿度上限
@@ -45,6 +48,7 @@ typedef enum
     Menu_Pb,       //压力下限
     Menu_Fa,       //流量上限
     Menu_Fb,       //流量下限
+    Menu_Size      //长度使用
 }MENU;
 
 
@@ -77,11 +81,10 @@ typedef struct
 #endif
     
 APP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
-
+APP_EXT uint16_t gParamDat[Menu_Size];
 
 void ReadInputDat(void);
 void KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
 void SetParam(void);
-
 
 #endif

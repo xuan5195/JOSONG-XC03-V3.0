@@ -6,22 +6,12 @@
 #include "bsp_tm1639.h"	
 #include "bsp.h"
 
-extern uint8_t Physical_ADD[4];//物理地址
 extern uint8_t g_RxMessage[8];	//CAN接收数据
 extern uint8_t g_RxMessFlag;	//CAN接收数据 标志
-extern unsigned char FM1702_Key[7];
-extern uint8_t WaterCost,CostNum;	//WaterCost=水费 最小扣款金额  //脉冲数
 extern uint8_t PutOutMemoryBuf(uint8_t *_Date);	//清第一个缓存
-extern unsigned char UID[5];
-extern uint8_t gErrorDat[6];		//异常代码存储
-extern uint8_t Flash_UpdateFlag;	//Flash有数据更新标志，0xAA表示有数据要更新
-extern uint8_t g_IAP_Flag;			//在线升级标志
-extern uint8_t g_LoseContact;		//失联计数，大于200时，表示失联，自动复位
-extern uint32_t g_RunningTime;		//运行时间
 
 extern void Delay (uint16_t nCount);
 
-extern void SoftReset(void);
 
 //CAN初始化
 //tsjw:重新同步跳跃时间单元.范围:1~3; CAN_SJW_1tq	 CAN_SJW_2tq CAN_SJW_3tq CAN_SJW_4tq
@@ -99,7 +89,7 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
  	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE; //激活过滤器0	
 	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
 
-	std_id = 0x100; std_id1 = 0x100|Physical_ADD[3];
+	std_id = 0x100; std_id1 = 0x100;
  	CAN_FilterInitStructure.CAN_FilterNumber=9;	  //设置过滤器组1，范围为0~13  
  	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdList;  //CAN_FilterMode_IdMask:屏蔽模式  CAN_FilterMode_IdList:列表模式
   	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit; //设置过滤器位宽为32位  
@@ -155,9 +145,9 @@ u8 Can_Send_Msg(u8* msg,u8 len)
 	u16 i=0;
 	CanTxMsg TxMessage;
 	if(msg[0]==0xB3)	
-		TxMessage.StdId=0x100|Physical_ADD[3];			// 标准标识符为0
+		TxMessage.StdId=0x100;			// 标准标识符为0
 	else if(msg[0]==0xC2)	
-		TxMessage.StdId=0x100|Physical_ADD[3];			// 标准标识符为0
+		TxMessage.StdId=0x100;			// 标准标识符为0
 	else				
 		TxMessage.StdId=0x200|msg[1];	// 标准标识符为0
 	TxMessage.ExtId=0x1800F001;			// 设置扩展标示符（29位）
@@ -194,11 +184,6 @@ void Package_Send(u8 _mode,u8 *Package_Dat)
     {
     	case 0xB3:	//未注册数据包
 			Package_SendBuf[0] = 0xB3;
-			Package_SendBuf[1] = Physical_ADD[0];	//物理地址
- 			Package_SendBuf[2] = Physical_ADD[1];
-			Package_SendBuf[3] = Physical_ADD[2];
-			Package_SendBuf[4] = Physical_ADD[3];
-			Package_SendBuf[5] = CRC8_Table(Physical_ADD,4);
 			break;
     	default:
     		break;
@@ -209,35 +194,4 @@ void Package_Send(u8 _mode,u8 *Package_Dat)
 //	else 	{printf(" S, ");}	
 }
 
-//按页读取并通过CAN发送_Page页内80条数据
-void Read_PageLogDat(uint16_t _Page)
-{
-	uint16_t u16Temp=0;	
-	uint8_t _Buffer[12]={0},SendCAN_Buf[8]={0};	//数据缓存
-	uint8_t i;
-	u16Temp = _Page * LOGFILE_PAGE_COUNT;
-	printf("读取运行日志：%d.\r\n",u16Temp);
-	for(i=0;i<80;i++)
-	{
-		Read_LogDat(i+u16Temp,_Buffer);
-		SendCAN_Buf[0] = _Buffer[ 0];	//数据域1
-		SendCAN_Buf[1] = _Buffer[ 1];	//数据域2
-		SendCAN_Buf[2] = _Buffer[ 2];	//数据域3
-		SendCAN_Buf[3] = _Buffer[ 3];	//数据域4
-		SendCAN_Buf[4] = CRC8_Table(_Buffer,12);	//CRC校验
-		Package_Send(0x21,(u8 *)SendCAN_Buf);	//Delay(0x2F);
-		SendCAN_Buf[0] = _Buffer[ 4];	//数据域5
-		SendCAN_Buf[1] = _Buffer[ 5];	//数据域6
-		SendCAN_Buf[2] = _Buffer[ 6];	//数据域7
-		SendCAN_Buf[3] = _Buffer[ 7];	//数据域8
-		SendCAN_Buf[4] = CRC8_Table(_Buffer,12);	//CRC校验
-		Package_Send(0x22,(u8 *)SendCAN_Buf);	    //Delay(0x2F);
-		SendCAN_Buf[0] = _Buffer[ 8];	//数据域9
-		SendCAN_Buf[1] = _Buffer[ 9];	//数据域10
-		SendCAN_Buf[2] = _Buffer[10];	//数据域11
-		SendCAN_Buf[3] = _Buffer[11];	//数据域12
-		SendCAN_Buf[4] = CRC8_Table(_Buffer,12);	//CRC校验
-		Package_Send(0x23,(u8 *)SendCAN_Buf);	Delay(0x7FFF);//Delay(0xFFFF);
-	}
-}
 
