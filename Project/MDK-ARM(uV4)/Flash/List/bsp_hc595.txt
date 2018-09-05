@@ -164,63 +164,47 @@
 
                           AREA ||i.KMOutUpdat||, CODE, READONLY, ALIGN=2
 
-                          REQUIRE _printf_pre_padding
-                          REQUIRE _printf_percent
-                          REQUIRE _printf_flags
-                          REQUIRE _printf_widthprec
-                          REQUIRE _printf_x
-                          REQUIRE _printf_longlong_hex
                   KMOutUpdat PROC
 ;;;65     
 ;;;66     void KMOutUpdat(void)
 000000  b510              PUSH     {r4,lr}
 ;;;67     {
 ;;;68         if(Old_LedShowDat!=g_LedShowDat)
-000002  480d              LDR      r0,|L5.56|
+000002  480b              LDR      r0,|L5.48|
 000004  8800              LDRH     r0,[r0,#0]  ; Old_LedShowDat
-000006  490d              LDR      r1,|L5.60|
+000006  490b              LDR      r1,|L5.52|
 000008  8809              LDRH     r1,[r1,#0]  ; g_LedShowDat
 00000a  4288              CMP      r0,r1
-00000c  d013              BEQ      |L5.54|
+00000c  d00e              BEQ      |L5.44|
 ;;;69         {
 ;;;70             BspLed_Show(0x0FFF);
 00000e  f64070ff          MOV      r0,#0xfff
 000012  f7fffffe          BL       BspLed_Show
 ;;;71             Old_LedShowDat=g_LedShowDat;
-000016  4809              LDR      r0,|L5.60|
+000016  4807              LDR      r0,|L5.52|
 000018  8800              LDRH     r0,[r0,#0]  ; g_LedShowDat
-00001a  4907              LDR      r1,|L5.56|
+00001a  4905              LDR      r1,|L5.48|
 00001c  8008              STRH     r0,[r1,#0]
-;;;72             printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
-00001e  4807              LDR      r0,|L5.60|
-000020  8801              LDRH     r1,[r0,#0]  ; g_LedShowDat
-000022  a007              ADR      r0,|L5.64|
-000024  f7fffffe          BL       __2printf
+;;;72     //        printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
 ;;;73             delay_ms(100);
-000028  2064              MOVS     r0,#0x64
-00002a  f7fffffe          BL       delay_ms
+00001e  2064              MOVS     r0,#0x64
+000020  f7fffffe          BL       delay_ms
 ;;;74             BspLed_Show(g_LedShowDat);
-00002e  4803              LDR      r0,|L5.60|
-000030  8800              LDRH     r0,[r0,#0]  ; g_LedShowDat
-000032  f7fffffe          BL       BspLed_Show
-                  |L5.54|
+000024  4803              LDR      r0,|L5.52|
+000026  8800              LDRH     r0,[r0,#0]  ; g_LedShowDat
+000028  f7fffffe          BL       BspLed_Show
+                  |L5.44|
 ;;;75         }
 ;;;76     }
-000036  bd10              POP      {r4,pc}
+00002c  bd10              POP      {r4,pc}
 ;;;77     
                           ENDP
 
-                  |L5.56|
+00002e  0000              DCW      0x0000
+                  |L5.48|
                           DCD      Old_LedShowDat
-                  |L5.60|
+                  |L5.52|
                           DCD      g_LedShowDat
-                  |L5.64|
-000040  675f4c65          DCB      "g_LedShowDat: %04X...\r\n",0
-000044  6453686f
-000048  77446174
-00004c  3a202530
-000050  34582e2e
-000054  2e0d0a00
 
                           AREA ||i.bsp_HC595_Config||, CODE, READONLY, ALIGN=2
 

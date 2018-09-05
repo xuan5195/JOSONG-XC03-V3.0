@@ -201,11 +201,13 @@ int main(void)
 				RS485_Count = 0;
                 RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
                 if((RS485Dat_Key[0]!=0x00)||(RS485Dat_Key[1]!=0x00))
-                printf("RS485_ReceiveDat(),%02X,%02X.\r\n",RS485Dat_Key[0],RS485Dat_Key[1]);
-                if((RS485Dat_Key[1]&0x01)==0x01){;}       //系统复位
-                else if((RS485Dat_Key[1]&0x08)==0x08){RunMode=1;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主一备二
-                else if((RS485Dat_Key[1]&0x10)==0x10){RunMode=0;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //手动模式
-                else if((RS485Dat_Key[1]&0x20)==0x20){RunMode=2;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主二备一
+                {
+                    //printf("RS485_ReceiveDat(),%02X,%02X.\r\n",RS485Dat_Key[0],RS485Dat_Key[1]);
+                    if((RS485Dat_Key[1]&0x01)==0x01){;}       //系统复位
+                    else if((RS485Dat_Key[1]&0x08)==0x08){RunMode=1;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主一备二
+                    else if((RS485Dat_Key[1]&0x10)==0x10){RunMode=0;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //手动模式
+                    else if((RS485Dat_Key[1]&0x20)==0x20){RunMode=2;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主二备一
+                }
 			}
             if(RunMode==0)      //手动模式,直接操作继电器输出
             {
@@ -276,7 +278,7 @@ int main(void)
                 }
                 else
                 {
-                    if(StartTimerFlag==0xCC)
+                    if(StartTimerFlag!=0x00)
                     {
                         RunStape = 0;
                         StartTimerFlag = 0x00;

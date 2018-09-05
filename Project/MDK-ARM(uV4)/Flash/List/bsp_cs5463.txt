@@ -486,7 +486,7 @@
                   |L5.48|
 ;;;388    		}else
 ;;;389    		{
-;;;390    			ret |= 0x01;//B0000_0001;	//这什么意思 还可以这样写吗？ PT2017-2-8   分隔符吗？ 
+;;;390    			ret |= 0x01;
 000030  f0440401          ORR      r4,r4,#1
                   |L5.52|
 ;;;391    		}
@@ -1268,246 +1268,407 @@
 
                           AREA ||i.Get_InputValue||, CODE, READONLY, ALIGN=2
 
-                          REQUIRE _printf_pre_padding
                           REQUIRE _printf_percent
-                          REQUIRE _printf_widthprec
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
+                          REQUIRE _printf_pre_padding
+                          REQUIRE _printf_widthprec
                   Get_InputValue PROC
 ;;;602    //Channal 检测通道
 ;;;603    void Get_InputValue(void)
-000000  b570              PUSH     {r4-r6,lr}
+000000  e92d41f0          PUSH     {r4-r8,lr}
 ;;;604    {
 ;;;605    	static UN32 Voltage_VA,Voltage_IA;
-;;;606    	u8 CS546x_Sta;
-;;;607        static u8 Channal=Channal_A;
-;;;608        if(Channal==Channal_A)
-000002  4854              LDR      r0,|L16.340|
-000004  7800              LDRB     r0,[r0,#0]  ; Channal
-000006  2801              CMP      r0,#1
-000008  d131              BNE      |L16.110|
-;;;609        {
-;;;610            SetInput_CSCD4051Switch(IV_A);	//A相电压通道选择
-00000a  2002              MOVS     r0,#2
-00000c  f7fffffe          BL       SetInput_CSCD4051Switch
-;;;611            SetInput_IICD4051Switch(II_A);	//A相电流通道选择
-000010  2000              MOVS     r0,#0
-000012  f7fffffe          BL       SetInput_IICD4051Switch
-;;;612            delay_us(30);					//必要延时
-000016  201e              MOVS     r0,#0x1e
-000018  f7fffffe          BL       delay_us
-;;;613            CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
-00001c  f7fffffe          BL       CS5463_GetStaReg_Val
-000020  4604              MOV      r4,r0
-;;;614            if(0x01==(CS546x_Sta&0x01))  
-000022  f0040001          AND      r0,r4,#1
-000026  2800              CMP      r0,#0
-000028  d020              BEQ      |L16.108|
-;;;615            {
-;;;616                Voltage_VA.u32 = CS546x_Get_Vrms(); 
-00002a  f7fffffe          BL       CS546x_Get_Vrms
-00002e  494a              LDR      r1,|L16.344|
-000030  6008              STR      r0,[r1,#0]  ; Voltage_VA
-;;;617                Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-000032  f7fffffe          BL       CS546x_Get_Irms
-000036  4949              LDR      r1,|L16.348|
-000038  6008              STR      r0,[r1,#0]  ; Voltage_IA
-;;;618                printf("A V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
-00003a  4847              LDR      r0,|L16.344|
-00003c  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
-00003e  210a              MOVS     r1,#0xa
-000040  fb90f2f1          SDIV     r2,r0,r1
-000044  fb010512          MLS      r5,r1,r2,r0
-000048  4843              LDR      r0,|L16.344|
-00004a  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
-00004c  fb90f6f1          SDIV     r6,r0,r1
-000050  4842              LDR      r0,|L16.348|
-000052  462a              MOV      r2,r5
-000054  4631              MOV      r1,r6
-000056  6803              LDR      r3,[r0,#0]  ; Voltage_IA
-000058  a041              ADR      r0,|L16.352|
-00005a  f7fffffe          BL       __2printf
-;;;619                CS546x_ResetStaReg();
-00005e  f7fffffe          BL       CS546x_ResetStaReg
-;;;620                Channal++;
-000062  483c              LDR      r0,|L16.340|
-000064  7800              LDRB     r0,[r0,#0]  ; Channal
-000066  1c40              ADDS     r0,r0,#1
-000068  493a              LDR      r1,|L16.340|
-00006a  7008              STRB     r0,[r1,#0]
-                  |L16.108|
-00006c  e067              B        |L16.318|
-                  |L16.110|
+;;;606        static u8 Channal=Channal_A;
+;;;607    	u8 CS546x_Sta,TimeCount;
+;;;608        printf("CS5463检测, ");
+000004  a079              ADR      r0,|L16.492|
+000006  f7fffffe          BL       __2printf
+;;;609        if(Channal==Channal_A)
+00000a  487c              LDR      r0,|L16.508|
+00000c  7800              LDRB     r0,[r0,#0]  ; Channal
+00000e  2801              CMP      r0,#1
+000010  d146              BNE      |L16.160|
+;;;610        {
+;;;611            SetInput_CSCD4051Switch(IV_A);	//A相电压通道选择
+000012  2002              MOVS     r0,#2
+000014  f7fffffe          BL       SetInput_CSCD4051Switch
+;;;612            SetInput_IICD4051Switch(II_A);	//A相电流通道选择
+000018  2000              MOVS     r0,#0
+00001a  f7fffffe          BL       SetInput_IICD4051Switch
+;;;613            delay_us(30);					//必要延时
+00001e  201e              MOVS     r0,#0x1e
+000020  f7fffffe          BL       delay_us
+;;;614            printf("Channal_A,");
+000024  a076              ADR      r0,|L16.512|
+000026  f7fffffe          BL       __2printf
+;;;615    //        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+;;;616            TimeCount = 10;
+00002a  240a              MOVS     r4,#0xa
+;;;617            while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
+00002c  e007              B        |L16.62|
+                  |L16.46|
+;;;618            {
+;;;619                TimeCount--;delay_ms(10);
+00002e  1e60              SUBS     r0,r4,#1
+000030  b2c4              UXTB     r4,r0
+000032  200a              MOVS     r0,#0xa
+000034  f7fffffe          BL       delay_ms
+;;;620                CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+000038  f7fffffe          BL       CS5463_GetStaReg_Val
+00003c  4605              MOV      r5,r0
+                  |L16.62|
+00003e  f0050001          AND      r0,r5,#1              ;617
+000042  b908              CBNZ     r0,|L16.72|
+000044  2c00              CMP      r4,#0                 ;617
+000046  dcf2              BGT      |L16.46|
+                  |L16.72|
 ;;;621            }
-;;;622        }
-;;;623        else if(Channal==Channal_B)
-00006e  4839              LDR      r0,|L16.340|
-000070  7800              LDRB     r0,[r0,#0]  ; Channal
-000072  2802              CMP      r0,#2
-000074  d131              BNE      |L16.218|
-;;;624        {
-;;;625            SetInput_CSCD4051Switch(IV_B);	//B相电压通道选择
-000076  2001              MOVS     r0,#1
-000078  f7fffffe          BL       SetInput_CSCD4051Switch
-;;;626            SetInput_IICD4051Switch(II_B);	//B相电流通道选择
-00007c  2001              MOVS     r0,#1
-00007e  f7fffffe          BL       SetInput_IICD4051Switch
-;;;627            delay_us(30);					//必要延时
-000082  201e              MOVS     r0,#0x1e
-000084  f7fffffe          BL       delay_us
-;;;628            CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
-000088  f7fffffe          BL       CS5463_GetStaReg_Val
-00008c  4604              MOV      r4,r0
-;;;629            if(0x01==(CS546x_Sta&0x01))  
-00008e  f0040001          AND      r0,r4,#1
-000092  2800              CMP      r0,#0
-000094  d053              BEQ      |L16.318|
-;;;630            {
-;;;631                Voltage_VA.u32 = CS546x_Get_Vrms(); 
-000096  f7fffffe          BL       CS546x_Get_Vrms
-00009a  492f              LDR      r1,|L16.344|
-00009c  6008              STR      r0,[r1,#0]  ; Voltage_VA
-;;;632                Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-00009e  f7fffffe          BL       CS546x_Get_Irms
-0000a2  492e              LDR      r1,|L16.348|
-0000a4  6008              STR      r0,[r1,#0]  ; Voltage_IA
-;;;633                printf("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
-0000a6  482c              LDR      r0,|L16.344|
-0000a8  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
-0000aa  210a              MOVS     r1,#0xa
-0000ac  fb90f2f1          SDIV     r2,r0,r1
-0000b0  fb010512          MLS      r5,r1,r2,r0
-0000b4  4828              LDR      r0,|L16.344|
-0000b6  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
-0000b8  fb90f6f1          SDIV     r6,r0,r1
-0000bc  4827              LDR      r0,|L16.348|
-0000be  462a              MOV      r2,r5
-0000c0  4631              MOV      r1,r6
-0000c2  6803              LDR      r3,[r0,#0]  ; Voltage_IA
-0000c4  a02d              ADR      r0,|L16.380|
-0000c6  f7fffffe          BL       __2printf
-;;;634                CS546x_ResetStaReg();
-0000ca  f7fffffe          BL       CS546x_ResetStaReg
-;;;635                Channal++;
-0000ce  4821              LDR      r0,|L16.340|
-0000d0  7800              LDRB     r0,[r0,#0]  ; Channal
-0000d2  1c40              ADDS     r0,r0,#1
-0000d4  491f              LDR      r1,|L16.340|
-0000d6  7008              STRB     r0,[r1,#0]
-0000d8  e031              B        |L16.318|
-                  |L16.218|
-;;;636            }
-;;;637        }
-;;;638        else if(Channal==Channal_C)
-0000da  481e              LDR      r0,|L16.340|
-0000dc  7800              LDRB     r0,[r0,#0]  ; Channal
-0000de  2803              CMP      r0,#3
-0000e0  d12d              BNE      |L16.318|
-;;;639        {
-;;;640            SetInput_CSCD4051Switch(IV_C);	//C相电压通道选择
-0000e2  2000              MOVS     r0,#0
-0000e4  f7fffffe          BL       SetInput_CSCD4051Switch
-;;;641            SetInput_IICD4051Switch(II_C);	//C相电流通道选择
-0000e8  2002              MOVS     r0,#2
-0000ea  f7fffffe          BL       SetInput_IICD4051Switch
-;;;642            delay_us(30);					//必要延时
-0000ee  201e              MOVS     r0,#0x1e
-0000f0  f7fffffe          BL       delay_us
-;;;643            CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
-0000f4  f7fffffe          BL       CS5463_GetStaReg_Val
-0000f8  4604              MOV      r4,r0
-;;;644            if(0x01==(CS546x_Sta&0x01))  
-0000fa  f0040001          AND      r0,r4,#1
-0000fe  b1f0              CBZ      r0,|L16.318|
-;;;645            {
-;;;646                Voltage_VA.u32 = CS546x_Get_Vrms(); 
-000100  f7fffffe          BL       CS546x_Get_Vrms
-000104  4914              LDR      r1,|L16.344|
-000106  6008              STR      r0,[r1,#0]  ; Voltage_VA
-;;;647                Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-000108  f7fffffe          BL       CS546x_Get_Irms
-00010c  4913              LDR      r1,|L16.348|
-00010e  6008              STR      r0,[r1,#0]  ; Voltage_IA
-;;;648                printf("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
-000110  4811              LDR      r0,|L16.344|
-000112  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
-000114  210a              MOVS     r1,#0xa
-000116  fb90f2f1          SDIV     r2,r0,r1
-00011a  fb010512          MLS      r5,r1,r2,r0
-00011e  480e              LDR      r0,|L16.344|
-000120  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
-000122  fb90f6f1          SDIV     r6,r0,r1
-000126  480d              LDR      r0,|L16.348|
-000128  462a              MOV      r2,r5
-00012a  4631              MOV      r1,r6
-00012c  6803              LDR      r3,[r0,#0]  ; Voltage_IA
-00012e  a01a              ADR      r0,|L16.408|
+;;;622            printf("TimeCount:%d. ",TimeCount);
+000048  4621              MOV      r1,r4
+00004a  a070              ADR      r0,|L16.524|
+00004c  f7fffffe          BL       __2printf
+;;;623            if(TimeCount>0)
+000050  2c00              CMP      r4,#0
+000052  dd21              BLE      |L16.152|
+;;;624            {
+;;;625                Voltage_VA.u32 = CS546x_Get_Vrms(); 
+000054  f7fffffe          BL       CS546x_Get_Vrms
+000058  4970              LDR      r1,|L16.540|
+00005a  6008              STR      r0,[r1,#0]  ; Voltage_VA
+;;;626                Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
+00005c  f7fffffe          BL       CS546x_Get_Irms
+000060  496f              LDR      r1,|L16.544|
+000062  6008              STR      r0,[r1,#0]  ; Voltage_IA
+;;;627                printf("A V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+000064  486d              LDR      r0,|L16.540|
+000066  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
+000068  210a              MOVS     r1,#0xa
+00006a  fb90f2f1          SDIV     r2,r0,r1
+00006e  fb010612          MLS      r6,r1,r2,r0
+000072  486a              LDR      r0,|L16.540|
+000074  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
+000076  fb90f7f1          SDIV     r7,r0,r1
+00007a  4869              LDR      r0,|L16.544|
+00007c  4632              MOV      r2,r6
+00007e  4639              MOV      r1,r7
+000080  6803              LDR      r3,[r0,#0]  ; Voltage_IA
+000082  a068              ADR      r0,|L16.548|
+000084  f7fffffe          BL       __2printf
+;;;628                CS546x_ResetStaReg();
+000088  f7fffffe          BL       CS546x_ResetStaReg
+;;;629                Channal++;
+00008c  485b              LDR      r0,|L16.508|
+00008e  7800              LDRB     r0,[r0,#0]  ; Channal
+000090  1c40              ADDS     r0,r0,#1
+000092  495a              LDR      r1,|L16.508|
+000094  7008              STRB     r0,[r1,#0]
+000096  e09d              B        |L16.468|
+                  |L16.152|
+;;;630            }
+;;;631            else
+;;;632            {
+;;;633    //            CS546x_Init(0);
+;;;634                printf("CS546x_Init.\r\n");
+000098  a069              ADR      r0,|L16.576|
+00009a  f7fffffe          BL       __2printf
+00009e  e099              B        |L16.468|
+                  |L16.160|
+;;;635            }
+;;;636        }
+;;;637        else if(Channal==Channal_B)
+0000a0  4856              LDR      r0,|L16.508|
+0000a2  7800              LDRB     r0,[r0,#0]  ; Channal
+0000a4  2802              CMP      r0,#2
+0000a6  d146              BNE      |L16.310|
+;;;638        {
+;;;639            SetInput_CSCD4051Switch(IV_B);	//B相电压通道选择
+0000a8  2001              MOVS     r0,#1
+0000aa  f7fffffe          BL       SetInput_CSCD4051Switch
+;;;640            SetInput_IICD4051Switch(II_B);	//B相电流通道选择
+0000ae  2001              MOVS     r0,#1
+0000b0  f7fffffe          BL       SetInput_IICD4051Switch
+;;;641            delay_us(30);					//必要延时
+0000b4  201e              MOVS     r0,#0x1e
+0000b6  f7fffffe          BL       delay_us
+;;;642            printf("Channal_B,");
+0000ba  a065              ADR      r0,|L16.592|
+0000bc  f7fffffe          BL       __2printf
+;;;643    //        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+;;;644            TimeCount = 10;
+0000c0  240a              MOVS     r4,#0xa
+;;;645            while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
+0000c2  e007              B        |L16.212|
+                  |L16.196|
+;;;646            {
+;;;647                TimeCount--;delay_ms(10);
+0000c4  1e60              SUBS     r0,r4,#1
+0000c6  b2c4              UXTB     r4,r0
+0000c8  200a              MOVS     r0,#0xa
+0000ca  f7fffffe          BL       delay_ms
+;;;648                CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+0000ce  f7fffffe          BL       CS5463_GetStaReg_Val
+0000d2  4605              MOV      r5,r0
+                  |L16.212|
+0000d4  f0050001          AND      r0,r5,#1              ;645
+0000d8  b908              CBNZ     r0,|L16.222|
+0000da  2c00              CMP      r4,#0                 ;645
+0000dc  dcf2              BGT      |L16.196|
+                  |L16.222|
+;;;649            }            
+;;;650            printf("TimeCount:%d. ",TimeCount);
+0000de  4621              MOV      r1,r4
+0000e0  a04a              ADR      r0,|L16.524|
+0000e2  f7fffffe          BL       __2printf
+;;;651            if(TimeCount>0)
+0000e6  2c00              CMP      r4,#0
+0000e8  dd21              BLE      |L16.302|
+;;;652            {
+;;;653                Voltage_VA.u32 = CS546x_Get_Vrms(); 
+0000ea  f7fffffe          BL       CS546x_Get_Vrms
+0000ee  494b              LDR      r1,|L16.540|
+0000f0  6008              STR      r0,[r1,#0]  ; Voltage_VA
+;;;654                Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
+0000f2  f7fffffe          BL       CS546x_Get_Irms
+0000f6  494a              LDR      r1,|L16.544|
+0000f8  6008              STR      r0,[r1,#0]  ; Voltage_IA
+;;;655                printf("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+0000fa  4848              LDR      r0,|L16.540|
+0000fc  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
+0000fe  210a              MOVS     r1,#0xa
+000100  fb90f2f1          SDIV     r2,r0,r1
+000104  fb010612          MLS      r6,r1,r2,r0
+000108  4844              LDR      r0,|L16.540|
+00010a  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
+00010c  fb90f7f1          SDIV     r7,r0,r1
+000110  4843              LDR      r0,|L16.544|
+000112  4632              MOV      r2,r6
+000114  4639              MOV      r1,r7
+000116  6803              LDR      r3,[r0,#0]  ; Voltage_IA
+000118  a050              ADR      r0,|L16.604|
+00011a  f7fffffe          BL       __2printf
+;;;656                CS546x_ResetStaReg();
+00011e  f7fffffe          BL       CS546x_ResetStaReg
+;;;657                Channal++;
+000122  4836              LDR      r0,|L16.508|
+000124  7800              LDRB     r0,[r0,#0]  ; Channal
+000126  1c40              ADDS     r0,r0,#1
+000128  4934              LDR      r1,|L16.508|
+00012a  7008              STRB     r0,[r1,#0]
+00012c  e052              B        |L16.468|
+                  |L16.302|
+;;;658            }
+;;;659            else
+;;;660            {
+;;;661    //            CS546x_Init(0);
+;;;662                printf("CS546x_Init.\r\n");
+00012e  a044              ADR      r0,|L16.576|
 000130  f7fffffe          BL       __2printf
-;;;649                CS546x_ResetStaReg();
-000134  f7fffffe          BL       CS546x_ResetStaReg
-;;;650                Channal=Channal_A;
-000138  2001              MOVS     r0,#1
-00013a  4906              LDR      r1,|L16.340|
-00013c  7008              STRB     r0,[r1,#0]
-                  |L16.318|
-;;;651            }
-;;;652        }
-;;;653        g_ShowDat[0] = (uint16_t)Voltage_VA.u16[0]/10;    //电压
-00013e  4806              LDR      r0,|L16.344|
-000140  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
-000142  210a              MOVS     r1,#0xa
-000144  fb90f0f1          SDIV     r0,r0,r1
-000148  491a              LDR      r1,|L16.436|
-00014a  8008              STRH     r0,[r1,#0]
-;;;654        g_ShowDat[1] = (uint16_t)Voltage_IA.u32;          //电压
-00014c  4803              LDR      r0,|L16.348|
-00014e  8800              LDRH     r0,[r0,#0]  ; Voltage_IA
-000150  8048              STRH     r0,[r1,#2]
-;;;655    }
-000152  bd70              POP      {r4-r6,pc}
-;;;656    
+000134  e04e              B        |L16.468|
+                  |L16.310|
+;;;663            }
+;;;664        }
+;;;665        else if(Channal==Channal_C)
+000136  4831              LDR      r0,|L16.508|
+000138  7800              LDRB     r0,[r0,#0]  ; Channal
+00013a  2803              CMP      r0,#3
+00013c  d144              BNE      |L16.456|
+;;;666        {
+;;;667            SetInput_CSCD4051Switch(IV_C);	//C相电压通道选择
+00013e  2000              MOVS     r0,#0
+000140  f7fffffe          BL       SetInput_CSCD4051Switch
+;;;668            SetInput_IICD4051Switch(II_C);	//C相电流通道选择
+000144  2002              MOVS     r0,#2
+000146  f7fffffe          BL       SetInput_IICD4051Switch
+;;;669            delay_us(30);					//必要延时
+00014a  201e              MOVS     r0,#0x1e
+00014c  f7fffffe          BL       delay_us
+;;;670            printf("Channal_C,");
+000150  a049              ADR      r0,|L16.632|
+000152  f7fffffe          BL       __2printf
+;;;671    //        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+;;;672            TimeCount = 10;
+000156  240a              MOVS     r4,#0xa
+;;;673            while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
+000158  e007              B        |L16.362|
+                  |L16.346|
+;;;674            {
+;;;675                TimeCount--;delay_ms(10);
+00015a  1e60              SUBS     r0,r4,#1
+00015c  b2c4              UXTB     r4,r0
+00015e  200a              MOVS     r0,#0xa
+000160  f7fffffe          BL       delay_ms
+;;;676                CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+000164  f7fffffe          BL       CS5463_GetStaReg_Val
+000168  4605              MOV      r5,r0
+                  |L16.362|
+00016a  f0050001          AND      r0,r5,#1              ;673
+00016e  b908              CBNZ     r0,|L16.372|
+000170  2c00              CMP      r4,#0                 ;673
+000172  dcf2              BGT      |L16.346|
+                  |L16.372|
+;;;677            }            
+;;;678            printf("TimeCount:%d. ",TimeCount);
+000174  4621              MOV      r1,r4
+000176  a025              ADR      r0,|L16.524|
+000178  f7fffffe          BL       __2printf
+;;;679            if(TimeCount>0)
+00017c  2c00              CMP      r4,#0
+00017e  dd1f              BLE      |L16.448|
+;;;680            {
+;;;681                Voltage_VA.u32 = CS546x_Get_Vrms(); 
+000180  f7fffffe          BL       CS546x_Get_Vrms
+000184  4925              LDR      r1,|L16.540|
+000186  6008              STR      r0,[r1,#0]  ; Voltage_VA
+;;;682                Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
+000188  f7fffffe          BL       CS546x_Get_Irms
+00018c  4924              LDR      r1,|L16.544|
+00018e  6008              STR      r0,[r1,#0]  ; Voltage_IA
+;;;683                printf("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+000190  4822              LDR      r0,|L16.540|
+000192  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
+000194  210a              MOVS     r1,#0xa
+000196  fb90f2f1          SDIV     r2,r0,r1
+00019a  fb010612          MLS      r6,r1,r2,r0
+00019e  481f              LDR      r0,|L16.540|
+0001a0  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
+0001a2  fb90f7f1          SDIV     r7,r0,r1
+0001a6  481e              LDR      r0,|L16.544|
+0001a8  4632              MOV      r2,r6
+0001aa  4639              MOV      r1,r7
+0001ac  6803              LDR      r3,[r0,#0]  ; Voltage_IA
+0001ae  a035              ADR      r0,|L16.644|
+0001b0  f7fffffe          BL       __2printf
+;;;684                CS546x_ResetStaReg();
+0001b4  f7fffffe          BL       CS546x_ResetStaReg
+;;;685                Channal=Channal_A;
+0001b8  2001              MOVS     r0,#1
+0001ba  4910              LDR      r1,|L16.508|
+0001bc  7008              STRB     r0,[r1,#0]
+0001be  e009              B        |L16.468|
+                  |L16.448|
+;;;686            }
+;;;687            else
+;;;688            {
+;;;689    //            CS546x_Init(0);
+;;;690                printf("CS546x_Init.\r\n");
+0001c0  a01f              ADR      r0,|L16.576|
+0001c2  f7fffffe          BL       __2printf
+0001c6  e005              B        |L16.468|
+                  |L16.456|
+;;;691            }
+;;;692        }
+;;;693        else
+;;;694        {
+;;;695            printf("Channal Error,goto Channal_A!\r\n");
+0001c8  a035              ADR      r0,|L16.672|
+0001ca  f7fffffe          BL       __2printf
+;;;696            Channal=Channal_A;
+0001ce  2001              MOVS     r0,#1
+0001d0  490a              LDR      r1,|L16.508|
+0001d2  7008              STRB     r0,[r1,#0]
+                  |L16.468|
+;;;697        }
+;;;698        g_ShowDat[0] = (uint16_t)Voltage_VA.u16[0]/10;    //电压
+0001d4  4811              LDR      r0,|L16.540|
+0001d6  8800              LDRH     r0,[r0,#0]  ; Voltage_VA
+0001d8  210a              MOVS     r1,#0xa
+0001da  fb90f0f1          SDIV     r0,r0,r1
+0001de  4938              LDR      r1,|L16.704|
+0001e0  8008              STRH     r0,[r1,#0]
+;;;699        g_ShowDat[1] = (uint16_t)Voltage_IA.u32;          //电压
+0001e2  480f              LDR      r0,|L16.544|
+0001e4  8800              LDRH     r0,[r0,#0]  ; Voltage_IA
+0001e6  8048              STRH     r0,[r1,#2]
+;;;700    }
+0001e8  e8bd81f0          POP      {r4-r8,pc}
+;;;701    
                           ENDP
 
-                  |L16.340|
+                  |L16.492|
+0001ec  43533534          DCB      "CS5463",188,236,178,226,", ",0
+0001f0  3633bcec
+0001f4  b2e22c20
+0001f8  00      
+0001f9  00                DCB      0
+0001fa  00                DCB      0
+0001fb  00                DCB      0
+                  |L16.508|
                           DCD      Channal
-                  |L16.344|
+                  |L16.512|
+000200  4368616e          DCB      "Channal_A,",0
+000204  6e616c5f
+000208  412c00  
+00020b  00                DCB      0
+                  |L16.524|
+00020c  54696d65          DCB      "TimeCount:%d. ",0
+000210  436f756e
+000214  743a2564
+000218  2e2000  
+00021b  00                DCB      0
+                  |L16.540|
                           DCD      Voltage_VA
-                  |L16.348|
+                  |L16.544|
                           DCD      Voltage_IA
-                  |L16.352|
-000160  4120563a          DCB      "A V:%3d.%dV , I:%3dmA.\r\n",0
-000164  2533642e
-000168  25645620
-00016c  2c20493a
-000170  2533646d
-000174  412e0d0a
-000178  00      
-000179  00                DCB      0
-00017a  00                DCB      0
-00017b  00                DCB      0
-                  |L16.380|
-00017c  4220563a          DCB      "B V:%3d.%dV , I:%3dmA.\r\n",0
-000180  2533642e
-000184  25645620
-000188  2c20493a
-00018c  2533646d
-000190  412e0d0a
-000194  00      
-000195  00                DCB      0
-000196  00                DCB      0
-000197  00                DCB      0
-                  |L16.408|
-000198  4320563a          DCB      "C V:%3d.%dV , I:%3dmA.\r\n",0
-00019c  2533642e
-0001a0  25645620
-0001a4  2c20493a
-0001a8  2533646d
-0001ac  412e0d0a
-0001b0  00      
-0001b1  00                DCB      0
-0001b2  00                DCB      0
-0001b3  00                DCB      0
-                  |L16.436|
+                  |L16.548|
+000224  4120563a          DCB      "A V:%3d.%dV , I:%3dmA.\r\n",0
+000228  2533642e
+00022c  25645620
+000230  2c20493a
+000234  2533646d
+000238  412e0d0a
+00023c  00      
+00023d  00                DCB      0
+00023e  00                DCB      0
+00023f  00                DCB      0
+                  |L16.576|
+000240  43533534          DCB      "CS546x_Init.\r\n",0
+000244  36785f49
+000248  6e69742e
+00024c  0d0a00  
+00024f  00                DCB      0
+                  |L16.592|
+000250  4368616e          DCB      "Channal_B,",0
+000254  6e616c5f
+000258  422c00  
+00025b  00                DCB      0
+                  |L16.604|
+00025c  4220563a          DCB      "B V:%3d.%dV , I:%3dmA.\r\n",0
+000260  2533642e
+000264  25645620
+000268  2c20493a
+00026c  2533646d
+000270  412e0d0a
+000274  00      
+000275  00                DCB      0
+000276  00                DCB      0
+000277  00                DCB      0
+                  |L16.632|
+000278  4368616e          DCB      "Channal_C,",0
+00027c  6e616c5f
+000280  432c00  
+000283  00                DCB      0
+                  |L16.644|
+000284  4320563a          DCB      "C V:%3d.%dV , I:%3dmA.\r\n",0
+000288  2533642e
+00028c  25645620
+000290  2c20493a
+000294  2533646d
+000298  412e0d0a
+00029c  00      
+00029d  00                DCB      0
+00029e  00                DCB      0
+00029f  00                DCB      0
+                  |L16.672|
+0002a0  4368616e          DCB      "Channal Error,goto Channal_A!\r\n",0
+0002a4  6e616c20
+0002a8  4572726f
+0002ac  722c676f
+0002b0  746f2043
+0002b4  68616e6e
+0002b8  616c5f41
+0002bc  210d0a00
+                  |L16.704|
                           DCD      g_ShowDat
 
                           AREA ||.bss||, DATA, NOINIT, ALIGN=1

@@ -32736,7 +32736,7 @@ N		{
 N		 	CS546x_ResetStaReg();		//复位状态寄存器
 N		}else
 N		{
-N			ret |= 0x01;//B0000_0001;	//这什么意思 还可以这样写吗？ PT2017-2-8   分隔符吗？ 
+N			ret |= 0x01;
 N		}
 N	}
 N
@@ -32990,8 +32990,9 @@ N//Channal 检测通道
 Nvoid Get_InputValue(void)
 N{
 N	static UN32 Voltage_VA,Voltage_IA;
-N	u8 CS546x_Sta;
 N    static u8 Channal=Channal_A;
+N	u8 CS546x_Sta,TimeCount;
+N    printf("CS5463检测, ");
 N    if(Channal==Channal_A)
 N    {
 N        SetInput_CSCD4051Switch(IV_A);	//A相电压通道选择
@@ -32999,14 +33000,27 @@ X        SetInput_CSCD4051Switch(2);
 N        SetInput_IICD4051Switch(II_A);	//A相电流通道选择
 X        SetInput_IICD4051Switch(0);	
 N        delay_us(30);					//必要延时
-N        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
-N        if(0x01==(CS546x_Sta&0x01))  
+N        printf("Channal_A,");
+N//        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+N        TimeCount = 10;
+N        while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
+N        {
+N            TimeCount--;delay_ms(10);
+N            CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+N        }
+N        printf("TimeCount:%d. ",TimeCount);
+N        if(TimeCount>0)
 N        {
 N            Voltage_VA.u32 = CS546x_Get_Vrms(); 
 N            Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
 N            printf("A V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
 N            CS546x_ResetStaReg();
 N            Channal++;
+N        }
+N        else
+N        {
+N//            CS546x_Init(0);
+N            printf("CS546x_Init.\r\n");
 N        }
 N    }
 N    else if(Channal==Channal_B)
@@ -33016,14 +33030,27 @@ X        SetInput_CSCD4051Switch(1);
 N        SetInput_IICD4051Switch(II_B);	//B相电流通道选择
 X        SetInput_IICD4051Switch(1);	
 N        delay_us(30);					//必要延时
-N        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
-N        if(0x01==(CS546x_Sta&0x01))  
+N        printf("Channal_B,");
+N//        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+N        TimeCount = 10;
+N        while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
+N        {
+N            TimeCount--;delay_ms(10);
+N            CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+N        }            
+N        printf("TimeCount:%d. ",TimeCount);
+N        if(TimeCount>0)
 N        {
 N            Voltage_VA.u32 = CS546x_Get_Vrms(); 
 N            Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
 N            printf("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
 N            CS546x_ResetStaReg();
 N            Channal++;
+N        }
+N        else
+N        {
+N//            CS546x_Init(0);
+N            printf("CS546x_Init.\r\n");
 N        }
 N    }
 N    else if(Channal==Channal_C)
@@ -33033,8 +33060,16 @@ X        SetInput_CSCD4051Switch(0);
 N        SetInput_IICD4051Switch(II_C);	//C相电流通道选择
 X        SetInput_IICD4051Switch(2);	
 N        delay_us(30);					//必要延时
-N        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
-N        if(0x01==(CS546x_Sta&0x01))  
+N        printf("Channal_C,");
+N//        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+N        TimeCount = 10;
+N        while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
+N        {
+N            TimeCount--;delay_ms(10);
+N            CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+N        }            
+N        printf("TimeCount:%d. ",TimeCount);
+N        if(TimeCount>0)
 N        {
 N            Voltage_VA.u32 = CS546x_Get_Vrms(); 
 N            Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
@@ -33042,6 +33077,16 @@ N            printf("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA
 N            CS546x_ResetStaReg();
 N            Channal=Channal_A;
 N        }
+N        else
+N        {
+N//            CS546x_Init(0);
+N            printf("CS546x_Init.\r\n");
+N        }
+N    }
+N    else
+N    {
+N        printf("Channal Error,goto Channal_A!\r\n");
+N        Channal=Channal_A;
 N    }
 N    g_ShowDat[0] = (uint16_t)Voltage_VA.u16[0]/10;    //电压
 N    g_ShowDat[1] = (uint16_t)Voltage_IA.u32;          //电压

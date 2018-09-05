@@ -69,7 +69,7 @@ void KMOutUpdat(void)
     {
         BspLed_Show(0x0FFF);
         Old_LedShowDat=g_LedShowDat;
-        printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
+//        printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
         delay_ms(100);
         BspLed_Show(g_LedShowDat);
     }

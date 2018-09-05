@@ -32378,7 +32378,7 @@ N    if(Old_LedShowDat!=g_LedShowDat)
 N    {
 N        BspLed_Show(0x0FFF);
 N        Old_LedShowDat=g_LedShowDat;
-N        printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
+N//        printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
 N        delay_ms(100);
 N        BspLed_Show(g_LedShowDat);
 N    }

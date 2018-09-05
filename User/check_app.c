@@ -43,28 +43,46 @@ void ReadInputDat(void)
 
     if(gAp.Statue==Stop)    //停止状态
     {
+        if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0))
+        {
+            RS485Dat_LED12_ON();RS485Dat_LED13_OFF();RS485Dat_LED14_OFF();
+        }
         if( (gAp.KM1_Point==0)&&(gAp.KM2_Point==0x00)&&(gAp.KM3_Point==0x00)&&
-            (gAp.KM1_Coil==0)&&(gAp.KM2_Coil==0x00)&&(gAp.KM3_Coil==0x00) )    	
+            (gAp.KM1_Coil==0)&&(gAp.KM2_Coil==0x00)&&(gAp.KM3_Coil==0x00)&&(gAp.Power_Statue==0))    	
                 {   RS485Dat_LED7_OFF();    } //主一故障指示灯
         else    {   RS485Dat_LED7_ON();     }
     }
     else if(gAp.Statue==Slow)    //低速状态
     {
-        ;
+        if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0))
+        {
+            RS485Dat_LED12_OFF();RS485Dat_LED13_ON();RS485Dat_LED14_OFF();
+        }
     }
     else if(gAp.Statue==HighSpeed)    //高速状态
     {
-        ;
+        if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1))
+        {
+            RS485Dat_LED12_OFF();RS485Dat_LED13_OFF();RS485Dat_LED14_ON();
+        }
     }    
     if(gBp.Statue==Stop)    //停止状态
     {
-        if( (gBp.KM1_Point==0)&&(gBp.KM2_Point==0x00)&&(gBp.KM3_Point==0x00)&&
-            (gBp.KM1_Coil==0)&&(gBp.KM2_Coil==0x00)&&(gBp.KM3_Coil==0x00) )    	
+        if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0))
+        {
+            RS485Dat_LED18_ON();RS485Dat_LED19_OFF();RS485Dat_LED20_OFF();
+        }
+        if( (gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)&&
+            (gBp.KM1_Coil==0)&&(gBp.KM2_Coil==0)&&(gBp.KM3_Coil==0)&&(gBp.Power_Statue==0) )    	
                 {   RS485Dat_LED8_OFF();    } //主二故障指示灯
         else    {   RS485Dat_LED8_ON();     }
     }
     else if(gBp.Statue==Slow)    //低速状态
     {
+        if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0))
+        {
+            RS485Dat_LED18_OFF();RS485Dat_LED19_ON();RS485Dat_LED20_OFF();
+        }
 //        if(gBp.DelayCheck_Count==0) //延时检测时间到，进入检测
 //        {
 //            if(gBp.Work_Check==1)   //工作检测失败，转为
@@ -72,7 +90,10 @@ void ReadInputDat(void)
     }
     else if(gBp.Statue==HighSpeed)    //高速状态
     {
-        ;
+        if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1))
+        {
+            RS485Dat_LED18_OFF();RS485Dat_LED19_OFF();RS485Dat_LED20_ON();
+        }
     }     
 }
 
@@ -83,16 +104,19 @@ void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
         if(_Step==0)
         {
             printf("主一备二，停止.\r\n");
+            gAp.Statue = Stop;
             KMOFF_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //停止
         }
         else if(_Step==1)
         {
             printf("主一备二，低速.\r\n");
+            gAp.Statue = Slow;
             KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //低速运行
         }
         else if(_Step==2)
         {
             printf("主一备二，高速.\r\n");
+            gAp.Statue = HighSpeed;
             KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMON_Show(AKM3RUN);    //高速运行
         }
     }
@@ -101,16 +125,19 @@ void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
         if(_Step==0)
         {
             printf("主二备一，停止.\r\n");
+            gBp.Statue = Stop;
             KMOFF_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //停止运行
         }
         else if(_Step==1)
         {
             printf("主二备一，低速.\r\n");
+            gBp.Statue = Slow;
             KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //低速运行
         }
         else if(_Step==2)
         {
             printf("主二备一，高速.\r\n");
+            gBp.Statue = HighSpeed;
             KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMON_Show(BKM3RUN);    //高速运行
         }
     }
