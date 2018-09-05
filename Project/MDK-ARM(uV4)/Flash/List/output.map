@@ -79,6 +79,7 @@ Section Cross References
     main.o(i.main) refers to main.o(.data) for g_ShowUpDateFlag
     main.o(i.main) refers to bsp_uart_fifo.o(.data) for RS485_Count
     main.o(i.main) refers to bsp_uart_fifo.o(.bss) for RS485Dat
+    main.o(i.main) refers to check_app.o(.bss) for gAp
     stm32f10x_it.o(i.SysTick_Handler) refers to bsp_timer.o(i.SysTick_ISR) for SysTick_ISR
     stm32f10x_it.o(i.TIM2_IRQHandler) refers to stm32f10x_tim.o(i.TIM_GetITStatus) for TIM_GetITStatus
     stm32f10x_it.o(i.TIM2_IRQHandler) refers to stm32f10x_tim.o(i.TIM_GetCapture1) for TIM_GetCapture1
@@ -140,26 +141,17 @@ Section Cross References
     check_app.o(i.ReadInputDat) refers to bsp_cd4067.o(i.Read_Optocoupler) for Read_Optocoupler
     check_app.o(i.ReadInputDat) refers to bsp_cd4067.o(i.Read_InputDevDat) for Read_InputDevDat
     check_app.o(i.ReadInputDat) refers to bsp_cd4051.o(i.Read_Input_KPDevDat) for Read_Input_KPDevDat
+    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED10_OFF) for RS485Dat_LED10_OFF
+    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED10_ON) for RS485Dat_LED10_ON
+    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED4_ON) for RS485Dat_LED4_ON
+    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED4_OFF) for RS485Dat_LED4_OFF
+    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED9_ON) for RS485Dat_LED9_ON
+    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED9_OFF) for RS485Dat_LED9_OFF
     check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED7_OFF) for RS485Dat_LED7_OFF
     check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED7_ON) for RS485Dat_LED7_ON
     check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED8_OFF) for RS485Dat_LED8_OFF
     check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED8_ON) for RS485Dat_LED8_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED4_ON) for RS485Dat_LED4_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED4_OFF) for RS485Dat_LED4_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED12_OFF) for RS485Dat_LED12_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED13_ON) for RS485Dat_LED13_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED14_OFF) for RS485Dat_LED14_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED13_OFF) for RS485Dat_LED13_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED14_ON) for RS485Dat_LED14_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED12_ON) for RS485Dat_LED12_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED18_OFF) for RS485Dat_LED18_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED19_ON) for RS485Dat_LED19_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED20_OFF) for RS485Dat_LED20_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED19_OFF) for RS485Dat_LED19_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED20_ON) for RS485Dat_LED20_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED18_ON) for RS485Dat_LED18_ON
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED10_OFF) for RS485Dat_LED10_OFF
-    check_app.o(i.ReadInputDat) refers to bus_app.o(i.RS485Dat_LED10_ON) for RS485Dat_LED10_ON
+    check_app.o(i.ReadInputDat) refers to check_app.o(.bss) for gAp
     bsp_adc.o(i.Adc_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
     bsp_adc.o(i.Adc_Init) refers to stm32f10x_rcc.o(i.RCC_ADCCLKConfig) for RCC_ADCCLKConfig
     bsp_adc.o(i.Adc_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
@@ -851,20 +843,24 @@ Removing Unused input sections from the image.
 
     Removing main.o(i.Delay), (24 bytes).
     Removing main.o(i.NVIC_Configuration), (12 bytes).
-    Removing main.o(i.PutInMemoryBuf), (228 bytes).
+    Removing main.o(i.PutInMemoryBuf), (192 bytes).
     Removing main.o(i.PutOutMemoryBuf), (80 bytes).
     Removing main.o(i.SoftReset), (48 bytes).
     Removing bus_app.o(i.RS485Dat_LED11_OFF), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED11_ON), (20 bytes).
+    Removing bus_app.o(i.RS485Dat_LED12_OFF), (20 bytes).
+    Removing bus_app.o(i.RS485Dat_LED13_OFF), (20 bytes).
+    Removing bus_app.o(i.RS485Dat_LED14_OFF), (20 bytes).
+    Removing bus_app.o(i.RS485Dat_LED18_OFF), (20 bytes).
+    Removing bus_app.o(i.RS485Dat_LED19_OFF), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED1_OFF), (20 bytes).
+    Removing bus_app.o(i.RS485Dat_LED20_OFF), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED3_OFF), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED3_ON), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED5_OFF), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED5_ON), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED6_OFF), (20 bytes).
     Removing bus_app.o(i.RS485Dat_LED6_ON), (20 bytes).
-    Removing bus_app.o(i.RS485Dat_LED9_OFF), (20 bytes).
-    Removing bus_app.o(i.RS485Dat_LED9_ON), (20 bytes).
     Removing bsp_adc.o(i.Get_Adc), (52 bytes).
     Removing bsp_adc.o(i.Get_Adc_Average), (40 bytes).
     Removing bsp_adc.o(i.Read_Rand), (30 bytes).
@@ -1172,7 +1168,7 @@ Removing Unused input sections from the image.
     Removing dfixul.o(.text), (48 bytes).
     Removing cdrcmple.o(.text), (48 bytes).
 
-322 unused section(s) (total 17325 bytes) removed from the image.
+326 unused section(s) (total 17369 bytes) removed from the image.
 
 ==============================================================================
 
@@ -1185,49 +1181,49 @@ Image Symbol Table
     ../clib/../cmprslib/zerorunl2.c          0x00000000   Number         0  __dczerorl2.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llsshr.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf5.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf8.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf5.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf4.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf3.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf2.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf3.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
     ../clib/microlib/printf/stubs.s          0x00000000   Number         0  stubs.o ABSOLUTE
     ../clib/microlib/string/memcpy.c         0x00000000   Number         0  memcpya.o ABSOLUTE
     ../clib/microlib/string/memcpy.c         0x00000000   Number         0  memcpyb.o ABSOLUTE
     ../clib/microlib/string/strlen.c         0x00000000   Number         0  strlen.o ABSOLUTE
-    ../clib/microlib/stubs.s                 0x00000000   Number         0  iusefp.o ABSOLUTE
     ../clib/microlib/stubs.s                 0x00000000   Number         0  useno.o ABSOLUTE
+    ../clib/microlib/stubs.s                 0x00000000   Number         0  iusefp.o ABSOLUTE
     ../fplib/microlib/d2f.c                  0x00000000   Number         0  d2f.o ABSOLUTE
     ../fplib/microlib/fpadd.c                0x00000000   Number         0  dadd.o ABSOLUTE
     ../fplib/microlib/fpdiv.c                0x00000000   Number         0  ddiv.o ABSOLUTE
     ../fplib/microlib/fpepilogue.c           0x00000000   Number         0  depilogue.o ABSOLUTE
     ../fplib/microlib/fpepilogue.c           0x00000000   Number         0  fepilogue.o ABSOLUTE
-    ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixul.o ABSOLUTE
     ../fplib/microlib/fpfix.c                0x00000000   Number         0  ffixui.o ABSOLUTE
+    ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixul.o ABSOLUTE
     ../fplib/microlib/fpflt.c                0x00000000   Number         0  dfltui.o ABSOLUTE
-    ../fplib/microlib/fpmul.c                0x00000000   Number         0  dmul.o ABSOLUTE
     ../fplib/microlib/fpmul.c                0x00000000   Number         0  fmul.o ABSOLUTE
+    ../fplib/microlib/fpmul.c                0x00000000   Number         0  dmul.o ABSOLUTE
     ..\..\Libraries\CMSIS\CM3\CoreSupport\core_cm3.c 0x00000000   Number         0  core_cm3.o ABSOLUTE
     ..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_hd.s 0x00000000   Number         0  startup_stm32f10x_hd.o ABSOLUTE
     ..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c 0x00000000   Number         0  system_stm32f10x.o ABSOLUTE
@@ -1285,8 +1281,8 @@ Image Symbol Table
     .text                                    0x080002c4   Section        0  ffixui.o(.text)
     .text                                    0x080002ec   Section        0  d2f.o(.text)
     .text                                    0x08000324   Section        0  uldiv.o(.text)
-    .text                                    0x08000386   Section        0  fepilogue.o(.text)
     .text                                    0x08000386   Section        0  iusefp.o(.text)
+    .text                                    0x08000386   Section        0  fepilogue.o(.text)
     .text                                    0x080003f4   Section        0  depilogue.o(.text)
     .text                                    0x080004b0   Section       36  init.o(.text)
     .text                                    0x080004d4   Section        0  llshl.o(.text)
@@ -1383,130 +1379,126 @@ Image Symbol Table
     i.RCC_GetClocksFreq                      0x080021ac   Section        0  stm32f10x_rcc.o(i.RCC_GetClocksFreq)
     i.RS485Dat_LED10_OFF                     0x08002280   Section        0  bus_app.o(i.RS485Dat_LED10_OFF)
     i.RS485Dat_LED10_ON                      0x08002294   Section        0  bus_app.o(i.RS485Dat_LED10_ON)
-    i.RS485Dat_LED12_OFF                     0x080022a8   Section        0  bus_app.o(i.RS485Dat_LED12_OFF)
-    i.RS485Dat_LED12_ON                      0x080022bc   Section        0  bus_app.o(i.RS485Dat_LED12_ON)
-    i.RS485Dat_LED13_OFF                     0x080022d0   Section        0  bus_app.o(i.RS485Dat_LED13_OFF)
-    i.RS485Dat_LED13_ON                      0x080022e4   Section        0  bus_app.o(i.RS485Dat_LED13_ON)
-    i.RS485Dat_LED14_OFF                     0x080022f8   Section        0  bus_app.o(i.RS485Dat_LED14_OFF)
-    i.RS485Dat_LED14_ON                      0x0800230c   Section        0  bus_app.o(i.RS485Dat_LED14_ON)
-    i.RS485Dat_LED15_OFF                     0x08002320   Section        0  bus_app.o(i.RS485Dat_LED15_OFF)
-    i.RS485Dat_LED15_ON                      0x08002334   Section        0  bus_app.o(i.RS485Dat_LED15_ON)
-    i.RS485Dat_LED16_OFF                     0x08002348   Section        0  bus_app.o(i.RS485Dat_LED16_OFF)
-    i.RS485Dat_LED16_ON                      0x0800235c   Section        0  bus_app.o(i.RS485Dat_LED16_ON)
-    i.RS485Dat_LED17_OFF                     0x08002370   Section        0  bus_app.o(i.RS485Dat_LED17_OFF)
-    i.RS485Dat_LED17_ON                      0x08002384   Section        0  bus_app.o(i.RS485Dat_LED17_ON)
-    i.RS485Dat_LED18_OFF                     0x08002398   Section        0  bus_app.o(i.RS485Dat_LED18_OFF)
-    i.RS485Dat_LED18_ON                      0x080023ac   Section        0  bus_app.o(i.RS485Dat_LED18_ON)
-    i.RS485Dat_LED19_OFF                     0x080023c0   Section        0  bus_app.o(i.RS485Dat_LED19_OFF)
-    i.RS485Dat_LED19_ON                      0x080023d4   Section        0  bus_app.o(i.RS485Dat_LED19_ON)
-    i.RS485Dat_LED1_ON                       0x080023e8   Section        0  bus_app.o(i.RS485Dat_LED1_ON)
-    i.RS485Dat_LED20_OFF                     0x080023fc   Section        0  bus_app.o(i.RS485Dat_LED20_OFF)
-    i.RS485Dat_LED20_ON                      0x08002410   Section        0  bus_app.o(i.RS485Dat_LED20_ON)
-    i.RS485Dat_LED2_OFF                      0x08002424   Section        0  bus_app.o(i.RS485Dat_LED2_OFF)
-    i.RS485Dat_LED2_ON                       0x08002438   Section        0  bus_app.o(i.RS485Dat_LED2_ON)
-    i.RS485Dat_LED4_OFF                      0x0800244c   Section        0  bus_app.o(i.RS485Dat_LED4_OFF)
-    i.RS485Dat_LED4_ON                       0x08002460   Section        0  bus_app.o(i.RS485Dat_LED4_ON)
-    i.RS485Dat_LED7_OFF                      0x08002474   Section        0  bus_app.o(i.RS485Dat_LED7_OFF)
-    i.RS485Dat_LED7_ON                       0x08002488   Section        0  bus_app.o(i.RS485Dat_LED7_ON)
-    i.RS485Dat_LED8_OFF                      0x0800249c   Section        0  bus_app.o(i.RS485Dat_LED8_OFF)
-    i.RS485Dat_LED8_ON                       0x080024b0   Section        0  bus_app.o(i.RS485Dat_LED8_ON)
-    i.RS485_InitTXE                          0x080024c4   Section        0  bsp_uart_fifo.o(i.RS485_InitTXE)
-    i.RS485_ReceiveDat                       0x080024f8   Section        0  bsp_uart_fifo.o(i.RS485_ReceiveDat)
-    i.RS485_ReciveNew                        0x080025a8   Section        0  bsp_uart_fifo.o(i.RS485_ReciveNew)
-    i.RS485_SendBefor                        0x080025ac   Section        0  bsp_uart_fifo.o(i.RS485_SendBefor)
-    i.RS485_SendBuf                          0x080025b8   Section        0  bsp_uart_fifo.o(i.RS485_SendBuf)
-    i.RS485_SendDat                          0x080025dc   Section        0  bsp_uart_fifo.o(i.RS485_SendDat)
-    i.RS485_SendOver                         0x08002624   Section        0  bsp_uart_fifo.o(i.RS485_SendOver)
-    i.ReadInputDat                           0x08002630   Section        0  check_app.o(i.ReadInputDat)
-    i.Read_InputDevDat                       0x08002814   Section        0  bsp_cd4067.o(i.Read_InputDevDat)
-    i.Read_Input_KPDevDat                    0x08002950   Section        0  bsp_cd4051.o(i.Read_Input_KPDevDat)
-    i.Read_Optocoupler                       0x08002a98   Section        0  bsp_cd4067.o(i.Read_Optocoupler)
-    i.SVC_Handler                            0x08002ab8   Section        0  stm32f10x_it.o(i.SVC_Handler)
-    i.SetInput_CD4067Switch                  0x08002abc   Section        0  bsp_cd4067.o(i.SetInput_CD4067Switch)
-    SetInput_CD4067Switch                    0x08002abd   Thumb Code   652  bsp_cd4067.o(i.SetInput_CD4067Switch)
-    i.SetInput_CSCD4051Switch                0x08002d4c   Section        0  bsp_cd4051.o(i.SetInput_CSCD4051Switch)
-    i.SetInput_IICD4051Switch                0x08002d9c   Section        0  bsp_cd4051.o(i.SetInput_IICD4051Switch)
-    i.SetInput_KPCD4051Switch                0x08002df8   Section        0  bsp_cd4051.o(i.SetInput_KPCD4051Switch)
-    SetInput_KPCD4051Switch                  0x08002df9   Thumb Code   282  bsp_cd4051.o(i.SetInput_KPCD4051Switch)
-    i.SetSysClock                            0x08002f18   Section        0  system_stm32f10x.o(i.SetSysClock)
-    SetSysClock                              0x08002f19   Thumb Code     8  system_stm32f10x.o(i.SetSysClock)
-    i.SetSysClockTo72                        0x08002f20   Section        0  system_stm32f10x.o(i.SetSysClockTo72)
-    SetSysClockTo72                          0x08002f21   Thumb Code   214  system_stm32f10x.o(i.SetSysClockTo72)
-    i.SysTick_CLKSourceConfig                0x08003000   Section        0  misc.o(i.SysTick_CLKSourceConfig)
-    i.SysTick_Handler                        0x08003028   Section        0  stm32f10x_it.o(i.SysTick_Handler)
-    i.SysTick_ISR                            0x08003030   Section        0  bsp_timer.o(i.SysTick_ISR)
-    i.SystemInit                             0x08003088   Section        0  system_stm32f10x.o(i.SystemInit)
-    i.TIM2_IRQHandler                        0x080030e8   Section        0  stm32f10x_it.o(i.TIM2_IRQHandler)
-    i.TIM3_IRQHandler                        0x080031d8   Section        0  main.o(i.TIM3_IRQHandler)
-    i.TIM3_Int_Init                          0x080032a0   Section        0  bsp_timertim3.o(i.TIM3_Int_Init)
-    i.TIM_ClearITPendingBit                  0x08003300   Section        0  stm32f10x_tim.o(i.TIM_ClearITPendingBit)
-    i.TIM_Cmd                                0x08003306   Section        0  stm32f10x_tim.o(i.TIM_Cmd)
-    i.TIM_GetCapture1                        0x0800331e   Section        0  stm32f10x_tim.o(i.TIM_GetCapture1)
-    i.TIM_GetITStatus                        0x08003324   Section        0  stm32f10x_tim.o(i.TIM_GetITStatus)
-    i.TIM_ITConfig                           0x08003346   Section        0  stm32f10x_tim.o(i.TIM_ITConfig)
-    i.TIM_OC1PolarityConfig                  0x08003358   Section        0  stm32f10x_tim.o(i.TIM_OC1PolarityConfig)
-    i.TIM_SetCounter                         0x0800336a   Section        0  stm32f10x_tim.o(i.TIM_SetCounter)
-    i.TIM_TimeBaseInit                       0x08003370   Section        0  stm32f10x_tim.o(i.TIM_TimeBaseInit)
-    i.USART1_IRQHandler                      0x08003414   Section        0  bsp_uart_fifo.o(i.USART1_IRQHandler)
-    i.USART3_IRQHandler                      0x08003424   Section        0  bsp_uart_fifo.o(i.USART3_IRQHandler)
-    i.USART_ClearFlag                        0x08003434   Section        0  stm32f10x_usart.o(i.USART_ClearFlag)
-    i.USART_Cmd                              0x08003446   Section        0  stm32f10x_usart.o(i.USART_Cmd)
-    i.USART_GetITStatus                      0x0800345e   Section        0  stm32f10x_usart.o(i.USART_GetITStatus)
-    i.USART_ITConfig                         0x080034b2   Section        0  stm32f10x_usart.o(i.USART_ITConfig)
-    i.USART_Init                             0x080034fc   Section        0  stm32f10x_usart.o(i.USART_Init)
-    i.USART_ReceiveData                      0x080035d4   Section        0  stm32f10x_usart.o(i.USART_ReceiveData)
-    i.USART_SendData                         0x080035de   Section        0  stm32f10x_usart.o(i.USART_SendData)
-    i.USB_LP_CAN1_RX0_IRQHandler             0x080035e8   Section        0  bsp_can.o(i.USB_LP_CAN1_RX0_IRQHandler)
-    i.UartGetChar                            0x0800362c   Section        0  bsp_uart_fifo.o(i.UartGetChar)
-    UartGetChar                              0x0800362d   Thumb Code    74  bsp_uart_fifo.o(i.UartGetChar)
-    i.UartIRQ                                0x08003676   Section        0  bsp_uart_fifo.o(i.UartIRQ)
-    UartIRQ                                  0x08003677   Thumb Code   230  bsp_uart_fifo.o(i.UartIRQ)
-    i.UartSend                               0x0800375c   Section        0  bsp_uart_fifo.o(i.UartSend)
-    UartSend                                 0x0800375d   Thumb Code   114  bsp_uart_fifo.o(i.UartSend)
-    i.UartVarInit                            0x080037d0   Section        0  bsp_uart_fifo.o(i.UartVarInit)
-    UartVarInit                              0x080037d1   Thumb Code    92  bsp_uart_fifo.o(i.UartVarInit)
-    i.UsageFault_Handler                     0x08003858   Section        0  stm32f10x_it.o(i.UsageFault_Handler)
-    i.__0printf$8                            0x0800385c   Section        0  printf8.o(i.__0printf$8)
-    i.__scatterload_copy                     0x0800387c   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x0800388a   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x0800388c   Section       14  handlers.o(i.__scatterload_zeroinit)
-    i.__set_PRIMASK                          0x0800389a   Section        0  bsp_timer.o(i.__set_PRIMASK)
-    __set_PRIMASK                            0x0800389b   Thumb Code     6  bsp_timer.o(i.__set_PRIMASK)
-    i.__set_PRIMASK                          0x080038a0   Section        0  bsp_uart_fifo.o(i.__set_PRIMASK)
-    __set_PRIMASK                            0x080038a1   Thumb Code     6  bsp_uart_fifo.o(i.__set_PRIMASK)
-    i._printf_core                           0x080038a8   Section        0  printf8.o(i._printf_core)
-    _printf_core                             0x080038a9   Thumb Code   996  printf8.o(i._printf_core)
-    i._printf_post_padding                   0x08003cb8   Section        0  printf8.o(i._printf_post_padding)
-    _printf_post_padding                     0x08003cb9   Thumb Code    36  printf8.o(i._printf_post_padding)
-    i._printf_pre_padding                    0x08003cdc   Section        0  printf8.o(i._printf_pre_padding)
-    _printf_pre_padding                      0x08003cdd   Thumb Code    46  printf8.o(i._printf_pre_padding)
-    i.bsp_CheckTimer                         0x08003d0c   Section        0  bsp_timer.o(i.bsp_CheckTimer)
-    i.bsp_DetectKey                          0x08003d38   Section        0  bsp_fifo_key.o(i.bsp_DetectKey)
-    bsp_DetectKey                            0x08003d39   Thumb Code   198  bsp_fifo_key.o(i.bsp_DetectKey)
-    i.bsp_GetKey                             0x08003e04   Section        0  bsp_fifo_key.o(i.bsp_GetKey)
-    i.bsp_HC595_Config                       0x08003e38   Section        0  bsp_hc595.o(i.bsp_HC595_Config)
-    i.bsp_InitCQVar                          0x08003e9c   Section        0  bsp_fifo.o(i.bsp_InitCQVar)
-    i.bsp_InitKey                            0x08003ec4   Section        0  bsp_fifo_key.o(i.bsp_InitKey)
-    i.bsp_InitKeyHard                        0x08003ed0   Section        0  bsp_fifo_key.o(i.bsp_InitKeyHard)
-    bsp_InitKeyHard                          0x08003ed1   Thumb Code    86  bsp_fifo_key.o(i.bsp_InitKeyHard)
-    i.bsp_InitKeyVar                         0x08003f2c   Section        0  bsp_fifo_key.o(i.bsp_InitKeyVar)
-    bsp_InitKeyVar                           0x08003f2d   Thumb Code    88  bsp_fifo_key.o(i.bsp_InitKeyVar)
-    i.bsp_InitTimer                          0x08003f9c   Section        0  bsp_timer.o(i.bsp_InitTimer)
-    i.bsp_InitUart                           0x08003fbc   Section        0  bsp_uart_fifo.o(i.bsp_InitUart)
-    i.bsp_KeyScan                            0x08003fd0   Section        0  bsp_fifo_key.o(i.bsp_KeyScan)
-    i.bsp_PutKey                             0x08003fe8   Section        0  bsp_fifo_key.o(i.bsp_PutKey)
-    i.bsp_SoftTimerDec                       0x08004008   Section        0  bsp_timer.o(i.bsp_SoftTimerDec)
-    bsp_SoftTimerDec                         0x08004009   Thumb Code    22  bsp_timer.o(i.bsp_SoftTimerDec)
-    i.bsp_StartTimer                         0x08004020   Section        0  bsp_timer.o(i.bsp_StartTimer)
-    i.comGetChar                             0x08004050   Section        0  bsp_uart_fifo.o(i.comGetChar)
-    i.comSendBuf                             0x0800406e   Section        0  bsp_uart_fifo.o(i.comSendBuf)
-    i.delay_init                             0x0800409c   Section        0  delay.o(i.delay_init)
-    i.delay_ms                               0x080040e0   Section        0  delay.o(i.delay_ms)
-    i.delay_us                               0x0800412c   Section        0  delay.o(i.delay_us)
-    i.fputc                                  0x08004178   Section        0  bsp_uart_fifo.o(i.fputc)
-    i.main                                   0x08004194   Section        0  main.o(i.main)
-    .constdata                               0x08004614   Section       44  bsp_tm1639.o(.constdata)
-    .conststring                             0x08004640   Section       70  main.o(.conststring)
+    i.RS485Dat_LED12_ON                      0x080022a8   Section        0  bus_app.o(i.RS485Dat_LED12_ON)
+    i.RS485Dat_LED13_ON                      0x080022bc   Section        0  bus_app.o(i.RS485Dat_LED13_ON)
+    i.RS485Dat_LED14_ON                      0x080022d0   Section        0  bus_app.o(i.RS485Dat_LED14_ON)
+    i.RS485Dat_LED15_OFF                     0x080022e4   Section        0  bus_app.o(i.RS485Dat_LED15_OFF)
+    i.RS485Dat_LED15_ON                      0x080022f8   Section        0  bus_app.o(i.RS485Dat_LED15_ON)
+    i.RS485Dat_LED16_OFF                     0x0800230c   Section        0  bus_app.o(i.RS485Dat_LED16_OFF)
+    i.RS485Dat_LED16_ON                      0x08002320   Section        0  bus_app.o(i.RS485Dat_LED16_ON)
+    i.RS485Dat_LED17_OFF                     0x08002334   Section        0  bus_app.o(i.RS485Dat_LED17_OFF)
+    i.RS485Dat_LED17_ON                      0x08002348   Section        0  bus_app.o(i.RS485Dat_LED17_ON)
+    i.RS485Dat_LED18_ON                      0x0800235c   Section        0  bus_app.o(i.RS485Dat_LED18_ON)
+    i.RS485Dat_LED19_ON                      0x08002370   Section        0  bus_app.o(i.RS485Dat_LED19_ON)
+    i.RS485Dat_LED1_ON                       0x08002384   Section        0  bus_app.o(i.RS485Dat_LED1_ON)
+    i.RS485Dat_LED20_ON                      0x08002398   Section        0  bus_app.o(i.RS485Dat_LED20_ON)
+    i.RS485Dat_LED2_OFF                      0x080023ac   Section        0  bus_app.o(i.RS485Dat_LED2_OFF)
+    i.RS485Dat_LED2_ON                       0x080023c0   Section        0  bus_app.o(i.RS485Dat_LED2_ON)
+    i.RS485Dat_LED4_OFF                      0x080023d4   Section        0  bus_app.o(i.RS485Dat_LED4_OFF)
+    i.RS485Dat_LED4_ON                       0x080023e8   Section        0  bus_app.o(i.RS485Dat_LED4_ON)
+    i.RS485Dat_LED7_OFF                      0x080023fc   Section        0  bus_app.o(i.RS485Dat_LED7_OFF)
+    i.RS485Dat_LED7_ON                       0x08002410   Section        0  bus_app.o(i.RS485Dat_LED7_ON)
+    i.RS485Dat_LED8_OFF                      0x08002424   Section        0  bus_app.o(i.RS485Dat_LED8_OFF)
+    i.RS485Dat_LED8_ON                       0x08002438   Section        0  bus_app.o(i.RS485Dat_LED8_ON)
+    i.RS485Dat_LED9_OFF                      0x0800244c   Section        0  bus_app.o(i.RS485Dat_LED9_OFF)
+    i.RS485Dat_LED9_ON                       0x08002460   Section        0  bus_app.o(i.RS485Dat_LED9_ON)
+    i.RS485_InitTXE                          0x08002474   Section        0  bsp_uart_fifo.o(i.RS485_InitTXE)
+    i.RS485_ReceiveDat                       0x080024a8   Section        0  bsp_uart_fifo.o(i.RS485_ReceiveDat)
+    i.RS485_ReciveNew                        0x08002558   Section        0  bsp_uart_fifo.o(i.RS485_ReciveNew)
+    i.RS485_SendBefor                        0x0800255c   Section        0  bsp_uart_fifo.o(i.RS485_SendBefor)
+    i.RS485_SendBuf                          0x08002568   Section        0  bsp_uart_fifo.o(i.RS485_SendBuf)
+    i.RS485_SendDat                          0x0800258c   Section        0  bsp_uart_fifo.o(i.RS485_SendDat)
+    i.RS485_SendOver                         0x080025d4   Section        0  bsp_uart_fifo.o(i.RS485_SendOver)
+    i.ReadInputDat                           0x080025e0   Section        0  check_app.o(i.ReadInputDat)
+    i.Read_InputDevDat                       0x08002760   Section        0  bsp_cd4067.o(i.Read_InputDevDat)
+    i.Read_Input_KPDevDat                    0x0800289c   Section        0  bsp_cd4051.o(i.Read_Input_KPDevDat)
+    i.Read_Optocoupler                       0x080029e4   Section        0  bsp_cd4067.o(i.Read_Optocoupler)
+    i.SVC_Handler                            0x08002a04   Section        0  stm32f10x_it.o(i.SVC_Handler)
+    i.SetInput_CD4067Switch                  0x08002a08   Section        0  bsp_cd4067.o(i.SetInput_CD4067Switch)
+    SetInput_CD4067Switch                    0x08002a09   Thumb Code   652  bsp_cd4067.o(i.SetInput_CD4067Switch)
+    i.SetInput_CSCD4051Switch                0x08002c98   Section        0  bsp_cd4051.o(i.SetInput_CSCD4051Switch)
+    i.SetInput_IICD4051Switch                0x08002ce8   Section        0  bsp_cd4051.o(i.SetInput_IICD4051Switch)
+    i.SetInput_KPCD4051Switch                0x08002d44   Section        0  bsp_cd4051.o(i.SetInput_KPCD4051Switch)
+    SetInput_KPCD4051Switch                  0x08002d45   Thumb Code   282  bsp_cd4051.o(i.SetInput_KPCD4051Switch)
+    i.SetSysClock                            0x08002e64   Section        0  system_stm32f10x.o(i.SetSysClock)
+    SetSysClock                              0x08002e65   Thumb Code     8  system_stm32f10x.o(i.SetSysClock)
+    i.SetSysClockTo72                        0x08002e6c   Section        0  system_stm32f10x.o(i.SetSysClockTo72)
+    SetSysClockTo72                          0x08002e6d   Thumb Code   214  system_stm32f10x.o(i.SetSysClockTo72)
+    i.SysTick_CLKSourceConfig                0x08002f4c   Section        0  misc.o(i.SysTick_CLKSourceConfig)
+    i.SysTick_Handler                        0x08002f74   Section        0  stm32f10x_it.o(i.SysTick_Handler)
+    i.SysTick_ISR                            0x08002f7c   Section        0  bsp_timer.o(i.SysTick_ISR)
+    i.SystemInit                             0x08002fd4   Section        0  system_stm32f10x.o(i.SystemInit)
+    i.TIM2_IRQHandler                        0x08003034   Section        0  stm32f10x_it.o(i.TIM2_IRQHandler)
+    i.TIM3_IRQHandler                        0x08003124   Section        0  main.o(i.TIM3_IRQHandler)
+    i.TIM3_Int_Init                          0x080031ec   Section        0  bsp_timertim3.o(i.TIM3_Int_Init)
+    i.TIM_ClearITPendingBit                  0x0800324c   Section        0  stm32f10x_tim.o(i.TIM_ClearITPendingBit)
+    i.TIM_Cmd                                0x08003252   Section        0  stm32f10x_tim.o(i.TIM_Cmd)
+    i.TIM_GetCapture1                        0x0800326a   Section        0  stm32f10x_tim.o(i.TIM_GetCapture1)
+    i.TIM_GetITStatus                        0x08003270   Section        0  stm32f10x_tim.o(i.TIM_GetITStatus)
+    i.TIM_ITConfig                           0x08003292   Section        0  stm32f10x_tim.o(i.TIM_ITConfig)
+    i.TIM_OC1PolarityConfig                  0x080032a4   Section        0  stm32f10x_tim.o(i.TIM_OC1PolarityConfig)
+    i.TIM_SetCounter                         0x080032b6   Section        0  stm32f10x_tim.o(i.TIM_SetCounter)
+    i.TIM_TimeBaseInit                       0x080032bc   Section        0  stm32f10x_tim.o(i.TIM_TimeBaseInit)
+    i.USART1_IRQHandler                      0x08003360   Section        0  bsp_uart_fifo.o(i.USART1_IRQHandler)
+    i.USART3_IRQHandler                      0x08003370   Section        0  bsp_uart_fifo.o(i.USART3_IRQHandler)
+    i.USART_ClearFlag                        0x08003380   Section        0  stm32f10x_usart.o(i.USART_ClearFlag)
+    i.USART_Cmd                              0x08003392   Section        0  stm32f10x_usart.o(i.USART_Cmd)
+    i.USART_GetITStatus                      0x080033aa   Section        0  stm32f10x_usart.o(i.USART_GetITStatus)
+    i.USART_ITConfig                         0x080033fe   Section        0  stm32f10x_usart.o(i.USART_ITConfig)
+    i.USART_Init                             0x08003448   Section        0  stm32f10x_usart.o(i.USART_Init)
+    i.USART_ReceiveData                      0x08003520   Section        0  stm32f10x_usart.o(i.USART_ReceiveData)
+    i.USART_SendData                         0x0800352a   Section        0  stm32f10x_usart.o(i.USART_SendData)
+    i.USB_LP_CAN1_RX0_IRQHandler             0x08003534   Section        0  bsp_can.o(i.USB_LP_CAN1_RX0_IRQHandler)
+    i.UartGetChar                            0x08003578   Section        0  bsp_uart_fifo.o(i.UartGetChar)
+    UartGetChar                              0x08003579   Thumb Code    74  bsp_uart_fifo.o(i.UartGetChar)
+    i.UartIRQ                                0x080035c2   Section        0  bsp_uart_fifo.o(i.UartIRQ)
+    UartIRQ                                  0x080035c3   Thumb Code   230  bsp_uart_fifo.o(i.UartIRQ)
+    i.UartSend                               0x080036a8   Section        0  bsp_uart_fifo.o(i.UartSend)
+    UartSend                                 0x080036a9   Thumb Code   114  bsp_uart_fifo.o(i.UartSend)
+    i.UartVarInit                            0x0800371c   Section        0  bsp_uart_fifo.o(i.UartVarInit)
+    UartVarInit                              0x0800371d   Thumb Code    92  bsp_uart_fifo.o(i.UartVarInit)
+    i.UsageFault_Handler                     0x080037a4   Section        0  stm32f10x_it.o(i.UsageFault_Handler)
+    i.__0printf$8                            0x080037a8   Section        0  printf8.o(i.__0printf$8)
+    i.__scatterload_copy                     0x080037c8   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x080037d6   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x080037d8   Section       14  handlers.o(i.__scatterload_zeroinit)
+    i.__set_PRIMASK                          0x080037e6   Section        0  bsp_timer.o(i.__set_PRIMASK)
+    __set_PRIMASK                            0x080037e7   Thumb Code     6  bsp_timer.o(i.__set_PRIMASK)
+    i.__set_PRIMASK                          0x080037ec   Section        0  bsp_uart_fifo.o(i.__set_PRIMASK)
+    __set_PRIMASK                            0x080037ed   Thumb Code     6  bsp_uart_fifo.o(i.__set_PRIMASK)
+    i._printf_core                           0x080037f4   Section        0  printf8.o(i._printf_core)
+    _printf_core                             0x080037f5   Thumb Code   996  printf8.o(i._printf_core)
+    i._printf_post_padding                   0x08003c04   Section        0  printf8.o(i._printf_post_padding)
+    _printf_post_padding                     0x08003c05   Thumb Code    36  printf8.o(i._printf_post_padding)
+    i._printf_pre_padding                    0x08003c28   Section        0  printf8.o(i._printf_pre_padding)
+    _printf_pre_padding                      0x08003c29   Thumb Code    46  printf8.o(i._printf_pre_padding)
+    i.bsp_CheckTimer                         0x08003c58   Section        0  bsp_timer.o(i.bsp_CheckTimer)
+    i.bsp_DetectKey                          0x08003c84   Section        0  bsp_fifo_key.o(i.bsp_DetectKey)
+    bsp_DetectKey                            0x08003c85   Thumb Code   198  bsp_fifo_key.o(i.bsp_DetectKey)
+    i.bsp_GetKey                             0x08003d50   Section        0  bsp_fifo_key.o(i.bsp_GetKey)
+    i.bsp_HC595_Config                       0x08003d84   Section        0  bsp_hc595.o(i.bsp_HC595_Config)
+    i.bsp_InitCQVar                          0x08003de8   Section        0  bsp_fifo.o(i.bsp_InitCQVar)
+    i.bsp_InitKey                            0x08003e10   Section        0  bsp_fifo_key.o(i.bsp_InitKey)
+    i.bsp_InitKeyHard                        0x08003e1c   Section        0  bsp_fifo_key.o(i.bsp_InitKeyHard)
+    bsp_InitKeyHard                          0x08003e1d   Thumb Code    86  bsp_fifo_key.o(i.bsp_InitKeyHard)
+    i.bsp_InitKeyVar                         0x08003e78   Section        0  bsp_fifo_key.o(i.bsp_InitKeyVar)
+    bsp_InitKeyVar                           0x08003e79   Thumb Code    88  bsp_fifo_key.o(i.bsp_InitKeyVar)
+    i.bsp_InitTimer                          0x08003ee8   Section        0  bsp_timer.o(i.bsp_InitTimer)
+    i.bsp_InitUart                           0x08003f08   Section        0  bsp_uart_fifo.o(i.bsp_InitUart)
+    i.bsp_KeyScan                            0x08003f1c   Section        0  bsp_fifo_key.o(i.bsp_KeyScan)
+    i.bsp_PutKey                             0x08003f34   Section        0  bsp_fifo_key.o(i.bsp_PutKey)
+    i.bsp_SoftTimerDec                       0x08003f54   Section        0  bsp_timer.o(i.bsp_SoftTimerDec)
+    bsp_SoftTimerDec                         0x08003f55   Thumb Code    22  bsp_timer.o(i.bsp_SoftTimerDec)
+    i.bsp_StartTimer                         0x08003f6c   Section        0  bsp_timer.o(i.bsp_StartTimer)
+    i.comGetChar                             0x08003f9c   Section        0  bsp_uart_fifo.o(i.comGetChar)
+    i.comSendBuf                             0x08003fba   Section        0  bsp_uart_fifo.o(i.comSendBuf)
+    i.delay_init                             0x08003fe8   Section        0  delay.o(i.delay_init)
+    i.delay_ms                               0x0800402c   Section        0  delay.o(i.delay_ms)
+    i.delay_us                               0x08004078   Section        0  delay.o(i.delay_us)
+    i.fputc                                  0x080040c4   Section        0  bsp_uart_fifo.o(i.fputc)
+    i.main                                   0x080040e0   Section        0  main.o(i.main)
+    .constdata                               0x08004560   Section       44  bsp_tm1639.o(.constdata)
+    .conststring                             0x0800458c   Section       70  main.o(.conststring)
     .data                                    0x20000000   Section       24  main.o(.data)
     g_FlagDWG                                0x20000017   Data           1  main.o(.data)
     .data                                    0x20000018   Section        4  stm32f10x_it.o(.data)
@@ -1542,19 +1534,20 @@ Image Symbol Table
     ADCPrescTable                            0x20000191   Data           4  stm32f10x_rcc.o(.data)
     .data                                    0x20000198   Section       20  system_stm32f10x.o(.data)
     .bss                                     0x200001ac   Section       12  main.o(.bss)
-    .bss                                     0x200001b8   Section       32  bsp_timer.o(.bss)
-    .bss                                     0x200001d8   Section     4236  bsp_uart_fifo.o(.bss)
-    g_tUart1                                 0x20000214   Data          40  bsp_uart_fifo.o(.bss)
-    g_TxBuf1                                 0x2000023c   Data        1024  bsp_uart_fifo.o(.bss)
-    g_RxBuf1                                 0x2000063c   Data        1024  bsp_uart_fifo.o(.bss)
-    g_tUart3                                 0x20000a3c   Data          40  bsp_uart_fifo.o(.bss)
-    g_TxBuf3                                 0x20000a64   Data        1024  bsp_uart_fifo.o(.bss)
-    g_RxBuf3                                 0x20000e64   Data        1024  bsp_uart_fifo.o(.bss)
-    .bss                                     0x20001264   Section      326  bsp_fifo.o(.bss)
-    s_tCQ                                    0x20001307   Data         163  bsp_fifo.o(.bss)
-    .bss                                     0x200013ac   Section       64  bsp_fifo_key.o(.bss)
-    s_tBtn                                   0x200013ac   Data          64  bsp_fifo_key.o(.bss)
-    STACK                                    0x200013f0   Section     8192  startup_stm32f10x_hd.o(STACK)
+    .bss                                     0x200001b8   Section       32  check_app.o(.bss)
+    .bss                                     0x200001d8   Section       32  bsp_timer.o(.bss)
+    .bss                                     0x200001f8   Section     4236  bsp_uart_fifo.o(.bss)
+    g_tUart1                                 0x20000234   Data          40  bsp_uart_fifo.o(.bss)
+    g_TxBuf1                                 0x2000025c   Data        1024  bsp_uart_fifo.o(.bss)
+    g_RxBuf1                                 0x2000065c   Data        1024  bsp_uart_fifo.o(.bss)
+    g_tUart3                                 0x20000a5c   Data          40  bsp_uart_fifo.o(.bss)
+    g_TxBuf3                                 0x20000a84   Data        1024  bsp_uart_fifo.o(.bss)
+    g_RxBuf3                                 0x20000e84   Data        1024  bsp_uart_fifo.o(.bss)
+    .bss                                     0x20001284   Section      326  bsp_fifo.o(.bss)
+    s_tCQ                                    0x20001327   Data         163  bsp_fifo.o(.bss)
+    .bss                                     0x200013cc   Section       64  bsp_fifo_key.o(.bss)
+    s_tBtn                                   0x200013cc   Data          64  bsp_fifo_key.o(.bss)
+    STACK                                    0x20001410   Section     8192  startup_stm32f10x_hd.o(STACK)
 
     Global Symbols
 
@@ -1769,100 +1762,96 @@ Image Symbol Table
     RCC_GetClocksFreq                        0x080021ad   Thumb Code   192  stm32f10x_rcc.o(i.RCC_GetClocksFreq)
     RS485Dat_LED10_OFF                       0x08002281   Thumb Code    14  bus_app.o(i.RS485Dat_LED10_OFF)
     RS485Dat_LED10_ON                        0x08002295   Thumb Code    14  bus_app.o(i.RS485Dat_LED10_ON)
-    RS485Dat_LED12_OFF                       0x080022a9   Thumb Code    14  bus_app.o(i.RS485Dat_LED12_OFF)
-    RS485Dat_LED12_ON                        0x080022bd   Thumb Code    14  bus_app.o(i.RS485Dat_LED12_ON)
-    RS485Dat_LED13_OFF                       0x080022d1   Thumb Code    14  bus_app.o(i.RS485Dat_LED13_OFF)
-    RS485Dat_LED13_ON                        0x080022e5   Thumb Code    14  bus_app.o(i.RS485Dat_LED13_ON)
-    RS485Dat_LED14_OFF                       0x080022f9   Thumb Code    14  bus_app.o(i.RS485Dat_LED14_OFF)
-    RS485Dat_LED14_ON                        0x0800230d   Thumb Code    14  bus_app.o(i.RS485Dat_LED14_ON)
-    RS485Dat_LED15_OFF                       0x08002321   Thumb Code    14  bus_app.o(i.RS485Dat_LED15_OFF)
-    RS485Dat_LED15_ON                        0x08002335   Thumb Code    14  bus_app.o(i.RS485Dat_LED15_ON)
-    RS485Dat_LED16_OFF                       0x08002349   Thumb Code    14  bus_app.o(i.RS485Dat_LED16_OFF)
-    RS485Dat_LED16_ON                        0x0800235d   Thumb Code    14  bus_app.o(i.RS485Dat_LED16_ON)
-    RS485Dat_LED17_OFF                       0x08002371   Thumb Code    14  bus_app.o(i.RS485Dat_LED17_OFF)
-    RS485Dat_LED17_ON                        0x08002385   Thumb Code    14  bus_app.o(i.RS485Dat_LED17_ON)
-    RS485Dat_LED18_OFF                       0x08002399   Thumb Code    14  bus_app.o(i.RS485Dat_LED18_OFF)
-    RS485Dat_LED18_ON                        0x080023ad   Thumb Code    14  bus_app.o(i.RS485Dat_LED18_ON)
-    RS485Dat_LED19_OFF                       0x080023c1   Thumb Code    14  bus_app.o(i.RS485Dat_LED19_OFF)
-    RS485Dat_LED19_ON                        0x080023d5   Thumb Code    14  bus_app.o(i.RS485Dat_LED19_ON)
-    RS485Dat_LED1_ON                         0x080023e9   Thumb Code    14  bus_app.o(i.RS485Dat_LED1_ON)
-    RS485Dat_LED20_OFF                       0x080023fd   Thumb Code    14  bus_app.o(i.RS485Dat_LED20_OFF)
-    RS485Dat_LED20_ON                        0x08002411   Thumb Code    14  bus_app.o(i.RS485Dat_LED20_ON)
-    RS485Dat_LED2_OFF                        0x08002425   Thumb Code    14  bus_app.o(i.RS485Dat_LED2_OFF)
-    RS485Dat_LED2_ON                         0x08002439   Thumb Code    14  bus_app.o(i.RS485Dat_LED2_ON)
-    RS485Dat_LED4_OFF                        0x0800244d   Thumb Code    14  bus_app.o(i.RS485Dat_LED4_OFF)
-    RS485Dat_LED4_ON                         0x08002461   Thumb Code    14  bus_app.o(i.RS485Dat_LED4_ON)
-    RS485Dat_LED7_OFF                        0x08002475   Thumb Code    14  bus_app.o(i.RS485Dat_LED7_OFF)
-    RS485Dat_LED7_ON                         0x08002489   Thumb Code    14  bus_app.o(i.RS485Dat_LED7_ON)
-    RS485Dat_LED8_OFF                        0x0800249d   Thumb Code    14  bus_app.o(i.RS485Dat_LED8_OFF)
-    RS485Dat_LED8_ON                         0x080024b1   Thumb Code    14  bus_app.o(i.RS485Dat_LED8_ON)
-    RS485_InitTXE                            0x080024c5   Thumb Code    46  bsp_uart_fifo.o(i.RS485_InitTXE)
-    RS485_ReceiveDat                         0x080024f9   Thumb Code   168  bsp_uart_fifo.o(i.RS485_ReceiveDat)
-    RS485_ReciveNew                          0x080025a9   Thumb Code     2  bsp_uart_fifo.o(i.RS485_ReciveNew)
-    RS485_SendBefor                          0x080025ad   Thumb Code     8  bsp_uart_fifo.o(i.RS485_SendBefor)
-    RS485_SendBuf                            0x080025b9   Thumb Code    30  bsp_uart_fifo.o(i.RS485_SendBuf)
-    RS485_SendDat                            0x080025dd   Thumb Code    60  bsp_uart_fifo.o(i.RS485_SendDat)
-    RS485_SendOver                           0x08002625   Thumb Code     8  bsp_uart_fifo.o(i.RS485_SendOver)
-    ReadInputDat                             0x08002631   Thumb Code   484  check_app.o(i.ReadInputDat)
-    Read_InputDevDat                         0x08002815   Thumb Code   302  bsp_cd4067.o(i.Read_InputDevDat)
-    Read_Input_KPDevDat                      0x08002951   Thumb Code   316  bsp_cd4051.o(i.Read_Input_KPDevDat)
-    Read_Optocoupler                         0x08002a99   Thumb Code    26  bsp_cd4067.o(i.Read_Optocoupler)
-    SVC_Handler                              0x08002ab9   Thumb Code     2  stm32f10x_it.o(i.SVC_Handler)
-    SetInput_CSCD4051Switch                  0x08002d4d   Thumb Code    76  bsp_cd4051.o(i.SetInput_CSCD4051Switch)
-    SetInput_IICD4051Switch                  0x08002d9d   Thumb Code    82  bsp_cd4051.o(i.SetInput_IICD4051Switch)
-    SysTick_CLKSourceConfig                  0x08003001   Thumb Code    40  misc.o(i.SysTick_CLKSourceConfig)
-    SysTick_Handler                          0x08003029   Thumb Code     8  stm32f10x_it.o(i.SysTick_Handler)
-    SysTick_ISR                              0x08003031   Thumb Code    74  bsp_timer.o(i.SysTick_ISR)
-    SystemInit                               0x08003089   Thumb Code    78  system_stm32f10x.o(i.SystemInit)
-    TIM2_IRQHandler                          0x080030e9   Thumb Code   224  stm32f10x_it.o(i.TIM2_IRQHandler)
-    TIM3_IRQHandler                          0x080031d9   Thumb Code   176  main.o(i.TIM3_IRQHandler)
-    TIM3_Int_Init                            0x080032a1   Thumb Code    90  bsp_timertim3.o(i.TIM3_Int_Init)
-    TIM_ClearITPendingBit                    0x08003301   Thumb Code     6  stm32f10x_tim.o(i.TIM_ClearITPendingBit)
-    TIM_Cmd                                  0x08003307   Thumb Code    24  stm32f10x_tim.o(i.TIM_Cmd)
-    TIM_GetCapture1                          0x0800331f   Thumb Code     6  stm32f10x_tim.o(i.TIM_GetCapture1)
-    TIM_GetITStatus                          0x08003325   Thumb Code    34  stm32f10x_tim.o(i.TIM_GetITStatus)
-    TIM_ITConfig                             0x08003347   Thumb Code    18  stm32f10x_tim.o(i.TIM_ITConfig)
-    TIM_OC1PolarityConfig                    0x08003359   Thumb Code    18  stm32f10x_tim.o(i.TIM_OC1PolarityConfig)
-    TIM_SetCounter                           0x0800336b   Thumb Code     4  stm32f10x_tim.o(i.TIM_SetCounter)
-    TIM_TimeBaseInit                         0x08003371   Thumb Code   122  stm32f10x_tim.o(i.TIM_TimeBaseInit)
-    USART1_IRQHandler                        0x08003415   Thumb Code    10  bsp_uart_fifo.o(i.USART1_IRQHandler)
-    USART3_IRQHandler                        0x08003425   Thumb Code    10  bsp_uart_fifo.o(i.USART3_IRQHandler)
-    USART_ClearFlag                          0x08003435   Thumb Code    18  stm32f10x_usart.o(i.USART_ClearFlag)
-    USART_Cmd                                0x08003447   Thumb Code    24  stm32f10x_usart.o(i.USART_Cmd)
-    USART_GetITStatus                        0x0800345f   Thumb Code    84  stm32f10x_usart.o(i.USART_GetITStatus)
-    USART_ITConfig                           0x080034b3   Thumb Code    74  stm32f10x_usart.o(i.USART_ITConfig)
-    USART_Init                               0x080034fd   Thumb Code   210  stm32f10x_usart.o(i.USART_Init)
-    USART_ReceiveData                        0x080035d5   Thumb Code    10  stm32f10x_usart.o(i.USART_ReceiveData)
-    USART_SendData                           0x080035df   Thumb Code     8  stm32f10x_usart.o(i.USART_SendData)
-    USB_LP_CAN1_RX0_IRQHandler               0x080035e9   Thumb Code    54  bsp_can.o(i.USB_LP_CAN1_RX0_IRQHandler)
-    UsageFault_Handler                       0x08003859   Thumb Code     4  stm32f10x_it.o(i.UsageFault_Handler)
-    __0printf$8                              0x0800385d   Thumb Code    22  printf8.o(i.__0printf$8)
-    __1printf$8                              0x0800385d   Thumb Code     0  printf8.o(i.__0printf$8)
-    __2printf                                0x0800385d   Thumb Code     0  printf8.o(i.__0printf$8)
-    __scatterload_copy                       0x0800387d   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x0800388b   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x0800388d   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    bsp_CheckTimer                           0x08003d0d   Thumb Code    40  bsp_timer.o(i.bsp_CheckTimer)
-    bsp_GetKey                               0x08003e05   Thumb Code    46  bsp_fifo_key.o(i.bsp_GetKey)
-    bsp_HC595_Config                         0x08003e39   Thumb Code    92  bsp_hc595.o(i.bsp_HC595_Config)
-    bsp_InitCQVar                            0x08003e9d   Thumb Code    32  bsp_fifo.o(i.bsp_InitCQVar)
-    bsp_InitKey                              0x08003ec5   Thumb Code    12  bsp_fifo_key.o(i.bsp_InitKey)
-    bsp_InitTimer                            0x08003f9d   Thumb Code    28  bsp_timer.o(i.bsp_InitTimer)
-    bsp_InitUart                             0x08003fbd   Thumb Code    20  bsp_uart_fifo.o(i.bsp_InitUart)
-    bsp_KeyScan                              0x08003fd1   Thumb Code    22  bsp_fifo_key.o(i.bsp_KeyScan)
-    bsp_PutKey                               0x08003fe9   Thumb Code    28  bsp_fifo_key.o(i.bsp_PutKey)
-    bsp_StartTimer                           0x08004021   Thumb Code    42  bsp_timer.o(i.bsp_StartTimer)
-    comGetChar                               0x08004051   Thumb Code    30  bsp_uart_fifo.o(i.comGetChar)
-    comSendBuf                               0x0800406f   Thumb Code    46  bsp_uart_fifo.o(i.comSendBuf)
-    delay_init                               0x0800409d   Thumb Code    50  delay.o(i.delay_init)
-    delay_ms                                 0x080040e1   Thumb Code    72  delay.o(i.delay_ms)
-    delay_us                                 0x0800412d   Thumb Code    72  delay.o(i.delay_us)
-    fputc                                    0x08004179   Thumb Code    24  bsp_uart_fifo.o(i.fputc)
-    main                                     0x08004195   Thumb Code   928  main.o(i.main)
-    table                                    0x08004614   Data          16  bsp_tm1639.o(.constdata)
-    Table_S                                  0x08004624   Data          28  bsp_tm1639.o(.constdata)
-    Region$$Table$$Base                      0x08004688   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x080046a8   Number         0  anon$$obj.o(Region$$Table)
+    RS485Dat_LED12_ON                        0x080022a9   Thumb Code    14  bus_app.o(i.RS485Dat_LED12_ON)
+    RS485Dat_LED13_ON                        0x080022bd   Thumb Code    14  bus_app.o(i.RS485Dat_LED13_ON)
+    RS485Dat_LED14_ON                        0x080022d1   Thumb Code    14  bus_app.o(i.RS485Dat_LED14_ON)
+    RS485Dat_LED15_OFF                       0x080022e5   Thumb Code    14  bus_app.o(i.RS485Dat_LED15_OFF)
+    RS485Dat_LED15_ON                        0x080022f9   Thumb Code    14  bus_app.o(i.RS485Dat_LED15_ON)
+    RS485Dat_LED16_OFF                       0x0800230d   Thumb Code    14  bus_app.o(i.RS485Dat_LED16_OFF)
+    RS485Dat_LED16_ON                        0x08002321   Thumb Code    14  bus_app.o(i.RS485Dat_LED16_ON)
+    RS485Dat_LED17_OFF                       0x08002335   Thumb Code    14  bus_app.o(i.RS485Dat_LED17_OFF)
+    RS485Dat_LED17_ON                        0x08002349   Thumb Code    14  bus_app.o(i.RS485Dat_LED17_ON)
+    RS485Dat_LED18_ON                        0x0800235d   Thumb Code    14  bus_app.o(i.RS485Dat_LED18_ON)
+    RS485Dat_LED19_ON                        0x08002371   Thumb Code    14  bus_app.o(i.RS485Dat_LED19_ON)
+    RS485Dat_LED1_ON                         0x08002385   Thumb Code    14  bus_app.o(i.RS485Dat_LED1_ON)
+    RS485Dat_LED20_ON                        0x08002399   Thumb Code    14  bus_app.o(i.RS485Dat_LED20_ON)
+    RS485Dat_LED2_OFF                        0x080023ad   Thumb Code    14  bus_app.o(i.RS485Dat_LED2_OFF)
+    RS485Dat_LED2_ON                         0x080023c1   Thumb Code    14  bus_app.o(i.RS485Dat_LED2_ON)
+    RS485Dat_LED4_OFF                        0x080023d5   Thumb Code    14  bus_app.o(i.RS485Dat_LED4_OFF)
+    RS485Dat_LED4_ON                         0x080023e9   Thumb Code    14  bus_app.o(i.RS485Dat_LED4_ON)
+    RS485Dat_LED7_OFF                        0x080023fd   Thumb Code    14  bus_app.o(i.RS485Dat_LED7_OFF)
+    RS485Dat_LED7_ON                         0x08002411   Thumb Code    14  bus_app.o(i.RS485Dat_LED7_ON)
+    RS485Dat_LED8_OFF                        0x08002425   Thumb Code    14  bus_app.o(i.RS485Dat_LED8_OFF)
+    RS485Dat_LED8_ON                         0x08002439   Thumb Code    14  bus_app.o(i.RS485Dat_LED8_ON)
+    RS485Dat_LED9_OFF                        0x0800244d   Thumb Code    14  bus_app.o(i.RS485Dat_LED9_OFF)
+    RS485Dat_LED9_ON                         0x08002461   Thumb Code    14  bus_app.o(i.RS485Dat_LED9_ON)
+    RS485_InitTXE                            0x08002475   Thumb Code    46  bsp_uart_fifo.o(i.RS485_InitTXE)
+    RS485_ReceiveDat                         0x080024a9   Thumb Code   168  bsp_uart_fifo.o(i.RS485_ReceiveDat)
+    RS485_ReciveNew                          0x08002559   Thumb Code     2  bsp_uart_fifo.o(i.RS485_ReciveNew)
+    RS485_SendBefor                          0x0800255d   Thumb Code     8  bsp_uart_fifo.o(i.RS485_SendBefor)
+    RS485_SendBuf                            0x08002569   Thumb Code    30  bsp_uart_fifo.o(i.RS485_SendBuf)
+    RS485_SendDat                            0x0800258d   Thumb Code    60  bsp_uart_fifo.o(i.RS485_SendDat)
+    RS485_SendOver                           0x080025d5   Thumb Code     8  bsp_uart_fifo.o(i.RS485_SendOver)
+    ReadInputDat                             0x080025e1   Thumb Code   374  check_app.o(i.ReadInputDat)
+    Read_InputDevDat                         0x08002761   Thumb Code   302  bsp_cd4067.o(i.Read_InputDevDat)
+    Read_Input_KPDevDat                      0x0800289d   Thumb Code   316  bsp_cd4051.o(i.Read_Input_KPDevDat)
+    Read_Optocoupler                         0x080029e5   Thumb Code    26  bsp_cd4067.o(i.Read_Optocoupler)
+    SVC_Handler                              0x08002a05   Thumb Code     2  stm32f10x_it.o(i.SVC_Handler)
+    SetInput_CSCD4051Switch                  0x08002c99   Thumb Code    76  bsp_cd4051.o(i.SetInput_CSCD4051Switch)
+    SetInput_IICD4051Switch                  0x08002ce9   Thumb Code    82  bsp_cd4051.o(i.SetInput_IICD4051Switch)
+    SysTick_CLKSourceConfig                  0x08002f4d   Thumb Code    40  misc.o(i.SysTick_CLKSourceConfig)
+    SysTick_Handler                          0x08002f75   Thumb Code     8  stm32f10x_it.o(i.SysTick_Handler)
+    SysTick_ISR                              0x08002f7d   Thumb Code    74  bsp_timer.o(i.SysTick_ISR)
+    SystemInit                               0x08002fd5   Thumb Code    78  system_stm32f10x.o(i.SystemInit)
+    TIM2_IRQHandler                          0x08003035   Thumb Code   224  stm32f10x_it.o(i.TIM2_IRQHandler)
+    TIM3_IRQHandler                          0x08003125   Thumb Code   176  main.o(i.TIM3_IRQHandler)
+    TIM3_Int_Init                            0x080031ed   Thumb Code    90  bsp_timertim3.o(i.TIM3_Int_Init)
+    TIM_ClearITPendingBit                    0x0800324d   Thumb Code     6  stm32f10x_tim.o(i.TIM_ClearITPendingBit)
+    TIM_Cmd                                  0x08003253   Thumb Code    24  stm32f10x_tim.o(i.TIM_Cmd)
+    TIM_GetCapture1                          0x0800326b   Thumb Code     6  stm32f10x_tim.o(i.TIM_GetCapture1)
+    TIM_GetITStatus                          0x08003271   Thumb Code    34  stm32f10x_tim.o(i.TIM_GetITStatus)
+    TIM_ITConfig                             0x08003293   Thumb Code    18  stm32f10x_tim.o(i.TIM_ITConfig)
+    TIM_OC1PolarityConfig                    0x080032a5   Thumb Code    18  stm32f10x_tim.o(i.TIM_OC1PolarityConfig)
+    TIM_SetCounter                           0x080032b7   Thumb Code     4  stm32f10x_tim.o(i.TIM_SetCounter)
+    TIM_TimeBaseInit                         0x080032bd   Thumb Code   122  stm32f10x_tim.o(i.TIM_TimeBaseInit)
+    USART1_IRQHandler                        0x08003361   Thumb Code    10  bsp_uart_fifo.o(i.USART1_IRQHandler)
+    USART3_IRQHandler                        0x08003371   Thumb Code    10  bsp_uart_fifo.o(i.USART3_IRQHandler)
+    USART_ClearFlag                          0x08003381   Thumb Code    18  stm32f10x_usart.o(i.USART_ClearFlag)
+    USART_Cmd                                0x08003393   Thumb Code    24  stm32f10x_usart.o(i.USART_Cmd)
+    USART_GetITStatus                        0x080033ab   Thumb Code    84  stm32f10x_usart.o(i.USART_GetITStatus)
+    USART_ITConfig                           0x080033ff   Thumb Code    74  stm32f10x_usart.o(i.USART_ITConfig)
+    USART_Init                               0x08003449   Thumb Code   210  stm32f10x_usart.o(i.USART_Init)
+    USART_ReceiveData                        0x08003521   Thumb Code    10  stm32f10x_usart.o(i.USART_ReceiveData)
+    USART_SendData                           0x0800352b   Thumb Code     8  stm32f10x_usart.o(i.USART_SendData)
+    USB_LP_CAN1_RX0_IRQHandler               0x08003535   Thumb Code    54  bsp_can.o(i.USB_LP_CAN1_RX0_IRQHandler)
+    UsageFault_Handler                       0x080037a5   Thumb Code     4  stm32f10x_it.o(i.UsageFault_Handler)
+    __0printf$8                              0x080037a9   Thumb Code    22  printf8.o(i.__0printf$8)
+    __1printf$8                              0x080037a9   Thumb Code     0  printf8.o(i.__0printf$8)
+    __2printf                                0x080037a9   Thumb Code     0  printf8.o(i.__0printf$8)
+    __scatterload_copy                       0x080037c9   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x080037d7   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x080037d9   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    bsp_CheckTimer                           0x08003c59   Thumb Code    40  bsp_timer.o(i.bsp_CheckTimer)
+    bsp_GetKey                               0x08003d51   Thumb Code    46  bsp_fifo_key.o(i.bsp_GetKey)
+    bsp_HC595_Config                         0x08003d85   Thumb Code    92  bsp_hc595.o(i.bsp_HC595_Config)
+    bsp_InitCQVar                            0x08003de9   Thumb Code    32  bsp_fifo.o(i.bsp_InitCQVar)
+    bsp_InitKey                              0x08003e11   Thumb Code    12  bsp_fifo_key.o(i.bsp_InitKey)
+    bsp_InitTimer                            0x08003ee9   Thumb Code    28  bsp_timer.o(i.bsp_InitTimer)
+    bsp_InitUart                             0x08003f09   Thumb Code    20  bsp_uart_fifo.o(i.bsp_InitUart)
+    bsp_KeyScan                              0x08003f1d   Thumb Code    22  bsp_fifo_key.o(i.bsp_KeyScan)
+    bsp_PutKey                               0x08003f35   Thumb Code    28  bsp_fifo_key.o(i.bsp_PutKey)
+    bsp_StartTimer                           0x08003f6d   Thumb Code    42  bsp_timer.o(i.bsp_StartTimer)
+    comGetChar                               0x08003f9d   Thumb Code    30  bsp_uart_fifo.o(i.comGetChar)
+    comSendBuf                               0x08003fbb   Thumb Code    46  bsp_uart_fifo.o(i.comSendBuf)
+    delay_init                               0x08003fe9   Thumb Code    50  delay.o(i.delay_init)
+    delay_ms                                 0x0800402d   Thumb Code    72  delay.o(i.delay_ms)
+    delay_us                                 0x08004079   Thumb Code    72  delay.o(i.delay_us)
+    fputc                                    0x080040c5   Thumb Code    24  bsp_uart_fifo.o(i.fputc)
+    main                                     0x080040e1   Thumb Code   920  main.o(i.main)
+    table                                    0x08004560   Data          16  bsp_tm1639.o(.constdata)
+    Table_S                                  0x08004570   Data          28  bsp_tm1639.o(.constdata)
+    Region$$Table$$Base                      0x080045d4   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x080045f4   Number         0  anon$$obj.o(Region$$Table)
     g_RxMessage                              0x20000000   Data           8  main.o(.data)
     g_RxMessFlag                             0x20000008   Data           1  main.o(.data)
     OutFlag                                  0x20000009   Data           1  main.o(.data)
@@ -1894,12 +1883,14 @@ Image Symbol Table
     SystemCoreClock                          0x20000198   Data           4  system_stm32f10x.o(.data)
     AHBPrescTable                            0x2000019c   Data          16  system_stm32f10x.o(.data)
     g_ShowDat                                0x200001ac   Data          12  main.o(.bss)
-    g_Tmr                                    0x200001b8   Data          32  bsp_timer.o(.bss)
-    PBusDat                                  0x200001d8   Data          16  bsp_uart_fifo.o(.bss)
-    RS485Dat                                 0x200001e8   Data          10  bsp_uart_fifo.o(.bss)
-    g_SerialDat                              0x200001f2   Data          32  bsp_uart_fifo.o(.bss)
-    s_gCQ                                    0x20001264   Data         163  bsp_fifo.o(.bss)
-    __initial_sp                             0x200033f0   Data           0  startup_stm32f10x_hd.o(STACK)
+    gAp                                      0x200001b8   Data          16  check_app.o(.bss)
+    gBp                                      0x200001c8   Data          16  check_app.o(.bss)
+    g_Tmr                                    0x200001d8   Data          32  bsp_timer.o(.bss)
+    PBusDat                                  0x200001f8   Data          16  bsp_uart_fifo.o(.bss)
+    RS485Dat                                 0x20000208   Data          10  bsp_uart_fifo.o(.bss)
+    g_SerialDat                              0x20000212   Data          32  bsp_uart_fifo.o(.bss)
+    s_gCQ                                    0x20001284   Data         163  bsp_fifo.o(.bss)
+    __initial_sp                             0x20003410   Data           0  startup_stm32f10x_hd.o(STACK)
 
 
 
@@ -1909,245 +1900,241 @@ Memory Map of the image
 
   Image Entry point : 0x08000131
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00004854, Max: 0x00020000, ABSOLUTE, COMPRESSED[0x000047dc])
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x000047a0, Max: 0x00020000, ABSOLUTE, COMPRESSED[0x00004728])
 
-    Execution Region ER_IROM1 (Base: 0x08000000, Size: 0x000046a8, Max: 0x00020000, ABSOLUTE)
+    Execution Region ER_IROM1 (Base: 0x08000000, Size: 0x000045f4, Max: 0x00020000, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x08000000   0x00000130   Data   RO         1644    RESET               startup_stm32f10x_hd.o
-    0x08000130   0x00000000   Code   RO         3395  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
-    0x08000130   0x00000004   Code   RO         3675    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
-    0x08000134   0x00000004   Code   RO         3678    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
-    0x08000138   0x00000000   Code   RO         3680    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
-    0x08000138   0x00000000   Code   RO         3682    .ARM.Collect$$$$0000000A  mc_w.l(entry8b.o)
-    0x08000138   0x00000008   Code   RO         3683    .ARM.Collect$$$$0000000B  mc_w.l(entry9a.o)
-    0x08000140   0x00000000   Code   RO         3685    .ARM.Collect$$$$0000000D  mc_w.l(entry10a.o)
-    0x08000140   0x00000000   Code   RO         3687    .ARM.Collect$$$$0000000F  mc_w.l(entry11a.o)
-    0x08000140   0x00000004   Code   RO         3676    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
-    0x08000144   0x00000024   Code   RO         1645    .text               startup_stm32f10x_hd.o
-    0x08000168   0x00000064   Code   RO         3665    .text               mf_w.l(fmul.o)
-    0x080001cc   0x000000de   Code   RO         3667    .text               mf_w.l(ddiv.o)
-    0x080002aa   0x0000001a   Code   RO         3669    .text               mf_w.l(dfltui.o)
-    0x080002c4   0x00000028   Code   RO         3671    .text               mf_w.l(ffixui.o)
-    0x080002ec   0x00000038   Code   RO         3673    .text               mf_w.l(d2f.o)
-    0x08000324   0x00000062   Code   RO         3691    .text               mc_w.l(uldiv.o)
-    0x08000386   0x00000000   Code   RO         3693    .text               mc_w.l(iusefp.o)
-    0x08000386   0x0000006e   Code   RO         3694    .text               mf_w.l(fepilogue.o)
-    0x080003f4   0x000000ba   Code   RO         3696    .text               mf_w.l(depilogue.o)
+    0x08000000   0x00000130   Data   RO         1647    RESET               startup_stm32f10x_hd.o
+    0x08000130   0x00000000   Code   RO         3398  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
+    0x08000130   0x00000004   Code   RO         3678    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
+    0x08000134   0x00000004   Code   RO         3681    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
+    0x08000138   0x00000000   Code   RO         3683    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
+    0x08000138   0x00000000   Code   RO         3685    .ARM.Collect$$$$0000000A  mc_w.l(entry8b.o)
+    0x08000138   0x00000008   Code   RO         3686    .ARM.Collect$$$$0000000B  mc_w.l(entry9a.o)
+    0x08000140   0x00000000   Code   RO         3688    .ARM.Collect$$$$0000000D  mc_w.l(entry10a.o)
+    0x08000140   0x00000000   Code   RO         3690    .ARM.Collect$$$$0000000F  mc_w.l(entry11a.o)
+    0x08000140   0x00000004   Code   RO         3679    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
+    0x08000144   0x00000024   Code   RO         1648    .text               startup_stm32f10x_hd.o
+    0x08000168   0x00000064   Code   RO         3668    .text               mf_w.l(fmul.o)
+    0x080001cc   0x000000de   Code   RO         3670    .text               mf_w.l(ddiv.o)
+    0x080002aa   0x0000001a   Code   RO         3672    .text               mf_w.l(dfltui.o)
+    0x080002c4   0x00000028   Code   RO         3674    .text               mf_w.l(ffixui.o)
+    0x080002ec   0x00000038   Code   RO         3676    .text               mf_w.l(d2f.o)
+    0x08000324   0x00000062   Code   RO         3694    .text               mc_w.l(uldiv.o)
+    0x08000386   0x00000000   Code   RO         3696    .text               mc_w.l(iusefp.o)
+    0x08000386   0x0000006e   Code   RO         3697    .text               mf_w.l(fepilogue.o)
+    0x080003f4   0x000000ba   Code   RO         3699    .text               mf_w.l(depilogue.o)
     0x080004ae   0x00000002   PAD
-    0x080004b0   0x00000024   Code   RO         3706    .text               mc_w.l(init.o)
-    0x080004d4   0x0000001e   Code   RO         3708    .text               mc_w.l(llshl.o)
-    0x080004f2   0x00000020   Code   RO         3710    .text               mc_w.l(llushr.o)
-    0x08000512   0x00000056   Code   RO         3722    .text               mc_w.l(__dczerorl2.o)
-    0x08000568   0x00000016   Code   RO         2186    i.ADC_Cmd           stm32f10x_adc.o
+    0x080004b0   0x00000024   Code   RO         3709    .text               mc_w.l(init.o)
+    0x080004d4   0x0000001e   Code   RO         3711    .text               mc_w.l(llshl.o)
+    0x080004f2   0x00000020   Code   RO         3713    .text               mc_w.l(llushr.o)
+    0x08000512   0x00000056   Code   RO         3725    .text               mc_w.l(__dczerorl2.o)
+    0x08000568   0x00000016   Code   RO         2189    i.ADC_Cmd           stm32f10x_adc.o
     0x0800057e   0x00000002   PAD
-    0x08000580   0x0000005c   Code   RO         2188    i.ADC_DeInit        stm32f10x_adc.o
-    0x080005dc   0x00000014   Code   RO         2194    i.ADC_GetCalibrationStatus  stm32f10x_adc.o
-    0x080005f0   0x00000014   Code   RO         2200    i.ADC_GetResetCalibrationStatus  stm32f10x_adc.o
-    0x08000604   0x00000050   Code   RO         2204    i.ADC_Init          stm32f10x_adc.o
-    0x08000654   0x0000000a   Code   RO         2209    i.ADC_ResetCalibration  stm32f10x_adc.o
-    0x0800065e   0x0000000a   Code   RO         2213    i.ADC_StartCalibration  stm32f10x_adc.o
-    0x08000668   0x0000008c   Code   RO          667    i.Adc_Init          bsp_adc.o
-    0x080006f4   0x000000f4   Code   RO          814    i.BspDht11_Config   bsp_dht11.o
-    0x080007e8   0x00000074   Code   RO         1477    i.BspInput_CD4051_Config  bsp_cd4051.o
-    0x0800085c   0x0000000c   Code   RO         1478    i.BspInput_CD4051_Delay_ms  bsp_cd4051.o
-    0x08000868   0x0000000c   Code   RO         1479    i.BspInput_CD4051_Delay_us  bsp_cd4051.o
-    0x08000874   0x00000040   Code   RO         1427    i.BspInput_CD4067_Config  bsp_cd4067.o
-    0x080008b4   0x0000000c   Code   RO         1428    i.BspInput_CD4067_Delay_ms  bsp_cd4067.o
-    0x080008c0   0x0000000c   Code   RO         1429    i.BspInput_CD4067_Delay_us  bsp_cd4067.o
-    0x080008cc   0x00000094   Code   RO         1385    i.BspLed_Show       bsp_hc595.o
-    0x08000960   0x0000005c   Code   RO          869    i.BspTM1639_ClearALL  bsp_tm1639.o
-    0x080009bc   0x00000030   Code   RO          870    i.BspTm1639_Config  bsp_tm1639.o
-    0x080009ec   0x0000002e   Code   RO          871    i.BspTm1639_Delay   bsp_tm1639.o
+    0x08000580   0x0000005c   Code   RO         2191    i.ADC_DeInit        stm32f10x_adc.o
+    0x080005dc   0x00000014   Code   RO         2197    i.ADC_GetCalibrationStatus  stm32f10x_adc.o
+    0x080005f0   0x00000014   Code   RO         2203    i.ADC_GetResetCalibrationStatus  stm32f10x_adc.o
+    0x08000604   0x00000050   Code   RO         2207    i.ADC_Init          stm32f10x_adc.o
+    0x08000654   0x0000000a   Code   RO         2212    i.ADC_ResetCalibration  stm32f10x_adc.o
+    0x0800065e   0x0000000a   Code   RO         2216    i.ADC_StartCalibration  stm32f10x_adc.o
+    0x08000668   0x0000008c   Code   RO          670    i.Adc_Init          bsp_adc.o
+    0x080006f4   0x000000f4   Code   RO          817    i.BspDht11_Config   bsp_dht11.o
+    0x080007e8   0x00000074   Code   RO         1480    i.BspInput_CD4051_Config  bsp_cd4051.o
+    0x0800085c   0x0000000c   Code   RO         1481    i.BspInput_CD4051_Delay_ms  bsp_cd4051.o
+    0x08000868   0x0000000c   Code   RO         1482    i.BspInput_CD4051_Delay_us  bsp_cd4051.o
+    0x08000874   0x00000040   Code   RO         1430    i.BspInput_CD4067_Config  bsp_cd4067.o
+    0x080008b4   0x0000000c   Code   RO         1431    i.BspInput_CD4067_Delay_ms  bsp_cd4067.o
+    0x080008c0   0x0000000c   Code   RO         1432    i.BspInput_CD4067_Delay_us  bsp_cd4067.o
+    0x080008cc   0x00000094   Code   RO         1388    i.BspLed_Show       bsp_hc595.o
+    0x08000960   0x0000005c   Code   RO          872    i.BspTM1639_ClearALL  bsp_tm1639.o
+    0x080009bc   0x00000030   Code   RO          873    i.BspTm1639_Config  bsp_tm1639.o
+    0x080009ec   0x0000002e   Code   RO          874    i.BspTm1639_Delay   bsp_tm1639.o
     0x08000a1a   0x00000002   PAD
-    0x08000a1c   0x000001d4   Code   RO          872    i.BspTm1639_Show    bsp_tm1639.o
-    0x08000bf0   0x00000054   Code   RO          874    i.BspTm1639_Writebyte  bsp_tm1639.o
-    0x08000c44   0x0000005c   Code   RO         1537    i.Bsp_CS5463_Config  bsp_cs5463.o
+    0x08000a1c   0x000001d4   Code   RO          875    i.BspTm1639_Show    bsp_tm1639.o
+    0x08000bf0   0x00000054   Code   RO          877    i.BspTm1639_Writebyte  bsp_tm1639.o
+    0x08000c44   0x0000005c   Code   RO         1540    i.Bsp_CS5463_Config  bsp_cs5463.o
     0x08000ca0   0x00000004   Code   RO          237    i.BusFault_Handler  stm32f10x_it.o
-    0x08000ca4   0x00000108   Code   RO         3028    i.CAN_FilterInit    stm32f10x_can.o
-    0x08000dac   0x00000012   Code   RO         3034    i.CAN_ITConfig      stm32f10x_can.o
-    0x08000dbe   0x00000114   Code   RO         3035    i.CAN_Init          stm32f10x_can.o
+    0x08000ca4   0x00000108   Code   RO         3031    i.CAN_FilterInit    stm32f10x_can.o
+    0x08000dac   0x00000012   Code   RO         3037    i.CAN_ITConfig      stm32f10x_can.o
+    0x08000dbe   0x00000114   Code   RO         3038    i.CAN_Init          stm32f10x_can.o
     0x08000ed2   0x00000002   PAD
-    0x08000ed4   0x00000198   Code   RO          697    i.CAN_Mode_Init     bsp_can.o
-    0x0800106c   0x000000f0   Code   RO         3038    i.CAN_Receive       stm32f10x_can.o
+    0x08000ed4   0x00000198   Code   RO          700    i.CAN_Mode_Init     bsp_can.o
+    0x0800106c   0x000000f0   Code   RO         3041    i.CAN_Receive       stm32f10x_can.o
     0x0800115c   0x00000038   Code   RO            1    i.CPU_IDLE          main.o
-    0x08001194   0x00000020   Code   RO          740    i.CRC8_Table        bsp_crc8.o
-    0x080011b4   0x00000078   Code   RO         1538    i.CS5463CMD         bsp_cs5463.o
-    0x0800122c   0x000000f0   Code   RO         1539    i.CS5463ReadReg     bsp_cs5463.o
-    0x0800131c   0x000000dc   Code   RO         1540    i.CS5463WriteReg    bsp_cs5463.o
-    0x080013f8   0x0000003c   Code   RO         1541    i.CS5463_GetStaReg_Val  bsp_cs5463.o
-    0x08001434   0x00000074   Code   RO         1544    i.CS546x_Get_Irms   bsp_cs5463.o
-    0x080014a8   0x00000074   Code   RO         1545    i.CS546x_Get_Vrms   bsp_cs5463.o
-    0x0800151c   0x00000180   Code   RO         1546    i.CS546x_Init       bsp_cs5463.o
-    0x0800169c   0x00000018   Code   RO         1549    i.CS546x_ResetStaReg  bsp_cs5463.o
-    0x080016b4   0x0000003c   Code   RO         1550    i.CS546x_WriteReg   bsp_cs5463.o
-    0x080016f0   0x00000060   Code   RO         1551    i.CS546x_Write_Byte  bsp_cs5463.o
-    0x08001750   0x00000034   Code   RO          931    i.ComToUart         bsp_uart_fifo.o
-    0x08001784   0x00000034   Code   RO          932    i.ConfigUartNVIC    bsp_uart_fifo.o
-    0x080017b8   0x00000070   Code   RO          815    i.DHT11_Check       bsp_dht11.o
-    0x08001828   0x0000005c   Code   RO          816    i.DHT11_Read_Bit    bsp_dht11.o
-    0x08001884   0x0000001e   Code   RO          817    i.DHT11_Read_Byte   bsp_dht11.o
+    0x08001194   0x00000020   Code   RO          743    i.CRC8_Table        bsp_crc8.o
+    0x080011b4   0x00000078   Code   RO         1541    i.CS5463CMD         bsp_cs5463.o
+    0x0800122c   0x000000f0   Code   RO         1542    i.CS5463ReadReg     bsp_cs5463.o
+    0x0800131c   0x000000dc   Code   RO         1543    i.CS5463WriteReg    bsp_cs5463.o
+    0x080013f8   0x0000003c   Code   RO         1544    i.CS5463_GetStaReg_Val  bsp_cs5463.o
+    0x08001434   0x00000074   Code   RO         1547    i.CS546x_Get_Irms   bsp_cs5463.o
+    0x080014a8   0x00000074   Code   RO         1548    i.CS546x_Get_Vrms   bsp_cs5463.o
+    0x0800151c   0x00000180   Code   RO         1549    i.CS546x_Init       bsp_cs5463.o
+    0x0800169c   0x00000018   Code   RO         1552    i.CS546x_ResetStaReg  bsp_cs5463.o
+    0x080016b4   0x0000003c   Code   RO         1553    i.CS546x_WriteReg   bsp_cs5463.o
+    0x080016f0   0x00000060   Code   RO         1554    i.CS546x_Write_Byte  bsp_cs5463.o
+    0x08001750   0x00000034   Code   RO          934    i.ComToUart         bsp_uart_fifo.o
+    0x08001784   0x00000034   Code   RO          935    i.ConfigUartNVIC    bsp_uart_fifo.o
+    0x080017b8   0x00000070   Code   RO          818    i.DHT11_Check       bsp_dht11.o
+    0x08001828   0x0000005c   Code   RO          819    i.DHT11_Read_Bit    bsp_dht11.o
+    0x08001884   0x0000001e   Code   RO          820    i.DHT11_Read_Byte   bsp_dht11.o
     0x080018a2   0x00000002   PAD
-    0x080018a4   0x00000064   Code   RO          818    i.DHT11_Read_Data   bsp_dht11.o
-    0x08001908   0x00000040   Code   RO          819    i.DHT11_Rst         bsp_dht11.o
+    0x080018a4   0x00000064   Code   RO          821    i.DHT11_Read_Data   bsp_dht11.o
+    0x08001908   0x00000040   Code   RO          822    i.DHT11_Rst         bsp_dht11.o
     0x08001948   0x00000002   Code   RO          238    i.DebugMon_Handler  stm32f10x_it.o
     0x0800194a   0x00000002   PAD
     0x0800194c   0x0000002c   Code   RO          340    i.DisplaySendDat    bus_app.o
-    0x08001978   0x00000116   Code   RO         2072    i.GPIO_Init         stm32f10x_gpio.o
-    0x08001a8e   0x00000012   Code   RO         2076    i.GPIO_ReadInputDataBit  stm32f10x_gpio.o
-    0x08001aa0   0x00000004   Code   RO         2079    i.GPIO_ResetBits    stm32f10x_gpio.o
-    0x08001aa4   0x00000004   Code   RO         2080    i.GPIO_SetBits      stm32f10x_gpio.o
-    0x08001aa8   0x000001b8   Code   RO         1552    i.Get_InputValue    bsp_cs5463.o
-    0x08001c60   0x0000001c   Code   RO         1386    i.HC595_Delay       bsp_hc595.o
+    0x08001978   0x00000116   Code   RO         2075    i.GPIO_Init         stm32f10x_gpio.o
+    0x08001a8e   0x00000012   Code   RO         2079    i.GPIO_ReadInputDataBit  stm32f10x_gpio.o
+    0x08001aa0   0x00000004   Code   RO         2082    i.GPIO_ResetBits    stm32f10x_gpio.o
+    0x08001aa4   0x00000004   Code   RO         2083    i.GPIO_SetBits      stm32f10x_gpio.o
+    0x08001aa8   0x000001b8   Code   RO         1555    i.Get_InputValue    bsp_cs5463.o
+    0x08001c60   0x0000001c   Code   RO         1389    i.HC595_Delay       bsp_hc595.o
     0x08001c7c   0x00000004   Code   RO          239    i.HardFault_Handler  stm32f10x_it.o
     0x08001c80   0x000000d4   Code   RO            3    i.InitBoard         main.o
-    0x08001d54   0x00000128   Code   RO          933    i.InitHardUart      bsp_uart_fifo.o
+    0x08001d54   0x00000128   Code   RO          936    i.InitHardUart      bsp_uart_fifo.o
     0x08001e7c   0x00000028   Code   RO            4    i.Init_GPIO         main.o
-    0x08001ea4   0x00000018   Code   RO         1293    i.IsKeyDown1        bsp_fifo_key.o
-    0x08001ebc   0x00000018   Code   RO         1294    i.IsKeyDown2        bsp_fifo_key.o
-    0x08001ed4   0x00000018   Code   RO         1295    i.IsKeyDown3        bsp_fifo_key.o
-    0x08001eec   0x00000018   Code   RO         1296    i.IsKeyDown4        bsp_fifo_key.o
-    0x08001f04   0x00000138   Code   RO          649    i.KMAutoRUN         check_app.o
-    0x0800203c   0x00000010   Code   RO         1387    i.KMOFF_Show        bsp_hc595.o
-    0x0800204c   0x00000010   Code   RO         1388    i.KMON_Show         bsp_hc595.o
-    0x0800205c   0x00000058   Code   RO         1389    i.KMOutUpdat        bsp_hc595.o
+    0x08001ea4   0x00000018   Code   RO         1296    i.IsKeyDown1        bsp_fifo_key.o
+    0x08001ebc   0x00000018   Code   RO         1297    i.IsKeyDown2        bsp_fifo_key.o
+    0x08001ed4   0x00000018   Code   RO         1298    i.IsKeyDown3        bsp_fifo_key.o
+    0x08001eec   0x00000018   Code   RO         1299    i.IsKeyDown4        bsp_fifo_key.o
+    0x08001f04   0x00000138   Code   RO          646    i.KMAutoRUN         check_app.o
+    0x0800203c   0x00000010   Code   RO         1390    i.KMOFF_Show        bsp_hc595.o
+    0x0800204c   0x00000010   Code   RO         1391    i.KMON_Show         bsp_hc595.o
+    0x0800205c   0x00000058   Code   RO         1392    i.KMOutUpdat        bsp_hc595.o
     0x080020b4   0x00000004   Code   RO          240    i.MemManage_Handler  stm32f10x_it.o
     0x080020b8   0x00000002   Code   RO          241    i.NMI_Handler       stm32f10x_it.o
     0x080020ba   0x00000002   PAD
-    0x080020bc   0x00000070   Code   RO         1850    i.NVIC_Init         misc.o
+    0x080020bc   0x00000070   Code   RO         1853    i.NVIC_Init         misc.o
     0x0800212c   0x00000002   Code   RO          242    i.PendSV_Handler    stm32f10x_it.o
     0x0800212e   0x00000002   PAD
-    0x08002130   0x00000018   Code   RO         1650    i.RCC_ADCCLKConfig  stm32f10x_rcc.o
-    0x08002148   0x00000020   Code   RO         1652    i.RCC_APB1PeriphClockCmd  stm32f10x_rcc.o
-    0x08002168   0x00000020   Code   RO         1654    i.RCC_APB2PeriphClockCmd  stm32f10x_rcc.o
-    0x08002188   0x00000020   Code   RO         1655    i.RCC_APB2PeriphResetCmd  stm32f10x_rcc.o
+    0x08002130   0x00000018   Code   RO         1653    i.RCC_ADCCLKConfig  stm32f10x_rcc.o
+    0x08002148   0x00000020   Code   RO         1655    i.RCC_APB1PeriphClockCmd  stm32f10x_rcc.o
+    0x08002168   0x00000020   Code   RO         1657    i.RCC_APB2PeriphClockCmd  stm32f10x_rcc.o
+    0x08002188   0x00000020   Code   RO         1658    i.RCC_APB2PeriphResetCmd  stm32f10x_rcc.o
     0x080021a8   0x00000002   Code   RO            8    i.RCC_Configuration  main.o
     0x080021aa   0x00000002   PAD
-    0x080021ac   0x000000d4   Code   RO         1662    i.RCC_GetClocksFreq  stm32f10x_rcc.o
+    0x080021ac   0x000000d4   Code   RO         1665    i.RCC_GetClocksFreq  stm32f10x_rcc.o
     0x08002280   0x00000014   Code   RO          341    i.RS485Dat_LED10_OFF  bus_app.o
     0x08002294   0x00000014   Code   RO          342    i.RS485Dat_LED10_ON  bus_app.o
-    0x080022a8   0x00000014   Code   RO          345    i.RS485Dat_LED12_OFF  bus_app.o
-    0x080022bc   0x00000014   Code   RO          346    i.RS485Dat_LED12_ON  bus_app.o
-    0x080022d0   0x00000014   Code   RO          347    i.RS485Dat_LED13_OFF  bus_app.o
-    0x080022e4   0x00000014   Code   RO          348    i.RS485Dat_LED13_ON  bus_app.o
-    0x080022f8   0x00000014   Code   RO          349    i.RS485Dat_LED14_OFF  bus_app.o
-    0x0800230c   0x00000014   Code   RO          350    i.RS485Dat_LED14_ON  bus_app.o
-    0x08002320   0x00000014   Code   RO          351    i.RS485Dat_LED15_OFF  bus_app.o
-    0x08002334   0x00000014   Code   RO          352    i.RS485Dat_LED15_ON  bus_app.o
-    0x08002348   0x00000014   Code   RO          353    i.RS485Dat_LED16_OFF  bus_app.o
-    0x0800235c   0x00000014   Code   RO          354    i.RS485Dat_LED16_ON  bus_app.o
-    0x08002370   0x00000014   Code   RO          355    i.RS485Dat_LED17_OFF  bus_app.o
-    0x08002384   0x00000014   Code   RO          356    i.RS485Dat_LED17_ON  bus_app.o
-    0x08002398   0x00000014   Code   RO          357    i.RS485Dat_LED18_OFF  bus_app.o
-    0x080023ac   0x00000014   Code   RO          358    i.RS485Dat_LED18_ON  bus_app.o
-    0x080023c0   0x00000014   Code   RO          359    i.RS485Dat_LED19_OFF  bus_app.o
-    0x080023d4   0x00000014   Code   RO          360    i.RS485Dat_LED19_ON  bus_app.o
-    0x080023e8   0x00000014   Code   RO          362    i.RS485Dat_LED1_ON  bus_app.o
-    0x080023fc   0x00000014   Code   RO          363    i.RS485Dat_LED20_OFF  bus_app.o
-    0x08002410   0x00000014   Code   RO          364    i.RS485Dat_LED20_ON  bus_app.o
-    0x08002424   0x00000014   Code   RO          365    i.RS485Dat_LED2_OFF  bus_app.o
-    0x08002438   0x00000014   Code   RO          366    i.RS485Dat_LED2_ON  bus_app.o
-    0x0800244c   0x00000014   Code   RO          369    i.RS485Dat_LED4_OFF  bus_app.o
-    0x08002460   0x00000014   Code   RO          370    i.RS485Dat_LED4_ON  bus_app.o
-    0x08002474   0x00000014   Code   RO          375    i.RS485Dat_LED7_OFF  bus_app.o
-    0x08002488   0x00000014   Code   RO          376    i.RS485Dat_LED7_ON  bus_app.o
-    0x0800249c   0x00000014   Code   RO          377    i.RS485Dat_LED8_OFF  bus_app.o
-    0x080024b0   0x00000014   Code   RO          378    i.RS485Dat_LED8_ON  bus_app.o
-    0x080024c4   0x00000034   Code   RO          942    i.RS485_InitTXE     bsp_uart_fifo.o
-    0x080024f8   0x000000b0   Code   RO          943    i.RS485_ReceiveDat  bsp_uart_fifo.o
-    0x080025a8   0x00000002   Code   RO          944    i.RS485_ReciveNew   bsp_uart_fifo.o
-    0x080025aa   0x00000002   PAD
-    0x080025ac   0x0000000c   Code   RO          945    i.RS485_SendBefor   bsp_uart_fifo.o
-    0x080025b8   0x00000024   Code   RO          946    i.RS485_SendBuf     bsp_uart_fifo.o
-    0x080025dc   0x00000048   Code   RO          947    i.RS485_SendDat     bsp_uart_fifo.o
-    0x08002624   0x0000000c   Code   RO          948    i.RS485_SendOver    bsp_uart_fifo.o
-    0x08002630   0x000001e4   Code   RO          650    i.ReadInputDat      check_app.o
-    0x08002814   0x0000013c   Code   RO         1431    i.Read_InputDevDat  bsp_cd4067.o
-    0x08002950   0x00000148   Code   RO         1482    i.Read_Input_KPDevDat  bsp_cd4051.o
-    0x08002a98   0x00000020   Code   RO         1432    i.Read_Optocoupler  bsp_cd4067.o
-    0x08002ab8   0x00000002   Code   RO          243    i.SVC_Handler       stm32f10x_it.o
-    0x08002aba   0x00000002   PAD
-    0x08002abc   0x00000290   Code   RO         1433    i.SetInput_CD4067Switch  bsp_cd4067.o
-    0x08002d4c   0x00000050   Code   RO         1483    i.SetInput_CSCD4051Switch  bsp_cd4051.o
-    0x08002d9c   0x0000005c   Code   RO         1484    i.SetInput_IICD4051Switch  bsp_cd4051.o
-    0x08002df8   0x00000120   Code   RO         1485    i.SetInput_KPCD4051Switch  bsp_cd4051.o
-    0x08002f18   0x00000008   Code   RO         3361    i.SetSysClock       system_stm32f10x.o
-    0x08002f20   0x000000e0   Code   RO         3362    i.SetSysClockTo72   system_stm32f10x.o
-    0x08003000   0x00000028   Code   RO         1854    i.SysTick_CLKSourceConfig  misc.o
-    0x08003028   0x00000008   Code   RO          244    i.SysTick_Handler   stm32f10x_it.o
-    0x08003030   0x00000058   Code   RO          754    i.SysTick_ISR       bsp_timer.o
-    0x08003088   0x00000060   Code   RO         3364    i.SystemInit        system_stm32f10x.o
-    0x080030e8   0x000000f0   Code   RO          245    i.TIM2_IRQHandler   stm32f10x_it.o
-    0x080031d8   0x000000c8   Code   RO           10    i.TIM3_IRQHandler   main.o
-    0x080032a0   0x00000060   Code   RO          854    i.TIM3_Int_Init     bsp_timertim3.o
-    0x08003300   0x00000006   Code   RO         2485    i.TIM_ClearITPendingBit  stm32f10x_tim.o
-    0x08003306   0x00000018   Code   RO         2490    i.TIM_Cmd           stm32f10x_tim.o
-    0x0800331e   0x00000006   Code   RO         2505    i.TIM_GetCapture1   stm32f10x_tim.o
-    0x08003324   0x00000022   Code   RO         2511    i.TIM_GetITStatus   stm32f10x_tim.o
-    0x08003346   0x00000012   Code   RO         2515    i.TIM_ITConfig      stm32f10x_tim.o
-    0x08003358   0x00000012   Code   RO         2521    i.TIM_OC1PolarityConfig  stm32f10x_tim.o
-    0x0800336a   0x00000004   Code   RO         2555    i.TIM_SetCounter    stm32f10x_tim.o
-    0x0800336e   0x00000002   PAD
-    0x08003370   0x000000a4   Code   RO         2561    i.TIM_TimeBaseInit  stm32f10x_tim.o
-    0x08003414   0x00000010   Code   RO          952    i.USART1_IRQHandler  bsp_uart_fifo.o
-    0x08003424   0x00000010   Code   RO          953    i.USART3_IRQHandler  bsp_uart_fifo.o
-    0x08003434   0x00000012   Code   RO         1886    i.USART_ClearFlag   stm32f10x_usart.o
-    0x08003446   0x00000018   Code   RO         1890    i.USART_Cmd         stm32f10x_usart.o
-    0x0800345e   0x00000054   Code   RO         1894    i.USART_GetITStatus  stm32f10x_usart.o
-    0x080034b2   0x0000004a   Code   RO         1896    i.USART_ITConfig    stm32f10x_usart.o
-    0x080034fc   0x000000d8   Code   RO         1897    i.USART_Init        stm32f10x_usart.o
-    0x080035d4   0x0000000a   Code   RO         1904    i.USART_ReceiveData  stm32f10x_usart.o
-    0x080035de   0x00000008   Code   RO         1907    i.USART_SendData    stm32f10x_usart.o
-    0x080035e6   0x00000002   PAD
-    0x080035e8   0x00000044   Code   RO          702    i.USB_LP_CAN1_RX0_IRQHandler  bsp_can.o
-    0x0800362c   0x0000004a   Code   RO          954    i.UartGetChar       bsp_uart_fifo.o
-    0x08003676   0x000000e6   Code   RO          955    i.UartIRQ           bsp_uart_fifo.o
-    0x0800375c   0x00000072   Code   RO          956    i.UartSend          bsp_uart_fifo.o
-    0x080037ce   0x00000002   PAD
-    0x080037d0   0x00000088   Code   RO          957    i.UartVarInit       bsp_uart_fifo.o
-    0x08003858   0x00000004   Code   RO          246    i.UsageFault_Handler  stm32f10x_it.o
-    0x0800385c   0x00000020   Code   RO         3611    i.__0printf$8       mc_w.l(printf8.o)
-    0x0800387c   0x0000000e   Code   RO         3716    i.__scatterload_copy  mc_w.l(handlers.o)
-    0x0800388a   0x00000002   Code   RO         3717    i.__scatterload_null  mc_w.l(handlers.o)
-    0x0800388c   0x0000000e   Code   RO         3718    i.__scatterload_zeroinit  mc_w.l(handlers.o)
-    0x0800389a   0x00000006   Code   RO          755    i.__set_PRIMASK     bsp_timer.o
-    0x080038a0   0x00000006   Code   RO          958    i.__set_PRIMASK     bsp_uart_fifo.o
-    0x080038a6   0x00000002   PAD
-    0x080038a8   0x00000410   Code   RO         3618    i._printf_core      mc_w.l(printf8.o)
-    0x08003cb8   0x00000024   Code   RO         3619    i._printf_post_padding  mc_w.l(printf8.o)
-    0x08003cdc   0x0000002e   Code   RO         3620    i._printf_pre_padding  mc_w.l(printf8.o)
-    0x08003d0a   0x00000002   PAD
-    0x08003d0c   0x0000002c   Code   RO          756    i.bsp_CheckTimer    bsp_timer.o
-    0x08003d38   0x000000cc   Code   RO         1298    i.bsp_DetectKey     bsp_fifo_key.o
-    0x08003e04   0x00000034   Code   RO         1299    i.bsp_GetKey        bsp_fifo_key.o
-    0x08003e38   0x00000064   Code   RO         1390    i.bsp_HC595_Config  bsp_hc595.o
-    0x08003e9c   0x00000028   Code   RO         1262    i.bsp_InitCQVar     bsp_fifo.o
-    0x08003ec4   0x0000000c   Code   RO         1302    i.bsp_InitKey       bsp_fifo_key.o
-    0x08003ed0   0x0000005c   Code   RO         1303    i.bsp_InitKeyHard   bsp_fifo_key.o
-    0x08003f2c   0x00000070   Code   RO         1304    i.bsp_InitKeyVar    bsp_fifo_key.o
-    0x08003f9c   0x00000020   Code   RO          759    i.bsp_InitTimer     bsp_timer.o
-    0x08003fbc   0x00000014   Code   RO          961    i.bsp_InitUart      bsp_uart_fifo.o
-    0x08003fd0   0x00000016   Code   RO         1305    i.bsp_KeyScan       bsp_fifo_key.o
-    0x08003fe6   0x00000002   PAD
-    0x08003fe8   0x00000020   Code   RO         1306    i.bsp_PutKey        bsp_fifo_key.o
-    0x08004008   0x00000016   Code   RO          760    i.bsp_SoftTimerDec  bsp_timer.o
-    0x0800401e   0x00000002   PAD
-    0x08004020   0x00000030   Code   RO          761    i.bsp_StartTimer    bsp_timer.o
-    0x08004050   0x0000001e   Code   RO          967    i.comGetChar        bsp_uart_fifo.o
-    0x0800406e   0x0000002e   Code   RO          968    i.comSendBuf        bsp_uart_fifo.o
-    0x0800409c   0x00000044   Code   RO          314    i.delay_init        delay.o
-    0x080040e0   0x0000004c   Code   RO          315    i.delay_ms          delay.o
-    0x0800412c   0x0000004c   Code   RO          316    i.delay_us          delay.o
-    0x08004178   0x0000001c   Code   RO          970    i.fputc             bsp_uart_fifo.o
-    0x08004194   0x00000480   Code   RO           11    i.main              main.o
-    0x08004614   0x0000002c   Data   RO          875    .constdata          bsp_tm1639.o
-    0x08004640   0x00000046   Data   RO           13    .conststring        main.o
-    0x08004686   0x00000002   PAD
-    0x08004688   0x00000020   Data   RO         3714    Region$$Table       anon$$obj.o
+    0x080022a8   0x00000014   Code   RO          346    i.RS485Dat_LED12_ON  bus_app.o
+    0x080022bc   0x00000014   Code   RO          348    i.RS485Dat_LED13_ON  bus_app.o
+    0x080022d0   0x00000014   Code   RO          350    i.RS485Dat_LED14_ON  bus_app.o
+    0x080022e4   0x00000014   Code   RO          351    i.RS485Dat_LED15_OFF  bus_app.o
+    0x080022f8   0x00000014   Code   RO          352    i.RS485Dat_LED15_ON  bus_app.o
+    0x0800230c   0x00000014   Code   RO          353    i.RS485Dat_LED16_OFF  bus_app.o
+    0x08002320   0x00000014   Code   RO          354    i.RS485Dat_LED16_ON  bus_app.o
+    0x08002334   0x00000014   Code   RO          355    i.RS485Dat_LED17_OFF  bus_app.o
+    0x08002348   0x00000014   Code   RO          356    i.RS485Dat_LED17_ON  bus_app.o
+    0x0800235c   0x00000014   Code   RO          358    i.RS485Dat_LED18_ON  bus_app.o
+    0x08002370   0x00000014   Code   RO          360    i.RS485Dat_LED19_ON  bus_app.o
+    0x08002384   0x00000014   Code   RO          362    i.RS485Dat_LED1_ON  bus_app.o
+    0x08002398   0x00000014   Code   RO          364    i.RS485Dat_LED20_ON  bus_app.o
+    0x080023ac   0x00000014   Code   RO          365    i.RS485Dat_LED2_OFF  bus_app.o
+    0x080023c0   0x00000014   Code   RO          366    i.RS485Dat_LED2_ON  bus_app.o
+    0x080023d4   0x00000014   Code   RO          369    i.RS485Dat_LED4_OFF  bus_app.o
+    0x080023e8   0x00000014   Code   RO          370    i.RS485Dat_LED4_ON  bus_app.o
+    0x080023fc   0x00000014   Code   RO          375    i.RS485Dat_LED7_OFF  bus_app.o
+    0x08002410   0x00000014   Code   RO          376    i.RS485Dat_LED7_ON  bus_app.o
+    0x08002424   0x00000014   Code   RO          377    i.RS485Dat_LED8_OFF  bus_app.o
+    0x08002438   0x00000014   Code   RO          378    i.RS485Dat_LED8_ON  bus_app.o
+    0x0800244c   0x00000014   Code   RO          379    i.RS485Dat_LED9_OFF  bus_app.o
+    0x08002460   0x00000014   Code   RO          380    i.RS485Dat_LED9_ON  bus_app.o
+    0x08002474   0x00000034   Code   RO          945    i.RS485_InitTXE     bsp_uart_fifo.o
+    0x080024a8   0x000000b0   Code   RO          946    i.RS485_ReceiveDat  bsp_uart_fifo.o
+    0x08002558   0x00000002   Code   RO          947    i.RS485_ReciveNew   bsp_uart_fifo.o
+    0x0800255a   0x00000002   PAD
+    0x0800255c   0x0000000c   Code   RO          948    i.RS485_SendBefor   bsp_uart_fifo.o
+    0x08002568   0x00000024   Code   RO          949    i.RS485_SendBuf     bsp_uart_fifo.o
+    0x0800258c   0x00000048   Code   RO          950    i.RS485_SendDat     bsp_uart_fifo.o
+    0x080025d4   0x0000000c   Code   RO          951    i.RS485_SendOver    bsp_uart_fifo.o
+    0x080025e0   0x00000180   Code   RO          647    i.ReadInputDat      check_app.o
+    0x08002760   0x0000013c   Code   RO         1434    i.Read_InputDevDat  bsp_cd4067.o
+    0x0800289c   0x00000148   Code   RO         1485    i.Read_Input_KPDevDat  bsp_cd4051.o
+    0x080029e4   0x00000020   Code   RO         1435    i.Read_Optocoupler  bsp_cd4067.o
+    0x08002a04   0x00000002   Code   RO          243    i.SVC_Handler       stm32f10x_it.o
+    0x08002a06   0x00000002   PAD
+    0x08002a08   0x00000290   Code   RO         1436    i.SetInput_CD4067Switch  bsp_cd4067.o
+    0x08002c98   0x00000050   Code   RO         1486    i.SetInput_CSCD4051Switch  bsp_cd4051.o
+    0x08002ce8   0x0000005c   Code   RO         1487    i.SetInput_IICD4051Switch  bsp_cd4051.o
+    0x08002d44   0x00000120   Code   RO         1488    i.SetInput_KPCD4051Switch  bsp_cd4051.o
+    0x08002e64   0x00000008   Code   RO         3364    i.SetSysClock       system_stm32f10x.o
+    0x08002e6c   0x000000e0   Code   RO         3365    i.SetSysClockTo72   system_stm32f10x.o
+    0x08002f4c   0x00000028   Code   RO         1857    i.SysTick_CLKSourceConfig  misc.o
+    0x08002f74   0x00000008   Code   RO          244    i.SysTick_Handler   stm32f10x_it.o
+    0x08002f7c   0x00000058   Code   RO          757    i.SysTick_ISR       bsp_timer.o
+    0x08002fd4   0x00000060   Code   RO         3367    i.SystemInit        system_stm32f10x.o
+    0x08003034   0x000000f0   Code   RO          245    i.TIM2_IRQHandler   stm32f10x_it.o
+    0x08003124   0x000000c8   Code   RO           10    i.TIM3_IRQHandler   main.o
+    0x080031ec   0x00000060   Code   RO          857    i.TIM3_Int_Init     bsp_timertim3.o
+    0x0800324c   0x00000006   Code   RO         2488    i.TIM_ClearITPendingBit  stm32f10x_tim.o
+    0x08003252   0x00000018   Code   RO         2493    i.TIM_Cmd           stm32f10x_tim.o
+    0x0800326a   0x00000006   Code   RO         2508    i.TIM_GetCapture1   stm32f10x_tim.o
+    0x08003270   0x00000022   Code   RO         2514    i.TIM_GetITStatus   stm32f10x_tim.o
+    0x08003292   0x00000012   Code   RO         2518    i.TIM_ITConfig      stm32f10x_tim.o
+    0x080032a4   0x00000012   Code   RO         2524    i.TIM_OC1PolarityConfig  stm32f10x_tim.o
+    0x080032b6   0x00000004   Code   RO         2558    i.TIM_SetCounter    stm32f10x_tim.o
+    0x080032ba   0x00000002   PAD
+    0x080032bc   0x000000a4   Code   RO         2564    i.TIM_TimeBaseInit  stm32f10x_tim.o
+    0x08003360   0x00000010   Code   RO          955    i.USART1_IRQHandler  bsp_uart_fifo.o
+    0x08003370   0x00000010   Code   RO          956    i.USART3_IRQHandler  bsp_uart_fifo.o
+    0x08003380   0x00000012   Code   RO         1889    i.USART_ClearFlag   stm32f10x_usart.o
+    0x08003392   0x00000018   Code   RO         1893    i.USART_Cmd         stm32f10x_usart.o
+    0x080033aa   0x00000054   Code   RO         1897    i.USART_GetITStatus  stm32f10x_usart.o
+    0x080033fe   0x0000004a   Code   RO         1899    i.USART_ITConfig    stm32f10x_usart.o
+    0x08003448   0x000000d8   Code   RO         1900    i.USART_Init        stm32f10x_usart.o
+    0x08003520   0x0000000a   Code   RO         1907    i.USART_ReceiveData  stm32f10x_usart.o
+    0x0800352a   0x00000008   Code   RO         1910    i.USART_SendData    stm32f10x_usart.o
+    0x08003532   0x00000002   PAD
+    0x08003534   0x00000044   Code   RO          705    i.USB_LP_CAN1_RX0_IRQHandler  bsp_can.o
+    0x08003578   0x0000004a   Code   RO          957    i.UartGetChar       bsp_uart_fifo.o
+    0x080035c2   0x000000e6   Code   RO          958    i.UartIRQ           bsp_uart_fifo.o
+    0x080036a8   0x00000072   Code   RO          959    i.UartSend          bsp_uart_fifo.o
+    0x0800371a   0x00000002   PAD
+    0x0800371c   0x00000088   Code   RO          960    i.UartVarInit       bsp_uart_fifo.o
+    0x080037a4   0x00000004   Code   RO          246    i.UsageFault_Handler  stm32f10x_it.o
+    0x080037a8   0x00000020   Code   RO         3614    i.__0printf$8       mc_w.l(printf8.o)
+    0x080037c8   0x0000000e   Code   RO         3719    i.__scatterload_copy  mc_w.l(handlers.o)
+    0x080037d6   0x00000002   Code   RO         3720    i.__scatterload_null  mc_w.l(handlers.o)
+    0x080037d8   0x0000000e   Code   RO         3721    i.__scatterload_zeroinit  mc_w.l(handlers.o)
+    0x080037e6   0x00000006   Code   RO          758    i.__set_PRIMASK     bsp_timer.o
+    0x080037ec   0x00000006   Code   RO          961    i.__set_PRIMASK     bsp_uart_fifo.o
+    0x080037f2   0x00000002   PAD
+    0x080037f4   0x00000410   Code   RO         3621    i._printf_core      mc_w.l(printf8.o)
+    0x08003c04   0x00000024   Code   RO         3622    i._printf_post_padding  mc_w.l(printf8.o)
+    0x08003c28   0x0000002e   Code   RO         3623    i._printf_pre_padding  mc_w.l(printf8.o)
+    0x08003c56   0x00000002   PAD
+    0x08003c58   0x0000002c   Code   RO          759    i.bsp_CheckTimer    bsp_timer.o
+    0x08003c84   0x000000cc   Code   RO         1301    i.bsp_DetectKey     bsp_fifo_key.o
+    0x08003d50   0x00000034   Code   RO         1302    i.bsp_GetKey        bsp_fifo_key.o
+    0x08003d84   0x00000064   Code   RO         1393    i.bsp_HC595_Config  bsp_hc595.o
+    0x08003de8   0x00000028   Code   RO         1265    i.bsp_InitCQVar     bsp_fifo.o
+    0x08003e10   0x0000000c   Code   RO         1305    i.bsp_InitKey       bsp_fifo_key.o
+    0x08003e1c   0x0000005c   Code   RO         1306    i.bsp_InitKeyHard   bsp_fifo_key.o
+    0x08003e78   0x00000070   Code   RO         1307    i.bsp_InitKeyVar    bsp_fifo_key.o
+    0x08003ee8   0x00000020   Code   RO          762    i.bsp_InitTimer     bsp_timer.o
+    0x08003f08   0x00000014   Code   RO          964    i.bsp_InitUart      bsp_uart_fifo.o
+    0x08003f1c   0x00000016   Code   RO         1308    i.bsp_KeyScan       bsp_fifo_key.o
+    0x08003f32   0x00000002   PAD
+    0x08003f34   0x00000020   Code   RO         1309    i.bsp_PutKey        bsp_fifo_key.o
+    0x08003f54   0x00000016   Code   RO          763    i.bsp_SoftTimerDec  bsp_timer.o
+    0x08003f6a   0x00000002   PAD
+    0x08003f6c   0x00000030   Code   RO          764    i.bsp_StartTimer    bsp_timer.o
+    0x08003f9c   0x0000001e   Code   RO          970    i.comGetChar        bsp_uart_fifo.o
+    0x08003fba   0x0000002e   Code   RO          971    i.comSendBuf        bsp_uart_fifo.o
+    0x08003fe8   0x00000044   Code   RO          314    i.delay_init        delay.o
+    0x0800402c   0x0000004c   Code   RO          315    i.delay_ms          delay.o
+    0x08004078   0x0000004c   Code   RO          316    i.delay_us          delay.o
+    0x080040c4   0x0000001c   Code   RO          973    i.fputc             bsp_uart_fifo.o
+    0x080040e0   0x00000480   Code   RO           11    i.main              main.o
+    0x08004560   0x0000002c   Data   RO          878    .constdata          bsp_tm1639.o
+    0x0800458c   0x00000046   Data   RO           13    .conststring        main.o
+    0x080045d2   0x00000002   PAD
+    0x080045d4   0x00000020   Data   RO         3717    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Base: 0x20000000, Size: 0x000033f0, Max: 0x00005000, ABSOLUTE, COMPRESSED[0x00000134])
+    Execution Region RW_IRAM1 (Base: 0x20000000, Size: 0x00003410, Max: 0x00005000, ABSOLUTE, COMPRESSED[0x00000134])
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2155,31 +2142,32 @@ Memory Map of the image
     0x20000018   0x00000004   Data   RW          247    .data               stm32f10x_it.o
     0x2000001c   0x00000004   Data   RW          317    .data               delay.o
     0x20000020   0x00000003   Data   RW          381    .data               bus_app.o
-    0x20000023   0x00000100   Data   RW          741    .data               bsp_crc8.o
+    0x20000023   0x00000100   Data   RW          744    .data               bsp_crc8.o
     0x20000123   0x00000001   PAD
-    0x20000124   0x00000005   Data   RW          763    .data               bsp_timer.o
+    0x20000124   0x00000005   Data   RW          766    .data               bsp_timer.o
     0x20000129   0x00000003   PAD
-    0x2000012c   0x00000008   Data   RW          876    .data               bsp_tm1639.o
-    0x20000134   0x00000008   Data   RW          972    .data               bsp_uart_fifo.o
-    0x2000013c   0x0000000e   Data   RW         1182    .data               bsp_stmflash.o
-    0x2000014a   0x00000007   Data   RW         1309    .data               bsp_fifo_key.o
+    0x2000012c   0x00000008   Data   RW          879    .data               bsp_tm1639.o
+    0x20000134   0x00000008   Data   RW          975    .data               bsp_uart_fifo.o
+    0x2000013c   0x0000000e   Data   RW         1185    .data               bsp_stmflash.o
+    0x2000014a   0x00000007   Data   RW         1312    .data               bsp_fifo_key.o
     0x20000151   0x00000001   PAD
-    0x20000152   0x00000004   Data   RW         1391    .data               bsp_hc595.o
-    0x20000156   0x00000008   Data   RW         1434    .data               bsp_cd4067.o
-    0x2000015e   0x0000000d   Data   RW         1486    .data               bsp_cd4051.o
+    0x20000152   0x00000004   Data   RW         1394    .data               bsp_hc595.o
+    0x20000156   0x00000008   Data   RW         1437    .data               bsp_cd4067.o
+    0x2000015e   0x0000000d   Data   RW         1489    .data               bsp_cd4051.o
     0x2000016b   0x00000001   PAD
-    0x2000016c   0x00000015   Data   RW         1554    .data               bsp_cs5463.o
-    0x20000181   0x00000014   Data   RW         1682    .data               stm32f10x_rcc.o
+    0x2000016c   0x00000015   Data   RW         1557    .data               bsp_cs5463.o
+    0x20000181   0x00000014   Data   RW         1685    .data               stm32f10x_rcc.o
     0x20000195   0x00000003   PAD
-    0x20000198   0x00000014   Data   RW         3365    .data               system_stm32f10x.o
+    0x20000198   0x00000014   Data   RW         3368    .data               system_stm32f10x.o
     0x200001ac   0x0000000c   Zero   RW           12    .bss                main.o
-    0x200001b8   0x00000020   Zero   RW          762    .bss                bsp_timer.o
-    0x200001d8   0x0000108c   Zero   RW          971    .bss                bsp_uart_fifo.o
-    0x20001264   0x00000146   Zero   RW         1264    .bss                bsp_fifo.o
-    0x200013aa   0x00000002   PAD
-    0x200013ac   0x00000040   Zero   RW         1308    .bss                bsp_fifo_key.o
-    0x200013ec   0x00000004   PAD
-    0x200013f0   0x00002000   Zero   RW         1642    STACK               startup_stm32f10x_hd.o
+    0x200001b8   0x00000020   Zero   RW          648    .bss                check_app.o
+    0x200001d8   0x00000020   Zero   RW          765    .bss                bsp_timer.o
+    0x200001f8   0x0000108c   Zero   RW          974    .bss                bsp_uart_fifo.o
+    0x20001284   0x00000146   Zero   RW         1267    .bss                bsp_fifo.o
+    0x200013ca   0x00000002   PAD
+    0x200013cc   0x00000040   Zero   RW         1311    .bss                bsp_fifo_key.o
+    0x2000140c   0x00000004   PAD
+    0x20001410   0x00002000   Zero   RW         1645    STACK               startup_stm32f10x_hd.o
 
 
 ==============================================================================
@@ -2204,10 +2192,10 @@ Image component sizes
         96          6          0          0          0        664   bsp_timertim3.o
        738         34         44          8          0       3849   bsp_tm1639.o
       1478        124          0          8       4236      14054   bsp_uart_fifo.o
-       624        180          0          3          0      18925   bus_app.o
-       796        122          0          0          0       1915   check_app.o
+       544        156          0          3          0      17206   bus_app.o
+       696        132          0          0         32       2329   check_app.o
        220         26          0          4          0       1667   delay.o
-      1662        368         70         24         12     275986   main.o
+      1662        376         70         24         12     274830   main.o
        152         12          0          0          0       1694   misc.o
         36          8        304          0       8192        936   startup_stm32f10x_hd.o
        254         24          0          0          0       6367   stm32f10x_adc.o
@@ -2220,7 +2208,7 @@ Image component sizes
        328         28          0         20          0       2589   system_stm32f10x.o
 
     ----------------------------------------------------------------------
-     15406       1668        452        428      12868     414137   Object Totals
+     15226       1662        452        428      12900     411676   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         32          0          2          9          6          0   (incl. Padding)
 
@@ -2273,15 +2261,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     17636       1738        452        428      12868     406097   Grand Totals
-     17636       1738        452        308      12868     406097   ELF Image Totals (compressed)
-     17636       1738        452        308          0          0   ROM Totals
+     17456       1732        452        428      12900     403844   Grand Totals
+     17456       1732        452        308      12900     403844   ELF Image Totals (compressed)
+     17456       1732        452        308          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                18088 (  17.66kB)
-    Total RW  Size (RW Data + ZI Data)             13296 (  12.98kB)
-    Total ROM Size (Code + RO Data + RW Data)      18396 (  17.96kB)
+    Total RO  Size (Code + RO Data)                17908 (  17.49kB)
+    Total RW  Size (RW Data + ZI Data)             13328 (  13.02kB)
+    Total ROM Size (Code + RO Data + RW Data)      18216 (  17.79kB)
 
 ==============================================================================
 

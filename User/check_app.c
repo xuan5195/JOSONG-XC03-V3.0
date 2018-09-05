@@ -1,82 +1,79 @@
 #include "stm32f10x.h"		
-#include "check_app.h"		
 #include "delay.h"
+
+#define GLOBAL_APP
+
+#include "check_app.h"		
 #include "bsp.h"
 
-void ReadInputDat(uint8_t _ApDat,uint8_t _BpDat)
+void ReadInputDat(void)
 {
-    uint8_t ApPowerDat=0,BpPowerDat=0;
-    uint8_t ApKMDat1=0,BpKMDat1=0,ApKMDat2=0,BpKMDat2=0;
-    if(((Read_Optocoupler(RDKMA1)==1)||(Read_Optocoupler(RDKMA2)==1) || (Read_Optocoupler(RDKMA3)==1))&&(_ApDat==0))
-    {   ApKMDat1=0xAA;           }//A泵接触器反馈异常
-    else
-    {   ApKMDat1=0x00;           }//A泵接触器反馈正常
-	if(((Read_Optocoupler(RDKMB1)==1)||(Read_Optocoupler(RDKMB2)==1) || (Read_Optocoupler(RDKMB3)==1))&&(_BpDat==0))
-    {   BpKMDat1=0xAA;           }//B泵接触器反馈异常
-    else
-    {   BpKMDat1=0x00;           }//B泵接触器反馈正常
-    ApPowerDat = Read_InputDevDat(2);//A泵动力电；0->异常;1->正常 
-    BpPowerDat = Read_InputDevDat(3);//B泵动力电；0->异常;1->正常 
-
-    if(((Read_Input_KPDevDat(2)==1)||(Read_Input_KPDevDat(1)==1) || (Read_Input_KPDevDat(0)==1))&&(_ApDat==0))
-    {   ApKMDat2=0xAA;           }//A泵KM前导点电压信号
-    else
-    {   ApKMDat2=0x00;           }
-    if(((Read_Input_KPDevDat(3)==1)||(Read_Input_KPDevDat(4)==1) || (Read_Input_KPDevDat(5)==1))&&(_BpDat==0))
-    {   BpKMDat2=0xAA;           }//B泵KM前导点电压信号
-    else
-    {   BpKMDat2=0x00;           }
+    gAp.KM1_Point = Read_Optocoupler(KMA1_PointNo);//KM1触点状态 NC常闭触点 0->闭合；1->断开
+    gAp.KM2_Point = Read_Optocoupler(KMA2_PointNo);//KM2触点状态 NC常闭触点 0->闭合；1->断开
+    gAp.KM3_Point = Read_Optocoupler(KMA3_PointNo);//KM3触点状态 NC常闭触点 0->闭合；1->断开
+    gBp.KM1_Point = Read_Optocoupler(KMB1_PointNo);//KM1触点状态 NC常闭触点 0->闭合；1->断开
+    gBp.KM2_Point = Read_Optocoupler(KMB2_PointNo);//KM2触点状态 NC常闭触点 0->闭合；1->断开
+    gBp.KM3_Point = Read_Optocoupler(KMB3_PointNo);//KM3触点状态 NC常闭触点 0->闭合；1->断开
     
-    if((ApPowerDat==0)&&(ApKMDat1==0x00)&&(ApKMDat2==0x00))     {   RS485Dat_LED7_OFF();    } //主一故障指示灯
-    else                                    				    {   RS485Dat_LED7_ON();     }
-    if((BpPowerDat==0)&&(BpKMDat1==0x00)&&(BpKMDat2==0x00))     {   RS485Dat_LED8_OFF();    } //主二故障指示灯        
-    else                                    				    {   RS485Dat_LED8_ON();     }		
+    gAp.Power_Statue = Read_InputDevDat(2);//A泵动力电；0->正常;1->异常 
+    gBp.Power_Statue = Read_InputDevDat(3);//B泵动力电；0->正常;1->异常 
 
-    if((ApPowerDat==0)&&(BpPowerDat==0))    {   RS485Dat_LED4_ON();     } //动力电指示灯  
-    else                                    {   RS485Dat_LED4_OFF();    } 
+    gAp.Work_Check = Read_InputDevDat(0);//A泵工作检测；0->正常;1->异常 
+    gBp.Work_Check = Read_InputDevDat(1);//B泵工作检测；0->正常;1->异常 
 
-    if(_ApDat!=0)   //Ap泵运行中
-    {
-        if(((Read_Optocoupler(RDKMA1)==1)&&(Read_Optocoupler(RDKMA2)==1)&&(Read_Optocoupler(RDKMA3)==0)))   //KM常开触点反馈 低速运行中
-        {
-            RS485Dat_LED12_OFF();RS485Dat_LED13_ON();RS485Dat_LED14_OFF();
-        }
-        else if(((Read_Optocoupler(RDKMA1)==1)&&(Read_Optocoupler(RDKMA2)==0)&&(Read_Optocoupler(RDKMA3)==1)))   //KM常开触点反馈 高速运行中
-        {
-            RS485Dat_LED12_OFF();RS485Dat_LED13_OFF();RS485Dat_LED14_ON();
-        }
-    }
-    else
-    {
-        RS485Dat_LED12_ON();RS485Dat_LED13_OFF();RS485Dat_LED14_OFF();
-    }
-    if(_BpDat!=0)   //Bp泵运行中
-    {
-        if(((Read_Optocoupler(RDKMB1)==1)&&(Read_Optocoupler(RDKMB2)==1)&&(Read_Optocoupler(RDKMB3)==0)))   //KM常开触点反馈 低速运行中
-        {
-            RS485Dat_LED18_OFF();RS485Dat_LED19_ON();RS485Dat_LED20_OFF();
-        }
-        else if(((Read_Optocoupler(RDKMB1)==1)&&(Read_Optocoupler(RDKMB2)==0)&&(Read_Optocoupler(RDKMB3)==1)))   //KM常开触点反馈 高速运行中
-        {
-            RS485Dat_LED18_OFF();RS485Dat_LED19_OFF();RS485Dat_LED20_ON();
-        }
-    }
-    else
-    {
-        RS485Dat_LED18_ON();RS485Dat_LED19_OFF();RS485Dat_LED20_OFF();
-    }
-    
-    if(Read_Optocoupler(4))//缺水检测,正常有水
-    {
-        RS485Dat_LED10_OFF();	//缺水    指示灯
-    }        
-    else				   //缺水检测,异常缺水
-    {
-        RS485Dat_LED10_ON();	//缺水    指示灯    
-    }
-//    if(Read_Optocoupler(5))//箱内进水检测，正常，未进水
-//    else				   //箱内进水检测，异常，主机自动手动不能启动水泵
+    gAp.KM1_Coil = Read_Input_KPDevDat(KMA1_CoilNo);//KM1线圈状态；0->正常;1->异常
+    gAp.KM2_Coil = Read_Input_KPDevDat(KMA2_CoilNo);//KM2线圈状态；0->正常;1->异常
+    gAp.KM3_Coil = Read_Input_KPDevDat(KMA3_CoilNo);//KM3线圈状态；0->正常;1->异常
+    gBp.KM1_Coil = Read_Input_KPDevDat(KMB1_CoilNo);//KM1线圈状态；0->正常;1->异常
+    gBp.KM2_Coil = Read_Input_KPDevDat(KMB2_CoilNo);//KM2线圈状态；0->正常;1->异常
+    gBp.KM3_Coil = Read_Input_KPDevDat(KMB3_CoilNo);//KM3线圈状态；0->正常;1->异常
 
+    gAp.Phase_Check = Read_Optocoupler(6);  //断相/过载检测，开关信号; 0->正常; 1->异常.
+    gBp.Phase_Check = Read_Optocoupler(7);  //断相/过载检测，开关信号; 0->正常; 1->异常.
+   
+    if(Read_Optocoupler(4)) { RS485Dat_LED10_OFF(); }//缺水检测,正常有水 缺水指示灯OFF        
+    else                    { RS485Dat_LED10_ON();  }//缺水检测,异常缺水 缺水指示灯ON    
+//  if(Read_Optocoupler(5))//箱内进水检测，正常，未进水
+//  else				   //箱内进水检测，异常，主机自动手动不能启动水泵
+
+    if((gAp.Power_Statue==0)&&(gBp.Power_Statue==0)){   RS485Dat_LED4_ON();     } //动力电指示灯
+    else                                            {   RS485Dat_LED4_OFF();    }
+    if((gAp.Phase_Check==0)&&(gBp.Phase_Check==0))  {   RS485Dat_LED9_ON();     } //断相/过载 指示灯
+    else                                            {   RS485Dat_LED9_OFF();    }
+
+    if(gAp.Statue==Stop)    //停止状态
+    {
+        if( (gAp.KM1_Point==0)&&(gAp.KM2_Point==0x00)&&(gAp.KM3_Point==0x00)&&
+            (gAp.KM1_Coil==0)&&(gAp.KM2_Coil==0x00)&&(gAp.KM3_Coil==0x00) )    	
+                {   RS485Dat_LED7_OFF();    } //主一故障指示灯
+        else    {   RS485Dat_LED7_ON();     }
+    }
+    else if(gAp.Statue==Slow)    //低速状态
+    {
+        ;
+    }
+    else if(gAp.Statue==HighSpeed)    //高速状态
+    {
+        ;
+    }    
+    if(gBp.Statue==Stop)    //停止状态
+    {
+        if( (gBp.KM1_Point==0)&&(gBp.KM2_Point==0x00)&&(gBp.KM3_Point==0x00)&&
+            (gBp.KM1_Coil==0)&&(gBp.KM2_Coil==0x00)&&(gBp.KM3_Coil==0x00) )    	
+                {   RS485Dat_LED8_OFF();    } //主二故障指示灯
+        else    {   RS485Dat_LED8_ON();     }
+    }
+    else if(gBp.Statue==Slow)    //低速状态
+    {
+//        if(gBp.DelayCheck_Count==0) //延时检测时间到，进入检测
+//        {
+//            if(gBp.Work_Check==1)   //工作检测失败，转为
+//        }                
+    }
+    else if(gBp.Statue==HighSpeed)    //高速状态
+    {
+        ;
+    }     
 }
 
 void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制

@@ -31369,7 +31369,6 @@ N#else
 N	#define printf_debug(...)
 N#endif
 N
-N
 N#include "bsp_timer.h"		
 L 1 "..\..\User\bsp\bsp_timer.h" 1
 N#ifndef __BSP_TIMER_H
@@ -31390,7 +31389,7 @@ Nuint8_t bsp_CheckTimer(uint8_t _id);
 Nint32_t bsp_GetRunTime(void);
 N
 N#endif
-L 44 "..\..\User\bsp\bsp.h" 2
+L 43 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_TimerTim3.h"
 L 1 "..\..\User\bsp\bsp_TimerTim3.h" 1
 N#ifndef __BSP_TIMERTIM3_H
@@ -31401,7 +31400,7 @@ N
 N#endif
 N
 N
-L 45 "..\..\User\bsp\bsp.h" 2
+L 44 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_Tim2.h"
 L 1 "..\..\User\bsp\bsp_Tim2.h" 1
 N#ifndef __BSP_TIM5_H
@@ -31412,7 +31411,7 @@ N
 N#endif
 N
 N
-L 46 "..\..\User\bsp\bsp.h" 2
+L 45 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_tm1639.h"		
 L 1 "..\..\User\bsp\bsp_tm1639.h" 1
 N#ifndef __BSP_TM1639_H
@@ -31460,7 +31459,7 @@ Nvoid BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate);
 Nvoid BspTm1639_ShowSNDat(uint8_t ShowMode,uint8_t *ShowDate);
 N
 N#endif
-L 47 "..\..\User\bsp\bsp.h" 2
+L 46 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_can.h"
 L 1 "..\..\User\bsp\bsp_can.h" 1
 N#ifndef __BSP_CAN_H
@@ -31496,7 +31495,7 @@ N
 N
 N
 N
-L 48 "..\..\User\bsp\bsp.h" 2
+L 47 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_uart_fifo.h"
 L 1 "..\..\User\bsp\bsp_uart_fifo.h" 1
 N/*
@@ -31658,7 +31657,7 @@ N
 N#endif
 N
 N/***************************** (END OF FILE) *********************************/
-L 49 "..\..\User\bsp\bsp.h" 2
+L 48 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_crc8.h"
 L 1 "..\..\User\bsp\bsp_crc8.h" 1
 N#ifndef __BSP_CRC8_H
@@ -31668,7 +31667,7 @@ N
 Nunsigned char CRC8_Table(unsigned char *p, unsigned char counter);
 N
 N#endif
-L 50 "..\..\User\bsp\bsp.h" 2
+L 49 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_adc.h"
 L 1 "..\..\User\bsp\bsp_adc.h" 1
 N#ifndef __BSP_ADC_H
@@ -31682,7 +31681,7 @@ Nu16 Get_Adc_Average(u8 ch,u8 times);
 Nu8 Read_Rand(void);	//产生随时数
 N
 N#endif
-L 51 "..\..\User\bsp\bsp.h" 2
+L 50 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_stmflash.h"
 L 1 "..\..\User\bsp\bsp_stmflash.h" 1
 N#ifndef __BSP_STMFLASH_H__
@@ -31701,7 +31700,7 @@ Nvoid Clear_Flash_Dat(void);
 N
 N#endif
 N
-L 52 "..\..\User\bsp\bsp.h" 2
+L 51 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_logfile.h"
 L 1 "..\..\User\bsp\bsp_logfile.h" 1
 N#ifndef __BSP_LOGFILE_H__
@@ -31720,7 +31719,7 @@ Nvoid Show_LogDat(uint16_t _no);
 N
 N#endif
 N
-L 53 "..\..\User\bsp\bsp.h" 2
+L 52 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_fifo.h"
 L 1 "..\..\User\bsp\bsp_fifo.h" 1
 N#ifndef __BSP_FIFO_H
@@ -31752,7 +31751,7 @@ Nuint8_t bsp_GetCQ2(uint8_t *_Date);
 N
 N#endif
 N
-L 54 "..\..\User\bsp\bsp.h" 2
+L 53 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_fifo_key.h"
 L 1 "..\..\User\bsp\bsp_fifo_key.h" 1
 N/*
@@ -31880,7 +31879,7 @@ Nvoid bsp_ClearKey(void);
 N
 N#endif
 N
-L 55 "..\..\User\bsp\bsp.h" 2
+L 54 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_Dht11.h"
 L 1 "..\..\User\bsp\bsp_Dht11.h" 1
 N#ifndef __BSP_DHT11_H
@@ -31904,7 +31903,7 @@ Nuint8_t DHT11_Read_Byte(void);
 Nuint8_t DHT11_Read_Data(uint8_t *buf);    
 N
 N#endif
-L 56 "..\..\User\bsp\bsp.h" 2
+L 55 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_hc595.h"		
 L 1 "..\..\User\bsp\bsp_hc595.h" 1
 N#ifndef __BSP_HC595_H
@@ -31947,7 +31946,7 @@ Nvoid KMOFF_Show(u16 ShowDat);
 Nvoid KMOutUpdat(void);
 N		 				    
 N#endif
-L 57 "..\..\User\bsp\bsp.h" 2
+L 56 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_cd4067.h"		
 L 1 "..\..\User\bsp\bsp_cd4067.h" 1
 N#ifndef __BSP_CD4067_H
@@ -31976,13 +31975,29 @@ N#define RDKMB1  13
 N#define RDKMB2  14
 N#define RDKMB3  15
 N
+Ntypedef enum
+N{
+N    KMA3_CoilNo = 0,        
+N    KMA2_CoilNo,        
+N	KMA1_CoilNo,   
+N    KMB1_CoilNo,        
+N    KMB2_CoilNo,        
+N    KMB3_CoilNo,        
+N	KMA1_PointNo = 10,   
+N    KMA2_PointNo,        
+N    KMA3_PointNo,        
+N    KMB1_PointNo,        
+N    KMB2_PointNo,        
+N    KMB3_PointNo        
+N}ReadCD4067_No;
+N
 Nvoid BspInput_CD4067_Config(void); 
 Nuint8_t Read_InputDevDat(uint8_t uAreaDat); 
 Nuint8_t Read_Optocoupler(uint8_t uAreaDat);
 Nvoid ReadDat_CD4067(void);
 N		 				    
 N#endif
-L 58 "..\..\User\bsp\bsp.h" 2
+L 57 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_cd4051.h"		
 L 1 "..\..\User\bsp\bsp_cd4051.h" 1
 N#ifndef __BSP_CD4051_H
@@ -32038,7 +32053,7 @@ Nu8 Read_Input_KPDevDat(uint8_t uAreaDat) ;
 Nu8 CD4051Read_Optocoupler(uint8_t uAreaDat);
 N		 				    
 N#endif
-L 59 "..\..\User\bsp\bsp.h" 2
+L 58 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_cs5463.h"		
 L 1 "..\..\User\bsp\bsp_cs5463.h" 1
 N#ifndef __BSP_CS5463_H
@@ -32173,7 +32188,7 @@ Nu32 CS546x_Get_Vrms(void);
 Nvoid Get_InputValue(void);
 N		 				    
 N#endif
-L 60 "..\..\User\bsp\bsp.h" 2
+L 59 "..\..\User\bsp\bsp.h" 2
 N
 N#include "bus_app.h"		
 L 1 "..\..\User\bus_app.h" 1
@@ -32224,7 +32239,7 @@ Nvoid RS485Dat_LED18_OFF(void);
 Nvoid RS485Dat_LED19_OFF(void); 
 Nvoid RS485Dat_LED20_OFF(void); 
 N#endif
-L 62 "..\..\User\bsp\bsp.h" 2
+L 61 "..\..\User\bsp\bsp.h" 2
 N#include "check_app.h"		
 L 1 "..\..\User\check_app.h" 1
 N#ifndef __CHECK_APP_H
@@ -32234,37 +32249,21 @@ N#include "stm32f10x.h"
 N
 Ntypedef struct 
 N{
-N	uint8_t Statue;         //运行状态
-N	uint8_t Power_Statue;   //动力电状态，220V脉冲检测
-N	uint8_t Work_Check;     //工作检测，220V脉冲检测
-N	uint8_t Phase_Check;    //断相/过载检测，开关信号
-N	uint8_t KM1_Point;      //KM1触点状态
-N	uint8_t KM2_Point;      //KM2触点状态
-N	uint8_t KM3_Point;      //KM3触点状态
-N	uint8_t KM1_Coil;       //KM1线圈状态
-N	uint8_t KM2_Coil;       //KM2线圈状态
-N	uint8_t KM3_Coil;       //KM3线圈状态
+N	uint8_t Statue;         //运行状态 0->Stop; 1->Slow; 2->HighSpeed; 3->Error
+N	uint8_t OldStatue;      //记录上一次状态
+N	uint8_t Power_Statue;   //动力电状态，220V脉冲检测 0->正常; 1->异常.
+N	uint8_t Work_Check;     //工作检测，220V脉冲检测   0->正常; 1->异常.
+N	uint8_t Phase_Check;    //断相/过载检测，开关信号  0->正常; 1->异常.
+N	uint8_t KM1_Point;      //KM1触点状态 0->正常; 1->异常.
+N	uint8_t KM2_Point;      //KM2触点状态 0->正常; 1->异常.
+N	uint8_t KM3_Point;      //KM3触点状态 0->正常; 1->异常.
+N	uint8_t KM1_Coil;       //KM1线圈状态 0->正常; 1->异常.
+N	uint8_t KM2_Coil;       //KM2线圈状态 0->正常; 1->异常.
+N	uint8_t KM3_Coil;       //KM3线圈状态 0->正常; 1->异常.
 N	uint16_t Timer_Count;	//水泵低速延时时间计数 递减方式	
+N	uint16_t DelayCheck_Count;	//延时异常检测时间计数 递减方式	
 N}MotorChar; //电机特性结构体
 N
-N#ifdef GLOBAL_APP
-S	#define APP_EXT
-N#else
-N	#define APP_EXT extern 
-N#endif
-NAPP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
-Xextern MotorChar gAp,gBp;  
-N
-N
-Nvoid ReadInputDat(uint8_t _ApDat,uint8_t _BpDat);
-Nvoid KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
-N
-N
-N#endif
-L 63 "..\..\User\bsp\bsp.h" 2
-N
-N#define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
-N#define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
 N
 Ntypedef enum
 N{
@@ -32274,11 +32273,25 @@ N    HighSpeed,  //高速
 N    Error,      //错误
 N}Run_Statue;
 N
-Ntypedef struct 
-N{
-N	uint8_t Statue;     //运行状态 Stop,Slow,HighSpeed,Error
-N	uint8_t OldStatue;  //记录上一次状态
-N}KMDat;
+N#ifdef GLOBAL_APP
+S	#define APP_EXT
+N#else
+N	#define APP_EXT extern 
+N#endif
+N    
+NAPP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
+Xextern MotorChar gAp,gBp;  
+N
+N
+Nvoid ReadInputDat(void);
+Nvoid KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
+N
+N
+N#endif
+L 62 "..\..\User\bsp\bsp.h" 2
+N
+N#define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
+N#define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
 N
 N#endif
 N
@@ -32286,8 +32299,6 @@ L 5 "..\..\User\main.c" 2
 N#include <stdio.h>
 N#include <string.h>
 N#include <stdlib.h>
-N
-N
 N
 Nstatic void InitBoard(void);
 Nvoid Delay (uint16_t nCount);
@@ -32303,6 +32314,7 @@ Nuint8_t StartTimerFlag = 0x00;  //用于自动启动切换定时标志量
 Nextern CQ_FIFO_T s_gCQ;				//消息FIFO变量,结构体 */
 Nextern uint8_t RS485_Count;
 Nextern uint8_t RS485Dat[10];
+Nextern MotorChar gAp,gBp;  //A/B泵相关信息
 N
 Nvoid NVIC_Configuration(void)
 N{
@@ -32353,28 +32365,20 @@ N    BufDat[ 0] = (uint8_t)(g_RunningTime>>24); //时钟
 N    BufDat[ 1] = (uint8_t)(g_RunningTime>>16); //时钟
 N    BufDat[ 2] = (uint8_t)(g_RunningTime>>8);  //时钟
 N    BufDat[ 3] = (uint8_t)(g_RunningTime);     //时钟
-N    BufDat[ 4] = Buf[1];     	//卡号0；
-N    BufDat[ 5] = Buf[2];     	//卡号1；
-N    BufDat[ 6] = Buf[3];     	//卡号2；
-N    BufDat[ 7] = Buf[4];     	//卡号3；
-N    BufDat[ 8] = Buf[8];		//校验	
-N    BufDat[ 9] = Buf[ 5];     	//金额1高位
-N    BufDat[10] = Buf[ 6];     	//金额2
-N    BufDat[11] = Buf[ 7];     	//金额3
-N    BufDat[12] = Buf[ 9]&0x7F;	//DecSum高位
-N    BufDat[13] = Buf[10];     	//DecSum低位
-N	
-N	if((Buf[ 9]&0x80)==0x80)    BufDat[14] = 0x03;	 //连续消息标记; 
-N	else
-N    {
-N        if( Buf[0] == 0xAA )	BufDat[14] = 0x01;  //插卡；
-N        else					BufDat[14] = 0x02;  //取卡； 
-N	}
+N    BufDat[ 4] = Buf[1];     	
+N    BufDat[ 5] = Buf[2];     	
+N    BufDat[ 6] = Buf[3];     	
+N    BufDat[ 7] = Buf[4];     	
+N    BufDat[ 8] = Buf[8];		
+N    BufDat[ 9] = Buf[5];     
+N    BufDat[10] = Buf[6];     
+N    BufDat[11] = Buf[7];  
+N    BufDat[12] = Buf[9];
+N    BufDat[13] = Buf[10];
+N	BufDat[14] = 0x02;
 N    BufDat[15] = CRC8_Table(BufDat,15); 	//CRC
-N	
 N
 N	memcpy(s_gCQ.Buf[s_gCQ.Write],Buf,10);
-N
 N	if (++s_gCQ.Write  >= CQ_FIFO_SIZE)
 X	if (++s_gCQ.Write  >= 10)
 N	{
@@ -32418,7 +32422,6 @@ N	uint8_t KeyDat=0;
 N    uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
 N    uint8_t OldRunMode=0;
 N    uint8_t RunStape = 0;   //0低速，1高速;
-N    KMDat ApRun,BpRun;      //A/B泵 运行状态    
 N	SystemInit();
 N	
 N	InitBoard();		//硬件初始化
@@ -32457,9 +32460,8 @@ N                {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
 N                Get_InputValue();
 N			}
 N            BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
-N            //ReadDat_CD4067();
-N            ReadInputDat(ApRun.Statue,BpRun.Statue);
-N            DisplaySendDat();
+N            ReadInputDat();     //读取A/B泵全部状态，存放在结构体中
+N            DisplaySendDat();   //RS485数据发送
 N			KeyDat = bsp_GetKey();
 N			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
 N			{
@@ -32515,37 +32517,37 @@ N            {
 N                RS485Dat_LED15_OFF();RS485Dat_LED16_ON();RS485Dat_LED17_OFF();
 N                if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
 N                {   
-N                    ApRun.Statue=Stop;
+N                    gAp.Statue=Stop;
 N                    KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
 X                    KMOFF_Show(0x0001);KMOFF_Show(0x0002);KMOFF_Show(0x0004);
 N                }  
 N                else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
 N                {   
-N                    ApRun.Statue=Slow;     
+N                    gAp.Statue=Slow;     
 N                    KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
 X                    KMON_Show(0x0001); KMON_Show(0x0002); KMOFF_Show(0x0004);
 N                }  
 N                else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
 N                {   
-N                    ApRun.Statue=HighSpeed;
+N                    gAp.Statue=HighSpeed;
 N                    KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
 X                    KMON_Show(0x0001); KMOFF_Show(0x0002);KMON_Show(0x0004); 
 N                }  
 N                else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
 N                {   
-N                    BpRun.Statue=Stop;     
+N                    gBp.Statue=Stop;     
 N                    KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
 X                    KMOFF_Show(0x0008);KMOFF_Show(0x0010);KMOFF_Show(0x0020);
 N                }  
 N                else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
 N                {   
-N                    BpRun.Statue=Slow;     
+N                    gBp.Statue=Slow;     
 N                    KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
 X                    KMON_Show(0x0008); KMON_Show(0x0010); KMOFF_Show(0x0020);
 N                }  
 N                else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
 N                {   
-N                    BpRun.Statue=HighSpeed;
+N                    gBp.Statue=HighSpeed;
 N                    KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
 X                    KMON_Show(0x0008); KMOFF_Show(0x0010);KMON_Show(0x0020); 
 N                }                 
@@ -32561,10 +32563,10 @@ N            }
 N            if(RunMode!=OldRunMode) //运行模式切换，把运行模式全部转为停止
 N            {
 N                OldRunMode = RunMode;StartTimerFlag = 0x00;
-N                ApRun.Statue = Stop;
+N                gAp.Statue = Stop;
 N                KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
 X                KMOFF_Show(0x0001);KMOFF_Show(0x0002);KMOFF_Show(0x0004);
-N                BpRun.Statue = Stop;     
+N                gBp.Statue = Stop;     
 N                KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
 X                KMOFF_Show(0x0008);KMOFF_Show(0x0010);KMOFF_Show(0x0020);
 N            }

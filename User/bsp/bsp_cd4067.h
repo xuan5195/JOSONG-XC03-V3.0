@@ -24,6 +24,22 @@
 #define RDKMB2  14
 #define RDKMB3  15
 
+typedef enum
+{
+    KMA3_CoilNo = 0,        
+    KMA2_CoilNo,        
+	KMA1_CoilNo,   
+    KMB1_CoilNo,        
+    KMB2_CoilNo,        
+    KMB3_CoilNo,        
+	KMA1_PointNo = 10,   
+    KMA2_PointNo,        
+    KMA3_PointNo,        
+    KMB1_PointNo,        
+    KMB2_PointNo,        
+    KMB3_PointNo        
+}ReadCD4067_No;
+
 void BspInput_CD4067_Config(void); 
 uint8_t Read_InputDevDat(uint8_t uAreaDat); 
 uint8_t Read_Optocoupler(uint8_t uAreaDat);

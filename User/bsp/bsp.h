@@ -39,7 +39,6 @@
 	#define printf_debug(...)
 #endif
 
-
 #include "bsp_timer.h"		
 #include "bsp_TimerTim3.h"
 #include "bsp_Tim2.h"
@@ -63,20 +62,6 @@
 
 #define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
 #define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
-
-typedef enum
-{
-	Stop = 0,   //停止
-    Slow,       //低速
-    HighSpeed,  //高速
-    Error,      //错误
-}Run_Statue;
-
-typedef struct 
-{
-	uint8_t Statue;     //运行状态 Stop,Slow,HighSpeed,Error
-	uint8_t OldStatue;  //记录上一次状态
-}KMDat;
 
 #endif
 

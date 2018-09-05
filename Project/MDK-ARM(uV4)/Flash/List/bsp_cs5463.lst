@@ -31503,7 +31503,6 @@ N#else
 N	#define printf_debug(...)
 N#endif
 N
-N
 N#include "bsp_timer.h"		
 L 1 "..\..\User\bsp\bsp_timer.h" 1
 N#ifndef __BSP_TIMER_H
@@ -31524,7 +31523,7 @@ Nuint8_t bsp_CheckTimer(uint8_t _id);
 Nint32_t bsp_GetRunTime(void);
 N
 N#endif
-L 44 "..\..\User\bsp\bsp.h" 2
+L 43 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_TimerTim3.h"
 L 1 "..\..\User\bsp\bsp_TimerTim3.h" 1
 N#ifndef __BSP_TIMERTIM3_H
@@ -31535,7 +31534,7 @@ N
 N#endif
 N
 N
-L 45 "..\..\User\bsp\bsp.h" 2
+L 44 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_Tim2.h"
 L 1 "..\..\User\bsp\bsp_Tim2.h" 1
 N#ifndef __BSP_TIM5_H
@@ -31546,7 +31545,7 @@ N
 N#endif
 N
 N
-L 46 "..\..\User\bsp\bsp.h" 2
+L 45 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_tm1639.h"		
 L 1 "..\..\User\bsp\bsp_tm1639.h" 1
 N#ifndef __BSP_TM1639_H
@@ -31594,7 +31593,7 @@ Nvoid BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate);
 Nvoid BspTm1639_ShowSNDat(uint8_t ShowMode,uint8_t *ShowDate);
 N
 N#endif
-L 47 "..\..\User\bsp\bsp.h" 2
+L 46 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_can.h"
 L 1 "..\..\User\bsp\bsp_can.h" 1
 N#ifndef __BSP_CAN_H
@@ -31630,7 +31629,7 @@ N
 N
 N
 N
-L 48 "..\..\User\bsp\bsp.h" 2
+L 47 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_uart_fifo.h"
 L 1 "..\..\User\bsp\bsp_uart_fifo.h" 1
 N/*
@@ -31792,7 +31791,7 @@ N
 N#endif
 N
 N/***************************** (END OF FILE) *********************************/
-L 49 "..\..\User\bsp\bsp.h" 2
+L 48 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_crc8.h"
 L 1 "..\..\User\bsp\bsp_crc8.h" 1
 N#ifndef __BSP_CRC8_H
@@ -31802,7 +31801,7 @@ N
 Nunsigned char CRC8_Table(unsigned char *p, unsigned char counter);
 N
 N#endif
-L 50 "..\..\User\bsp\bsp.h" 2
+L 49 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_adc.h"
 L 1 "..\..\User\bsp\bsp_adc.h" 1
 N#ifndef __BSP_ADC_H
@@ -31816,7 +31815,7 @@ Nu16 Get_Adc_Average(u8 ch,u8 times);
 Nu8 Read_Rand(void);	//产生随时数
 N
 N#endif
-L 51 "..\..\User\bsp\bsp.h" 2
+L 50 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_stmflash.h"
 L 1 "..\..\User\bsp\bsp_stmflash.h" 1
 N#ifndef __BSP_STMFLASH_H__
@@ -31835,7 +31834,7 @@ Nvoid Clear_Flash_Dat(void);
 N
 N#endif
 N
-L 52 "..\..\User\bsp\bsp.h" 2
+L 51 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_logfile.h"
 L 1 "..\..\User\bsp\bsp_logfile.h" 1
 N#ifndef __BSP_LOGFILE_H__
@@ -31854,7 +31853,7 @@ Nvoid Show_LogDat(uint16_t _no);
 N
 N#endif
 N
-L 53 "..\..\User\bsp\bsp.h" 2
+L 52 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_fifo.h"
 L 1 "..\..\User\bsp\bsp_fifo.h" 1
 N#ifndef __BSP_FIFO_H
@@ -31886,7 +31885,7 @@ Nuint8_t bsp_GetCQ2(uint8_t *_Date);
 N
 N#endif
 N
-L 54 "..\..\User\bsp\bsp.h" 2
+L 53 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_fifo_key.h"
 L 1 "..\..\User\bsp\bsp_fifo_key.h" 1
 N/*
@@ -32014,7 +32013,7 @@ Nvoid bsp_ClearKey(void);
 N
 N#endif
 N
-L 55 "..\..\User\bsp\bsp.h" 2
+L 54 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_Dht11.h"
 L 1 "..\..\User\bsp\bsp_Dht11.h" 1
 N#ifndef __BSP_DHT11_H
@@ -32038,7 +32037,7 @@ Nuint8_t DHT11_Read_Byte(void);
 Nuint8_t DHT11_Read_Data(uint8_t *buf);    
 N
 N#endif
-L 56 "..\..\User\bsp\bsp.h" 2
+L 55 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_hc595.h"		
 L 1 "..\..\User\bsp\bsp_hc595.h" 1
 N#ifndef __BSP_HC595_H
@@ -32081,7 +32080,7 @@ Nvoid KMOFF_Show(u16 ShowDat);
 Nvoid KMOutUpdat(void);
 N		 				    
 N#endif
-L 57 "..\..\User\bsp\bsp.h" 2
+L 56 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_cd4067.h"		
 L 1 "..\..\User\bsp\bsp_cd4067.h" 1
 N#ifndef __BSP_CD4067_H
@@ -32110,13 +32109,29 @@ N#define RDKMB1  13
 N#define RDKMB2  14
 N#define RDKMB3  15
 N
+Ntypedef enum
+N{
+N    KMA3_CoilNo = 0,        
+N    KMA2_CoilNo,        
+N	KMA1_CoilNo,   
+N    KMB1_CoilNo,        
+N    KMB2_CoilNo,        
+N    KMB3_CoilNo,        
+N	KMA1_PointNo = 10,   
+N    KMA2_PointNo,        
+N    KMA3_PointNo,        
+N    KMB1_PointNo,        
+N    KMB2_PointNo,        
+N    KMB3_PointNo        
+N}ReadCD4067_No;
+N
 Nvoid BspInput_CD4067_Config(void); 
 Nuint8_t Read_InputDevDat(uint8_t uAreaDat); 
 Nuint8_t Read_Optocoupler(uint8_t uAreaDat);
 Nvoid ReadDat_CD4067(void);
 N		 				    
 N#endif
-L 58 "..\..\User\bsp\bsp.h" 2
+L 57 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_cd4051.h"		
 L 1 "..\..\User\bsp\bsp_cd4051.h" 1
 N#ifndef __BSP_CD4051_H
@@ -32172,7 +32187,7 @@ Nu8 Read_Input_KPDevDat(uint8_t uAreaDat) ;
 Nu8 CD4051Read_Optocoupler(uint8_t uAreaDat);
 N		 				    
 N#endif
-L 59 "..\..\User\bsp\bsp.h" 2
+L 58 "..\..\User\bsp\bsp.h" 2
 N#include "bsp_cs5463.h"		
 N
 N#include "bus_app.h"		
@@ -32224,7 +32239,7 @@ Nvoid RS485Dat_LED18_OFF(void);
 Nvoid RS485Dat_LED19_OFF(void); 
 Nvoid RS485Dat_LED20_OFF(void); 
 N#endif
-L 62 "..\..\User\bsp\bsp.h" 2
+L 61 "..\..\User\bsp\bsp.h" 2
 N#include "check_app.h"		
 L 1 "..\..\User\check_app.h" 1
 N#ifndef __CHECK_APP_H
@@ -32234,37 +32249,21 @@ N#include "stm32f10x.h"
 N
 Ntypedef struct 
 N{
-N	uint8_t Statue;         //运行状态
-N	uint8_t Power_Statue;   //动力电状态，220V脉冲检测
-N	uint8_t Work_Check;     //工作检测，220V脉冲检测
-N	uint8_t Phase_Check;    //断相/过载检测，开关信号
-N	uint8_t KM1_Point;      //KM1触点状态
-N	uint8_t KM2_Point;      //KM2触点状态
-N	uint8_t KM3_Point;      //KM3触点状态
-N	uint8_t KM1_Coil;       //KM1线圈状态
-N	uint8_t KM2_Coil;       //KM2线圈状态
-N	uint8_t KM3_Coil;       //KM3线圈状态
+N	uint8_t Statue;         //运行状态 0->Stop; 1->Slow; 2->HighSpeed; 3->Error
+N	uint8_t OldStatue;      //记录上一次状态
+N	uint8_t Power_Statue;   //动力电状态，220V脉冲检测 0->正常; 1->异常.
+N	uint8_t Work_Check;     //工作检测，220V脉冲检测   0->正常; 1->异常.
+N	uint8_t Phase_Check;    //断相/过载检测，开关信号  0->正常; 1->异常.
+N	uint8_t KM1_Point;      //KM1触点状态 0->正常; 1->异常.
+N	uint8_t KM2_Point;      //KM2触点状态 0->正常; 1->异常.
+N	uint8_t KM3_Point;      //KM3触点状态 0->正常; 1->异常.
+N	uint8_t KM1_Coil;       //KM1线圈状态 0->正常; 1->异常.
+N	uint8_t KM2_Coil;       //KM2线圈状态 0->正常; 1->异常.
+N	uint8_t KM3_Coil;       //KM3线圈状态 0->正常; 1->异常.
 N	uint16_t Timer_Count;	//水泵低速延时时间计数 递减方式	
+N	uint16_t DelayCheck_Count;	//延时异常检测时间计数 递减方式	
 N}MotorChar; //电机特性结构体
 N
-N#ifdef GLOBAL_APP
-S	#define APP_EXT
-N#else
-N	#define APP_EXT extern 
-N#endif
-NAPP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
-Xextern MotorChar gAp,gBp;  
-N
-N
-Nvoid ReadInputDat(uint8_t _ApDat,uint8_t _BpDat);
-Nvoid KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
-N
-N
-N#endif
-L 63 "..\..\User\bsp\bsp.h" 2
-N
-N#define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
-N#define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
 N
 Ntypedef enum
 N{
@@ -32274,11 +32273,25 @@ N    HighSpeed,  //高速
 N    Error,      //错误
 N}Run_Statue;
 N
-Ntypedef struct 
-N{
-N	uint8_t Statue;     //运行状态 Stop,Slow,HighSpeed,Error
-N	uint8_t OldStatue;  //记录上一次状态
-N}KMDat;
+N#ifdef GLOBAL_APP
+S	#define APP_EXT
+N#else
+N	#define APP_EXT extern 
+N#endif
+N    
+NAPP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
+Xextern MotorChar gAp,gBp;  
+N
+N
+Nvoid ReadInputDat(void);
+Nvoid KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
+N
+N
+N#endif
+L 62 "..\..\User\bsp\bsp.h" 2
+N
+N#define HardWDG_ON()  GPIO_SetBits(GPIOA, GPIO_Pin_4)  	       	//
+N#define HardWDG_OFF()  GPIO_ResetBits(GPIOA, GPIO_Pin_4) 	   	//
 N
 N#endif
 N

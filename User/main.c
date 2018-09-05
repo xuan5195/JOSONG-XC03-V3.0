@@ -6,8 +6,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
-
 static void InitBoard(void);
 void Delay (uint16_t nCount);
 
@@ -22,6 +20,7 @@ uint8_t StartTimerFlag = 0x00;  //用于自动启动切换定时标志量
 extern CQ_FIFO_T s_gCQ;				//消息FIFO变量,结构体 */
 extern uint8_t RS485_Count;
 extern uint8_t RS485Dat[10];
+extern MotorChar gAp,gBp;  //A/B泵相关信息
 
 void NVIC_Configuration(void)
 {
@@ -68,28 +67,20 @@ void PutInMemoryBuf(u8 *Buf)	//末尾加入第一个缓存
     BufDat[ 1] = (uint8_t)(g_RunningTime>>16); //时钟
     BufDat[ 2] = (uint8_t)(g_RunningTime>>8);  //时钟
     BufDat[ 3] = (uint8_t)(g_RunningTime);     //时钟
-    BufDat[ 4] = Buf[1];     	//卡号0；
-    BufDat[ 5] = Buf[2];     	//卡号1；
-    BufDat[ 6] = Buf[3];     	//卡号2；
-    BufDat[ 7] = Buf[4];     	//卡号3；
-    BufDat[ 8] = Buf[8];		//校验	
-    BufDat[ 9] = Buf[ 5];     	//金额1高位
-    BufDat[10] = Buf[ 6];     	//金额2
-    BufDat[11] = Buf[ 7];     	//金额3
-    BufDat[12] = Buf[ 9]&0x7F;	//DecSum高位
-    BufDat[13] = Buf[10];     	//DecSum低位
-	
-	if((Buf[ 9]&0x80)==0x80)    BufDat[14] = 0x03;	 //连续消息标记; 
-	else
-    {
-        if( Buf[0] == 0xAA )	BufDat[14] = 0x01;  //插卡；
-        else					BufDat[14] = 0x02;  //取卡； 
-	}
+    BufDat[ 4] = Buf[1];     	
+    BufDat[ 5] = Buf[2];     	
+    BufDat[ 6] = Buf[3];     	
+    BufDat[ 7] = Buf[4];     	
+    BufDat[ 8] = Buf[8];		
+    BufDat[ 9] = Buf[5];     
+    BufDat[10] = Buf[6];     
+    BufDat[11] = Buf[7];  
+    BufDat[12] = Buf[9];
+    BufDat[13] = Buf[10];
+	BufDat[14] = 0x02;
     BufDat[15] = CRC8_Table(BufDat,15); 	//CRC
-	
 
 	memcpy(s_gCQ.Buf[s_gCQ.Write],Buf,10);
-
 	if (++s_gCQ.Write  >= CQ_FIFO_SIZE)
 	{
 		s_gCQ.Write = 0;
@@ -129,7 +120,6 @@ int main(void)
     uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
     uint8_t OldRunMode=0;
     uint8_t RunStape = 0;   //0低速，1高速;
-    KMDat ApRun,BpRun;      //A/B泵 运行状态    
 	SystemInit();
 	
 	InitBoard();		//硬件初始化
@@ -165,9 +155,8 @@ int main(void)
                 Get_InputValue();
 			}
             BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
-            //ReadDat_CD4067();
-            ReadInputDat(ApRun.Statue,BpRun.Statue);
-            DisplaySendDat();
+            ReadInputDat();     //读取A/B泵全部状态，存放在结构体中
+            DisplaySendDat();   //RS485数据发送
 			KeyDat = bsp_GetKey();
 			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
 			{
@@ -223,32 +212,32 @@ int main(void)
                 RS485Dat_LED15_OFF();RS485Dat_LED16_ON();RS485Dat_LED17_OFF();
                 if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
                 {   
-                    ApRun.Statue=Stop;
+                    gAp.Statue=Stop;
                     KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
                 }  
                 else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
                 {   
-                    ApRun.Statue=Slow;     
+                    gAp.Statue=Slow;     
                     KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
                 }  
                 else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
                 {   
-                    ApRun.Statue=HighSpeed;
+                    gAp.Statue=HighSpeed;
                     KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
                 }  
                 else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
                 {   
-                    BpRun.Statue=Stop;     
+                    gBp.Statue=Stop;     
                     KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
                 }  
                 else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
                 {   
-                    BpRun.Statue=Slow;     
+                    gBp.Statue=Slow;     
                     KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
                 }  
                 else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
                 {   
-                    BpRun.Statue=HighSpeed;
+                    gBp.Statue=HighSpeed;
                     KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
                 }                 
             }
@@ -263,9 +252,9 @@ int main(void)
             if(RunMode!=OldRunMode) //运行模式切换，把运行模式全部转为停止
             {
                 OldRunMode = RunMode;StartTimerFlag = 0x00;
-                ApRun.Statue = Stop;
+                gAp.Statue = Stop;
                 KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
-                BpRun.Statue = Stop;     
+                gBp.Statue = Stop;     
                 KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
             }
             else if(RunMode!=0)  //自动模式

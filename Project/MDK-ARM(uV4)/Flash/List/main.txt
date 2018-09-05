@@ -5,12 +5,12 @@
                           AREA ||i.CPU_IDLE||, CODE, READONLY, ALIGN=2
 
                   CPU_IDLE PROC
-;;;37     }
-;;;38     void CPU_IDLE(void)
+;;;36     }
+;;;37     void CPU_IDLE(void)
 000000  b510              PUSH     {r4,lr}
-;;;39     {
-;;;40     	static uint8_t g_FlagDWG=0;
-;;;41     	if(++g_FlagDWG%2==0)	HardWDG_ON();
+;;;38     {
+;;;39     	static uint8_t g_FlagDWG=0;
+;;;40     	if(++g_FlagDWG%2==0)	HardWDG_ON();
 000002  490b              LDR      r1,|L1.48|
 000004  7809              LDRB     r1,[r1,#0]  ; g_FlagDWG
 000006  1c49              ADDS     r1,r1,#1
@@ -27,14 +27,14 @@
 000020  f7fffffe          BL       GPIO_SetBits
 000024  e003              B        |L1.46|
                   |L1.38|
-;;;42     	else 					HardWDG_OFF();
+;;;41     	else 					HardWDG_OFF();
 000026  2110              MOVS     r1,#0x10
 000028  4802              LDR      r0,|L1.52|
 00002a  f7fffffe          BL       GPIO_ResetBits
                   |L1.46|
-;;;43     }
+;;;42     }
 00002e  bd10              POP      {r4,pc}
-;;;44     
+;;;43     
                           ENDP
 
                   |L1.48|
@@ -45,27 +45,27 @@
                           AREA ||i.Delay||, CODE, READONLY, ALIGN=1
 
                   Delay PROC
-;;;372    
-;;;373    void Delay(__IO uint16_t nCount)
+;;;361    
+;;;362    void Delay(__IO uint16_t nCount)
 000000  b501              PUSH     {r0,lr}
-;;;374    {
-;;;375    	while (nCount != 0)
+;;;363    {
+;;;364    	while (nCount != 0)
 000002  e004              B        |L2.14|
                   |L2.4|
-;;;376    	{
-;;;377    		nCount--;
+;;;365    	{
+;;;366    		nCount--;
 000004  f8bd0000          LDRH     r0,[sp,#0]
 000008  1e40              SUBS     r0,r0,#1
 00000a  b280              UXTH     r0,r0
 00000c  9000              STR      r0,[sp,#0]
                   |L2.14|
-00000e  f8bd0000          LDRH     r0,[sp,#0]            ;375
-000012  2800              CMP      r0,#0                 ;375
+00000e  f8bd0000          LDRH     r0,[sp,#0]            ;364
+000012  2800              CMP      r0,#0                 ;364
 000014  d1f6              BNE      |L2.4|
-;;;378    	}
-;;;379    }
+;;;367    	}
+;;;368    }
 000016  bd08              POP      {r3,pc}
-;;;380    
+;;;369    
                           ENDP
 
 
@@ -80,68 +80,68 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   InitBoard PROC
-;;;311    */
-;;;312    static void InitBoard(void)
+;;;300    */
+;;;301    static void InitBoard(void)
 000000  b510              PUSH     {r4,lr}
-;;;313    {	
-;;;314    	RCC_Configuration();
+;;;302    {	
+;;;303    	RCC_Configuration();
 000002  f7fffffe          BL       RCC_Configuration
-;;;315    	/* 初始化systick定时器，并启动定时中断 */
-;;;316    	bsp_InitTimer(); 
+;;;304    	/* 初始化systick定时器，并启动定时中断 */
+;;;305    	bsp_InitTimer(); 
 000006  f7fffffe          BL       bsp_InitTimer
-;;;317    	delay_init();
+;;;306    	delay_init();
 00000a  f7fffffe          BL       delay_init
-;;;318    	delay_ms(500);
+;;;307    	delay_ms(500);
 00000e  f44f70fa          MOV      r0,#0x1f4
 000012  f7fffffe          BL       delay_ms
-;;;319    	Init_GPIO();				//输出初始化
+;;;308    	Init_GPIO();				//输出初始化
 000016  f7fffffe          BL       Init_GPIO
-;;;320    	bsp_InitKey();
+;;;309    	bsp_InitKey();
 00001a  f7fffffe          BL       bsp_InitKey
-;;;321    	bsp_InitUart(); 	    	//初始化串口+RS485
+;;;310    	bsp_InitUart(); 	    	//初始化串口+RS485
 00001e  f7fffffe          BL       bsp_InitUart
-;;;322    	printf("\r\nStarting Up...\r\nJOSONG-XS03 V3.0...\r\n");
+;;;311    	printf("\r\nStarting Up...\r\nJOSONG-XS03 V3.0...\r\n");
 000022  a014              ADR      r0,|L3.116|
 000024  f7fffffe          BL       __2printf
-;;;323    	printf("VersionNo: %02X...\r\n",VERSION);
+;;;312    	printf("VersionNo: %02X...\r\n",VERSION);
 000028  2101              MOVS     r1,#1
 00002a  a01c              ADR      r0,|L3.156|
 00002c  f7fffffe          BL       __2printf
-;;;324    	printf("SystemCoreClock: %d...\r\n",SystemCoreClock);
+;;;313    	printf("SystemCoreClock: %d...\r\n",SystemCoreClock);
 000030  4820              LDR      r0,|L3.180|
 000032  6801              LDR      r1,[r0,#0]  ; SystemCoreClock
 000034  a020              ADR      r0,|L3.184|
 000036  f7fffffe          BL       __2printf
-;;;325    	delay_ms(500);
+;;;314    	delay_ms(500);
 00003a  f44f70fa          MOV      r0,#0x1f4
 00003e  f7fffffe          BL       delay_ms
-;;;326    	BspTm1639_Config();	        //TM1639初始化
+;;;315    	BspTm1639_Config();	        //TM1639初始化
 000042  f7fffffe          BL       BspTm1639_Config
-;;;327    	BspDht11_Config();			//温湿度传感器初始化
+;;;316    	BspDht11_Config();			//温湿度传感器初始化
 000046  f7fffffe          BL       BspDht11_Config
-;;;328    	bsp_HC595_Config();			//HC595初始化 用于继电器输出
+;;;317    	bsp_HC595_Config();			//HC595初始化 用于继电器输出
 00004a  f7fffffe          BL       bsp_HC595_Config
-;;;329    	BspInput_CD4067_Config();	//CD4067初始化 用于信号采集
+;;;318    	BspInput_CD4067_Config();	//CD4067初始化 用于信号采集
 00004e  f7fffffe          BL       BspInput_CD4067_Config
-;;;330    	BspInput_CD4051_Config();	//CD4051*3
+;;;319    	BspInput_CD4051_Config();	//CD4051*3
 000052  f7fffffe          BL       BspInput_CD4051_Config
-;;;331    	Bsp_CS5463_Config();
+;;;320    	Bsp_CS5463_Config();
 000056  f7fffffe          BL       Bsp_CS5463_Config
-;;;332    	CS546x_Init(0);
+;;;321    	CS546x_Init(0);
 00005a  2000              MOVS     r0,#0
 00005c  f7fffffe          BL       CS546x_Init
-;;;333    	TIM3_Int_Init(99,720-1);  	//以100khz的频率计数，0.01ms中断，计数到100 *0.01ms 为1ms 
+;;;322    	TIM3_Int_Init(99,720-1);  	//以100khz的频率计数，0.01ms中断，计数到100 *0.01ms 为1ms 
 000060  f24021cf          MOV      r1,#0x2cf
 000064  2063              MOVS     r0,#0x63
 000066  f7fffffe          BL       TIM3_Int_Init
-;;;334    //	TIM2_Cap_Init(0xFFFF,72-1);	//以1Mhz的频率计数 
-;;;335     	Adc_Init();		  		    //ADC初始化
+;;;323    //	TIM2_Cap_Init(0xFFFF,72-1);	//以1Mhz的频率计数 
+;;;324     	Adc_Init();		  		    //ADC初始化
 00006a  f7fffffe          BL       Adc_Init
-;;;336    	bsp_InitCQVar();
+;;;325    	bsp_InitCQVar();
 00006e  f7fffffe          BL       bsp_InitCQVar
-;;;337    }
+;;;326    }
 000072  bd10              POP      {r4,pc}
-;;;338    
+;;;327    
                           ENDP
 
                   |L3.116|
@@ -182,31 +182,31 @@
                           AREA ||i.Init_GPIO||, CODE, READONLY, ALIGN=2
 
                   Init_GPIO PROC
-;;;98     
-;;;99     void Init_GPIO(void)
+;;;89     
+;;;90     void Init_GPIO(void)
 000000  b508              PUSH     {r3,lr}
-;;;100    {
-;;;101    	GPIO_InitTypeDef GPIO_InitStructure;
-;;;102    	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); 
+;;;91     {
+;;;92     	GPIO_InitTypeDef GPIO_InitStructure;
+;;;93     	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); 
 000002  2101              MOVS     r1,#1
 000004  2004              MOVS     r0,#4
 000006  f7fffffe          BL       RCC_APB2PeriphClockCmd
-;;;103    
-;;;104    	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+;;;94     
+;;;95     	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 00000a  2010              MOVS     r0,#0x10
 00000c  f8ad0000          STRH     r0,[sp,#0]
-;;;105    	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+;;;96     	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 000010  f88d0003          STRB     r0,[sp,#3]
-;;;106    	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+;;;97     	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 000014  2003              MOVS     r0,#3
 000016  f88d0002          STRB     r0,[sp,#2]
-;;;107    	GPIO_Init(GPIOA, &GPIO_InitStructure);
+;;;98     	GPIO_Init(GPIOA, &GPIO_InitStructure);
 00001a  4669              MOV      r1,sp
 00001c  4801              LDR      r0,|L4.36|
 00001e  f7fffffe          BL       GPIO_Init
-;;;108    }
+;;;99     }
 000022  bd08              POP      {r3,pc}
-;;;109    
+;;;100    
                           ENDP
 
                   |L4.36|
@@ -215,207 +215,182 @@
                           AREA ||i.NVIC_Configuration||, CODE, READONLY, ALIGN=1
 
                   NVIC_Configuration PROC
-;;;25     
-;;;26     void NVIC_Configuration(void)
+;;;24     
+;;;25     void NVIC_Configuration(void)
 000000  b510              PUSH     {r4,lr}
-;;;27     {
-;;;28         NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
+;;;26     {
+;;;27         NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
 000002  f44f60a0          MOV      r0,#0x500
 000006  f7fffffe          BL       NVIC_PriorityGroupConfig
-;;;29     }
+;;;28     }
 00000a  bd10              POP      {r4,pc}
-;;;30     
+;;;29     
                           ENDP
 
 
                           AREA ||i.PutInMemoryBuf||, CODE, READONLY, ALIGN=2
 
                   PutInMemoryBuf PROC
-;;;62     
-;;;63     void PutInMemoryBuf(u8 *Buf)	//末尾加入第一个缓存
+;;;61     
+;;;62     void PutInMemoryBuf(u8 *Buf)	//末尾加入第一个缓存
 000000  b51f              PUSH     {r0-r4,lr}
-;;;64     {
+;;;63     {
 000002  4604              MOV      r4,r0
-;;;65         uint8_t BufDat[16]={0};
+;;;64         uint8_t BufDat[16]={0};
 000004  2000              MOVS     r0,#0
 000006  9000              STR      r0,[sp,#0]
 000008  9001              STR      r0,[sp,#4]
 00000a  9002              STR      r0,[sp,#8]
 00000c  9003              STR      r0,[sp,#0xc]
-;;;66     	//日志存储
-;;;67         BufDat[ 0] = (uint8_t)(g_RunningTime>>24); //时钟
-00000e  4833              LDR      r0,|L6.220|
+;;;65     	//日志存储
+;;;66         BufDat[ 0] = (uint8_t)(g_RunningTime>>24); //时钟
+00000e  482a              LDR      r0,|L6.184|
 000010  6800              LDR      r0,[r0,#0]  ; g_RunningTime
 000012  0e00              LSRS     r0,r0,#24
 000014  f88d0000          STRB     r0,[sp,#0]
-;;;68         BufDat[ 1] = (uint8_t)(g_RunningTime>>16); //时钟
-000018  4830              LDR      r0,|L6.220|
+;;;67         BufDat[ 1] = (uint8_t)(g_RunningTime>>16); //时钟
+000018  4827              LDR      r0,|L6.184|
 00001a  6800              LDR      r0,[r0,#0]  ; g_RunningTime
 00001c  0c00              LSRS     r0,r0,#16
 00001e  f88d0001          STRB     r0,[sp,#1]
-;;;69         BufDat[ 2] = (uint8_t)(g_RunningTime>>8);  //时钟
-000022  482e              LDR      r0,|L6.220|
+;;;68         BufDat[ 2] = (uint8_t)(g_RunningTime>>8);  //时钟
+000022  4825              LDR      r0,|L6.184|
 000024  8800              LDRH     r0,[r0,#0]  ; g_RunningTime
 000026  0a00              LSRS     r0,r0,#8
 000028  f88d0002          STRB     r0,[sp,#2]
-;;;70         BufDat[ 3] = (uint8_t)(g_RunningTime);     //时钟
-00002c  482b              LDR      r0,|L6.220|
+;;;69         BufDat[ 3] = (uint8_t)(g_RunningTime);     //时钟
+00002c  4822              LDR      r0,|L6.184|
 00002e  7800              LDRB     r0,[r0,#0]  ; g_RunningTime
 000030  f88d0003          STRB     r0,[sp,#3]
-;;;71         BufDat[ 4] = Buf[1];     	//卡号0；
+;;;70         BufDat[ 4] = Buf[1];     	
 000034  7860              LDRB     r0,[r4,#1]
 000036  f88d0004          STRB     r0,[sp,#4]
-;;;72         BufDat[ 5] = Buf[2];     	//卡号1；
+;;;71         BufDat[ 5] = Buf[2];     	
 00003a  78a0              LDRB     r0,[r4,#2]
 00003c  f88d0005          STRB     r0,[sp,#5]
-;;;73         BufDat[ 6] = Buf[3];     	//卡号2；
+;;;72         BufDat[ 6] = Buf[3];     	
 000040  78e0              LDRB     r0,[r4,#3]
 000042  f88d0006          STRB     r0,[sp,#6]
-;;;74         BufDat[ 7] = Buf[4];     	//卡号3；
+;;;73         BufDat[ 7] = Buf[4];     	
 000046  7920              LDRB     r0,[r4,#4]
 000048  f88d0007          STRB     r0,[sp,#7]
-;;;75         BufDat[ 8] = Buf[8];		//校验	
+;;;74         BufDat[ 8] = Buf[8];		
 00004c  7a20              LDRB     r0,[r4,#8]
 00004e  f88d0008          STRB     r0,[sp,#8]
-;;;76         BufDat[ 9] = Buf[ 5];     	//金额1高位
+;;;75         BufDat[ 9] = Buf[5];     
 000052  7960              LDRB     r0,[r4,#5]
 000054  f88d0009          STRB     r0,[sp,#9]
-;;;77         BufDat[10] = Buf[ 6];     	//金额2
+;;;76         BufDat[10] = Buf[6];     
 000058  79a0              LDRB     r0,[r4,#6]
 00005a  f88d000a          STRB     r0,[sp,#0xa]
-;;;78         BufDat[11] = Buf[ 7];     	//金额3
+;;;77         BufDat[11] = Buf[7];  
 00005e  79e0              LDRB     r0,[r4,#7]
 000060  f88d000b          STRB     r0,[sp,#0xb]
-;;;79         BufDat[12] = Buf[ 9]&0x7F;	//DecSum高位
+;;;78         BufDat[12] = Buf[9];
 000064  7a60              LDRB     r0,[r4,#9]
-000066  f000007f          AND      r0,r0,#0x7f
-00006a  f88d000c          STRB     r0,[sp,#0xc]
-;;;80         BufDat[13] = Buf[10];     	//DecSum低位
-00006e  7aa0              LDRB     r0,[r4,#0xa]
-000070  f88d000d          STRB     r0,[sp,#0xd]
-;;;81     	
-;;;82     	if((Buf[ 9]&0x80)==0x80)    BufDat[14] = 0x03;	 //连续消息标记; 
-000074  7a60              LDRB     r0,[r4,#9]
-000076  f0000080          AND      r0,r0,#0x80
-00007a  2880              CMP      r0,#0x80
-00007c  d103              BNE      |L6.134|
-00007e  2003              MOVS     r0,#3
-000080  f88d000e          STRB     r0,[sp,#0xe]
-000084  e009              B        |L6.154|
-                  |L6.134|
-;;;83     	else
-;;;84         {
-;;;85             if( Buf[0] == 0xAA )	BufDat[14] = 0x01;  //插卡；
-000086  7820              LDRB     r0,[r4,#0]
-000088  28aa              CMP      r0,#0xaa
-00008a  d103              BNE      |L6.148|
-00008c  2001              MOVS     r0,#1
-00008e  f88d000e          STRB     r0,[sp,#0xe]
-000092  e002              B        |L6.154|
-                  |L6.148|
-;;;86             else					BufDat[14] = 0x02;  //取卡； 
-000094  2002              MOVS     r0,#2
-000096  f88d000e          STRB     r0,[sp,#0xe]
-                  |L6.154|
+000066  f88d000c          STRB     r0,[sp,#0xc]
+;;;79         BufDat[13] = Buf[10];
+00006a  7aa0              LDRB     r0,[r4,#0xa]
+00006c  f88d000d          STRB     r0,[sp,#0xd]
+;;;80     	BufDat[14] = 0x02;
+000070  2002              MOVS     r0,#2
+000072  f88d000e          STRB     r0,[sp,#0xe]
+;;;81         BufDat[15] = CRC8_Table(BufDat,15); 	//CRC
+000076  210f              MOVS     r1,#0xf
+000078  4668              MOV      r0,sp
+00007a  f7fffffe          BL       CRC8_Table
+00007e  f88d000f          STRB     r0,[sp,#0xf]
+;;;82     
+;;;83     	memcpy(s_gCQ.Buf[s_gCQ.Write],Buf,10);
+000082  480e              LDR      r0,|L6.188|
+000084  f89000a1          LDRB     r0,[r0,#0xa1]  ; s_gCQ
+000088  490c              LDR      r1,|L6.188|
+00008a  eb011000          ADD      r0,r1,r0,LSL #4
+00008e  6821              LDR      r1,[r4,#0]
+000090  6001              STR      r1,[r0,#0]
+000092  6861              LDR      r1,[r4,#4]
+000094  6041              STR      r1,[r0,#4]
+000096  8921              LDRH     r1,[r4,#8]
+000098  8101              STRH     r1,[r0,#8]
+;;;84     	if (++s_gCQ.Write  >= CQ_FIFO_SIZE)
+00009a  4808              LDR      r0,|L6.188|
+00009c  f89000a1          LDRB     r0,[r0,#0xa1]  ; s_gCQ
+0000a0  1c40              ADDS     r0,r0,#1
+0000a2  b2c0              UXTB     r0,r0
+0000a4  4905              LDR      r1,|L6.188|
+0000a6  f88100a1          STRB     r0,[r1,#0xa1]
+0000aa  280a              CMP      r0,#0xa
+0000ac  db02              BLT      |L6.180|
+;;;85     	{
+;;;86     		s_gCQ.Write = 0;
+0000ae  2000              MOVS     r0,#0
+0000b0  f88100a1          STRB     r0,[r1,#0xa1]
+                  |L6.180|
 ;;;87     	}
-;;;88         BufDat[15] = CRC8_Table(BufDat,15); 	//CRC
-00009a  210f              MOVS     r1,#0xf
-00009c  4668              MOV      r0,sp
-00009e  f7fffffe          BL       CRC8_Table
-0000a2  f88d000f          STRB     r0,[sp,#0xf]
-;;;89     	
-;;;90     
-;;;91     	memcpy(s_gCQ.Buf[s_gCQ.Write],Buf,10);
-0000a6  480e              LDR      r0,|L6.224|
-0000a8  f89000a1          LDRB     r0,[r0,#0xa1]  ; s_gCQ
-0000ac  490c              LDR      r1,|L6.224|
-0000ae  eb011000          ADD      r0,r1,r0,LSL #4
-0000b2  6821              LDR      r1,[r4,#0]
-0000b4  6001              STR      r1,[r0,#0]
-0000b6  6861              LDR      r1,[r4,#4]
-0000b8  6041              STR      r1,[r0,#4]
-0000ba  8921              LDRH     r1,[r4,#8]
-0000bc  8101              STRH     r1,[r0,#8]
-;;;92     
-;;;93     	if (++s_gCQ.Write  >= CQ_FIFO_SIZE)
-0000be  4808              LDR      r0,|L6.224|
-0000c0  f89000a1          LDRB     r0,[r0,#0xa1]  ; s_gCQ
-0000c4  1c40              ADDS     r0,r0,#1
-0000c6  b2c0              UXTB     r0,r0
-0000c8  4905              LDR      r1,|L6.224|
-0000ca  f88100a1          STRB     r0,[r1,#0xa1]
-0000ce  280a              CMP      r0,#0xa
-0000d0  db02              BLT      |L6.216|
-;;;94     	{
-;;;95     		s_gCQ.Write = 0;
-0000d2  2000              MOVS     r0,#0
-0000d4  f88100a1          STRB     r0,[r1,#0xa1]
-                  |L6.216|
-;;;96     	}
-;;;97     }
-0000d8  bd1f              POP      {r0-r4,pc}
-;;;98     
+;;;88     }
+0000b4  bd1f              POP      {r0-r4,pc}
+;;;89     
                           ENDP
 
-0000da  0000              DCW      0x0000
-                  |L6.220|
+0000b6  0000              DCW      0x0000
+                  |L6.184|
                           DCD      g_RunningTime
-                  |L6.224|
+                  |L6.188|
                           DCD      s_gCQ
 
                           AREA ||i.PutOutMemoryBuf||, CODE, READONLY, ALIGN=2
 
                   PutOutMemoryBuf PROC
-;;;45     
-;;;46     uint8_t PutOutMemoryBuf(uint8_t *_Date)	//清第一个缓存
+;;;44     
+;;;45     uint8_t PutOutMemoryBuf(uint8_t *_Date)	//清第一个缓存
 000000  b510              PUSH     {r4,lr}
-;;;47     {
+;;;46     {
 000002  4604              MOV      r4,r0
-;;;48     	if (s_gCQ.Read == s_gCQ.Write)
+;;;47     	if (s_gCQ.Read == s_gCQ.Write)
 000004  4811              LDR      r0,|L7.76|
 000006  f89000a0          LDRB     r0,[r0,#0xa0]  ; s_gCQ
 00000a  4910              LDR      r1,|L7.76|
 00000c  f89110a1          LDRB     r1,[r1,#0xa1]  ; s_gCQ
 000010  4288              CMP      r0,r1
 000012  d101              BNE      |L7.24|
-;;;49     	{
-;;;50     		return CQ_NONE;
+;;;48     	{
+;;;49     		return CQ_NONE;
 000014  2000              MOVS     r0,#0
                   |L7.22|
-;;;51     	}
-;;;52     	else
-;;;53     	{
-;;;54     		memcpy(_Date,s_gCQ.Buf[s_gCQ.Read],16);
-;;;55     		if (++s_gCQ.Read >= CQ_FIFO_SIZE)
-;;;56     		{
-;;;57     			s_gCQ.Read = 0;
-;;;58     		}
-;;;59     		return CQ_OK;
-;;;60     	}
-;;;61     }
+;;;50     	}
+;;;51     	else
+;;;52     	{
+;;;53     		memcpy(_Date,s_gCQ.Buf[s_gCQ.Read],16);
+;;;54     		if (++s_gCQ.Read >= CQ_FIFO_SIZE)
+;;;55     		{
+;;;56     			s_gCQ.Read = 0;
+;;;57     		}
+;;;58     		return CQ_OK;
+;;;59     	}
+;;;60     }
 000016  bd10              POP      {r4,pc}
                   |L7.24|
 000018  480c              LDR      r0,|L7.76|
-00001a  f89000a0          LDRB     r0,[r0,#0xa0]         ;54  ; s_gCQ
+00001a  f89000a0          LDRB     r0,[r0,#0xa0]         ;53  ; s_gCQ
 00001e  4a0b              LDR      r2,|L7.76|
-000020  eb021100          ADD      r1,r2,r0,LSL #4       ;54
-000024  2210              MOVS     r2,#0x10              ;54
-000026  4620              MOV      r0,r4                 ;54
+000020  eb021100          ADD      r1,r2,r0,LSL #4       ;53
+000024  2210              MOVS     r2,#0x10              ;53
+000026  4620              MOV      r0,r4                 ;53
 000028  f7fffffe          BL       __aeabi_memcpy
 00002c  4807              LDR      r0,|L7.76|
-00002e  f89000a0          LDRB     r0,[r0,#0xa0]         ;55  ; s_gCQ
-000032  1c40              ADDS     r0,r0,#1              ;55
-000034  b2c0              UXTB     r0,r0                 ;55
+00002e  f89000a0          LDRB     r0,[r0,#0xa0]         ;54  ; s_gCQ
+000032  1c40              ADDS     r0,r0,#1              ;54
+000034  b2c0              UXTB     r0,r0                 ;54
 000036  4905              LDR      r1,|L7.76|
-000038  f88100a0          STRB     r0,[r1,#0xa0]         ;55
-00003c  280a              CMP      r0,#0xa               ;55
+000038  f88100a0          STRB     r0,[r1,#0xa0]         ;54
+00003c  280a              CMP      r0,#0xa               ;54
 00003e  db02              BLT      |L7.70|
-000040  2000              MOVS     r0,#0                 ;57
-000042  f88100a0          STRB     r0,[r1,#0xa0]         ;57
+000040  2000              MOVS     r0,#0                 ;56
+000042  f88100a0          STRB     r0,[r1,#0xa0]         ;56
                   |L7.70|
-000046  2001              MOVS     r0,#1                 ;59
+000046  2001              MOVS     r0,#1                 ;58
 000048  e7e5              B        |L7.22|
-;;;62     
+;;;61     
                           ENDP
 
 00004a  0000              DCW      0x0000
@@ -425,30 +400,30 @@
                           AREA ||i.RCC_Configuration||, CODE, READONLY, ALIGN=1
 
                   RCC_Configuration PROC
-;;;30     
-;;;31     void RCC_Configuration(void)
+;;;29     
+;;;30     void RCC_Configuration(void)
 000000  4770              BX       lr
-;;;32     {
-;;;33     //    RCC_DeInit();
-;;;34     //    RCC_HSEConfig(RCC_HSE_OFF);
-;;;35     //    RCC_HSICmd(ENABLE);
-;;;36     //    RCC_HSEConfig(RCC_HSE_ON);
-;;;37     }
-;;;38     void CPU_IDLE(void)
+;;;31     {
+;;;32     //    RCC_DeInit();
+;;;33     //    RCC_HSEConfig(RCC_HSE_OFF);
+;;;34     //    RCC_HSICmd(ENABLE);
+;;;35     //    RCC_HSEConfig(RCC_HSE_ON);
+;;;36     }
+;;;37     void CPU_IDLE(void)
                           ENDP
 
 
                           AREA ||i.SoftReset||, CODE, READONLY, ALIGN=2
 
                   SoftReset PROC
-;;;109    
-;;;110    void SoftReset(void)
+;;;100    
+;;;101    void SoftReset(void)
 000000  2001              MOVS     r0,#1
 000002  f3808813          MSR      FAULTMASK,r0
 000006  bf00              NOP      
-;;;111    {
-;;;112    	__set_FAULTMASK(1);		// 关闭所有中端
-;;;113    	NVIC_SystemReset();		// 复位
+;;;102    {
+;;;103    	__set_FAULTMASK(1);		// 关闭所有中端
+;;;104    	NVIC_SystemReset();		// 复位
 000008  bf00              NOP      
 00000a  4807              LDR      r0,|L9.40|
 00000c  6800              LDR      r0,[r0,#0]
@@ -463,8 +438,8 @@
 000022  bf00              NOP      
                   |L9.36|
 000024  e7fe              B        |L9.36|
-;;;114    }
-;;;115    
+;;;105    }
+;;;106    
                           ENDP
 
 000026  0000              DCW      0x0000
@@ -476,29 +451,29 @@
                           AREA ||i.TIM3_IRQHandler||, CODE, READONLY, ALIGN=2
 
                   TIM3_IRQHandler PROC
-;;;342    //定时器3中断服务程序
-;;;343    void TIM3_IRQHandler(void)   //TIM3中断
+;;;331    //定时器3中断服务程序
+;;;332    void TIM3_IRQHandler(void)   //TIM3中断
 000000  b510              PUSH     {r4,lr}
-;;;344    {
-;;;345    	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)  //TIM3更新中断 1ms中断
+;;;333    {
+;;;334    	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)  //TIM3更新中断 1ms中断
 000002  2101              MOVS     r1,#1
 000004  482a              LDR      r0,|L10.176|
 000006  f7fffffe          BL       TIM_GetITStatus
 00000a  2800              CMP      r0,#0
 00000c  d04f              BEQ      |L10.174|
-;;;346    	{
-;;;347    		if(Time_count>3000) //3秒周期产生
+;;;335    	{
+;;;336    		if(Time_count>3000) //3秒周期产生
 00000e  4829              LDR      r0,|L10.180|
 000010  8800              LDRH     r0,[r0,#0]  ; Time_count
 000012  f64031b8          MOV      r1,#0xbb8
 000016  4288              CMP      r0,r1
 000018  dd0f              BLE      |L10.58|
-;;;348            {
-;;;349                Time_count = 0;
+;;;337            {
+;;;338                Time_count = 0;
 00001a  2000              MOVS     r0,#0
 00001c  4925              LDR      r1,|L10.180|
 00001e  8008              STRH     r0,[r1,#0]
-;;;350                g_ShowUpDateFlag = (++g_ShowUpDateFlag)%6;  //0-1-2-3-4-5-0
+;;;339                g_ShowUpDateFlag = (++g_ShowUpDateFlag)%6;  //0-1-2-3-4-5-0
 000020  4825              LDR      r0,|L10.184|
 000022  7800              LDRB     r0,[r0,#0]  ; g_ShowUpDateFlag
 000024  1c40              ADDS     r0,r0,#1
@@ -511,41 +486,41 @@
 000036  4920              LDR      r1,|L10.184|
 000038  7008              STRB     r0,[r1,#0]
                   |L10.58|
-;;;351            }
-;;;352    		Time_count++;
+;;;340            }
+;;;341    		Time_count++;
 00003a  481e              LDR      r0,|L10.180|
 00003c  8800              LDRH     r0,[r0,#0]  ; Time_count
 00003e  1c40              ADDS     r0,r0,#1
 000040  491c              LDR      r1,|L10.180|
 000042  8008              STRH     r0,[r1,#0]
-;;;353            if(StartTimerFlag==0xAA)    
+;;;342            if(StartTimerFlag==0xAA)    
 000044  481d              LDR      r0,|L10.188|
 000046  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
 000048  28aa              CMP      r0,#0xaa
 00004a  d118              BNE      |L10.126|
-;;;354            {
-;;;355                KMTime_count++;
+;;;343            {
+;;;344                KMTime_count++;
 00004c  481c              LDR      r0,|L10.192|
 00004e  8800              LDRH     r0,[r0,#0]  ; KMTime_count
 000050  1c40              ADDS     r0,r0,#1
 000052  491b              LDR      r1,|L10.192|
 000054  8008              STRH     r0,[r1,#0]
-;;;356                if(KMTime_count>1000) //1秒周期定时
+;;;345                if(KMTime_count>1000) //1秒周期定时
 000056  4608              MOV      r0,r1
 000058  8800              LDRH     r0,[r0,#0]  ; KMTime_count
 00005a  f5b07f7a          CMP      r0,#0x3e8
 00005e  dd16              BLE      |L10.142|
-;;;357                {
-;;;358                    KMTime_count = 0;
+;;;346                {
+;;;347                    KMTime_count = 0;
 000060  2000              MOVS     r0,#0
 000062  8008              STRH     r0,[r1,#0]
-;;;359                    KMTime_Sec++;
+;;;348                    KMTime_Sec++;
 000064  4817              LDR      r0,|L10.196|
 000066  7800              LDRB     r0,[r0,#0]  ; KMTime_Sec
 000068  1c40              ADDS     r0,r0,#1
 00006a  4916              LDR      r1,|L10.196|
 00006c  7008              STRB     r0,[r1,#0]
-;;;360                    if(KMTime_Sec>6)    StartTimerFlag = 0xBB;  //定时时间到
+;;;349                    if(KMTime_Sec>6)    StartTimerFlag = 0xBB;  //定时时间到
 00006e  4608              MOV      r0,r1
 000070  7800              LDRB     r0,[r0,#0]  ; KMTime_Sec
 000072  2806              CMP      r0,#6
@@ -555,24 +530,24 @@
 00007a  7008              STRB     r0,[r1,#0]
 00007c  e007              B        |L10.142|
                   |L10.126|
-;;;361                }
-;;;362            }
-;;;363            else if(StartTimerFlag==0x00)
+;;;350                }
+;;;351            }
+;;;352            else if(StartTimerFlag==0x00)
 00007e  480f              LDR      r0,|L10.188|
 000080  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
 000082  b920              CBNZ     r0,|L10.142|
-;;;364            {
-;;;365                KMTime_count = 0;   KMTime_Sec = 0;
+;;;353            {
+;;;354                KMTime_count = 0;   KMTime_Sec = 0;
 000084  2000              MOVS     r0,#0
 000086  490e              LDR      r1,|L10.192|
 000088  8008              STRH     r0,[r1,#0]
 00008a  490e              LDR      r1,|L10.196|
 00008c  7008              STRB     r0,[r1,#0]
                   |L10.142|
-;;;366            }
-;;;367    		SysTick_ISR();	//这个函数在bsp_timer.c中 
+;;;355            }
+;;;356    		SysTick_ISR();	//这个函数在bsp_timer.c中 
 00008e  f7fffffe          BL       SysTick_ISR
-;;;368    		if((Time_count%10)==0)			bsp_KeyScan();	//每10ms扫描按键一次
+;;;357    		if((Time_count%10)==0)			bsp_KeyScan();	//每10ms扫描按键一次
 000092  4808              LDR      r0,|L10.180|
 000094  8800              LDRH     r0,[r0,#0]  ; Time_count
 000096  210a              MOVS     r1,#0xa
@@ -581,15 +556,15 @@
 0000a0  b908              CBNZ     r0,|L10.166|
 0000a2  f7fffffe          BL       bsp_KeyScan
                   |L10.166|
-;;;369    		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  	//清除TIMx更新中断标志 					
+;;;358    		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  	//清除TIMx更新中断标志 					
 0000a6  2101              MOVS     r1,#1
 0000a8  4801              LDR      r0,|L10.176|
 0000aa  f7fffffe          BL       TIM_ClearITPendingBit
                   |L10.174|
-;;;370    	}
-;;;371    }
+;;;359    	}
+;;;360    }
 0000ae  bd10              POP      {r4,pc}
-;;;372    
+;;;361    
                           ENDP
 
                   |L10.176|
@@ -614,628 +589,636 @@
                           REQUIRE _printf_x
                           REQUIRE _printf_longlong_hex
                   main PROC
-;;;123    */
-;;;124    int main(void)
-000000  b086              SUB      sp,sp,#0x18
-;;;125    {
-;;;126    	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
+;;;114    */
+;;;115    int main(void)
+000000  b51f              PUSH     {r0-r4,lr}
+;;;116    {
+;;;117    	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
 000002  2000              MOVS     r0,#0
-000004  9004              STR      r0,[sp,#0x10]
-000006  9005              STR      r0,[sp,#0x14]
-000008  9003              STR      r0,[sp,#0xc]
-;;;127    	uint8_t Time_250ms=0;
+000004  9002              STR      r0,[sp,#8]
+000006  9003              STR      r0,[sp,#0xc]
+000008  9001              STR      r0,[sp,#4]
+;;;118    	uint8_t Time_250ms=0;
 00000a  2600              MOVS     r6,#0
-;;;128    	uint8_t KeyDat=0;
+;;;119    	uint8_t KeyDat=0;
 00000c  2500              MOVS     r5,#0
-;;;129        uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
+;;;120        uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
 00000e  2400              MOVS     r4,#0
-;;;130        uint8_t OldRunMode=0;
+;;;121        uint8_t OldRunMode=0;
 000010  2700              MOVS     r7,#0
-;;;131        uint8_t RunStape = 0;   //0低速，1高速;
+;;;122        uint8_t RunStape = 0;   //0低速，1高速;
 000012  4680              MOV      r8,r0
-;;;132        KMDat ApRun,BpRun;      //A/B泵 运行状态    
-;;;133    	SystemInit();
+;;;123    	SystemInit();
 000014  f7fffffe          BL       SystemInit
-;;;134    	
-;;;135    	InitBoard();		//硬件初始化
+;;;124    	
+;;;125    	InitBoard();		//硬件初始化
 000018  f7fffffe          BL       InitBoard
-;;;136    	BspTm1639_Show(0xA0,0x00);	//上电初始化显示
+;;;126    	BspTm1639_Show(0xA0,0x00);	//上电初始化显示
 00001c  2100              MOVS     r1,#0
 00001e  20a0              MOVS     r0,#0xa0
 000020  f7fffffe          BL       BspTm1639_Show
-;;;137    	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS1_4tq,CAN_BS2_3tq,75,CAN_Mode_Normal);	//CAN初始化正常模式,波特率60Kbps  //则波特率为:36M/((1+2+1)*150)= 60Kbps CAN_Normal_Init(1,2,1,150,1);   
+;;;127    	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS1_4tq,CAN_BS2_3tq,75,CAN_Mode_Normal);	//CAN初始化正常模式,波特率60Kbps  //则波特率为:36M/((1+2+1)*150)= 60Kbps CAN_Normal_Init(1,2,1,150,1);   
 000024  2000              MOVS     r0,#0
 000026  234b              MOVS     r3,#0x4b
 000028  2202              MOVS     r2,#2
 00002a  2103              MOVS     r1,#3
 00002c  9000              STR      r0,[sp,#0]
 00002e  f7fffffe          BL       CAN_Mode_Init
-;;;138    	printf("CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n");
-000032  a0db              ADR      r0,|L11.928|
+;;;128    	printf("CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n");
+000032  a0d9              ADR      r0,|L11.920|
 000034  f7fffffe          BL       __2printf
-;;;139    	
-;;;140        printf("-------------------------------------------------------------------\r\n");
-000038  48e2              LDR      r0,|L11.964|
+;;;129    	
+;;;130        printf("-------------------------------------------------------------------\r\n");
+000038  48e0              LDR      r0,|L11.956|
 00003a  f7fffffe          BL       __2printf
-;;;141    	bsp_StartTimer(1, 200);			//定时器1周期 200毫秒
+;;;131    	bsp_StartTimer(1, 200);			//定时器1周期 200毫秒
 00003e  21c8              MOVS     r1,#0xc8
 000040  2001              MOVS     r0,#1
 000042  f7fffffe          BL       bsp_StartTimer
-;;;142    	KMOFF_Show(ALARMALL);
+;;;132    	KMOFF_Show(ALARMALL);
 000046  f64070ff          MOV      r0,#0xfff
 00004a  f7fffffe          BL       KMOFF_Show
-;;;143    	HC595_E1_ON();HC595_E2_ON();
+;;;133    	HC595_E1_ON();HC595_E2_ON();
 00004e  2104              MOVS     r1,#4
-000050  48dd              LDR      r0,|L11.968|
+000050  48db              LDR      r0,|L11.960|
 000052  f7fffffe          BL       GPIO_ResetBits
 000056  2108              MOVS     r1,#8
-000058  48db              LDR      r0,|L11.968|
+000058  48d9              LDR      r0,|L11.960|
 00005a  f7fffffe          BL       GPIO_ResetBits
-;;;144        RS485Dat_LED1_ON();	//远程通信指示灯
+;;;134        RS485Dat_LED1_ON();	//远程通信指示灯
 00005e  f7fffffe          BL       RS485Dat_LED1_ON
-;;;145        RS485Dat_LED2_ON(); //主板通信指示灯	
+;;;135        RS485Dat_LED2_ON(); //主板通信指示灯	
 000062  f7fffffe          BL       RS485Dat_LED2_ON
-;;;146        RS485Dat_LED12_ON();//A泵停止指示灯
+;;;136        RS485Dat_LED12_ON();//A泵停止指示灯
 000066  f7fffffe          BL       RS485Dat_LED12_ON
-;;;147        RS485Dat_LED13_ON();//A泵停止指示灯
+;;;137        RS485Dat_LED13_ON();//A泵停止指示灯
 00006a  f7fffffe          BL       RS485Dat_LED13_ON
-;;;148        RS485Dat_LED14_ON();//A泵停止指示灯
+;;;138        RS485Dat_LED14_ON();//A泵停止指示灯
 00006e  f7fffffe          BL       RS485Dat_LED14_ON
-;;;149        RS485Dat_LED18_ON();//B泵停止指示灯
+;;;139        RS485Dat_LED18_ON();//B泵停止指示灯
 000072  f7fffffe          BL       RS485Dat_LED18_ON
-;;;150        RS485Dat_LED19_ON();//B泵停止指示灯
+;;;140        RS485Dat_LED19_ON();//B泵停止指示灯
 000076  f7fffffe          BL       RS485Dat_LED19_ON
-;;;151        RS485Dat_LED20_ON();//B泵停止指示灯
+;;;141        RS485Dat_LED20_ON();//B泵停止指示灯
 00007a  f7fffffe          BL       RS485Dat_LED20_ON
-;;;152        RS485Dat_LED16_ON();//手动模式指示灯
+;;;142        RS485Dat_LED16_ON();//手动模式指示灯
 00007e  f7fffffe          BL       RS485Dat_LED16_ON
-;;;153        while (1)
-000082  e18c              B        |L11.926|
+;;;143        while (1)
+000082  e188              B        |L11.918|
                   |L11.132|
-;;;154    	{
-;;;155    		CPU_IDLE();
+;;;144    	{
+;;;145    		CPU_IDLE();
 000084  f7fffffe          BL       CPU_IDLE
-;;;156    		if ( bsp_CheckTimer(1) )	//软定时器
+;;;146    		if ( bsp_CheckTimer(1) )	//软定时器
 000088  2001              MOVS     r0,#1
 00008a  f7fffffe          BL       bsp_CheckTimer
 00008e  2800              CMP      r0,#0
-000090  d07b              BEQ      |L11.394|
-;;;157    		{
-;;;158    			bsp_StartTimer(1, 200);	//启动下个定时周期
+000090  d077              BEQ      |L11.386|
+;;;147    		{
+;;;148    			bsp_StartTimer(1, 200);	//启动下个定时周期
 000092  21c8              MOVS     r1,#0xc8
 000094  2001              MOVS     r0,#1
 000096  f7fffffe          BL       bsp_StartTimer
-;;;159    			if(Time_250ms<20)	Time_250ms++;
+;;;149    			if(Time_250ms<20)	Time_250ms++;
 00009a  2e14              CMP      r6,#0x14
 00009c  da02              BGE      |L11.164|
 00009e  1c70              ADDS     r0,r6,#1
 0000a0  b2c6              UXTB     r6,r0
 0000a2  e00d              B        |L11.192|
                   |L11.164|
-;;;160    			else	
-;;;161    			{	
-;;;162    				Time_250ms=0;
+;;;150    			else	
+;;;151    			{	
+;;;152    				Time_250ms=0;
 0000a4  2600              MOVS     r6,#0
-;;;163                    if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0)
-0000a6  a804              ADD      r0,sp,#0x10
+;;;153                    if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0)
+0000a6  a802              ADD      r0,sp,#8
 0000a8  f7fffffe          BL       DHT11_Read_Data
 0000ac  b930              CBNZ     r0,|L11.188|
-;;;164                    {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
-0000ae  f89d0012          LDRB     r0,[sp,#0x12]
-0000b2  49c6              LDR      r1,|L11.972|
+;;;154                    {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
+0000ae  f89d000a          LDRB     r0,[sp,#0xa]
+0000b2  49c4              LDR      r1,|L11.964|
 0000b4  8088              STRH     r0,[r1,#4]
-0000b6  f89d0010          LDRB     r0,[sp,#0x10]
+0000b6  f89d0008          LDRB     r0,[sp,#8]
 0000ba  80c8              STRH     r0,[r1,#6]
                   |L11.188|
-;;;165                    Get_InputValue();
+;;;155                    Get_InputValue();
 0000bc  f7fffffe          BL       Get_InputValue
                   |L11.192|
-;;;166    			}
-;;;167                BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
-0000c0  48c2              LDR      r0,|L11.972|
-0000c2  4ac3              LDR      r2,|L11.976|
+;;;156    			}
+;;;157                BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
+0000c0  48c0              LDR      r0,|L11.964|
+0000c2  4ac1              LDR      r2,|L11.968|
 0000c4  7812              LDRB     r2,[r2,#0]  ; g_ShowUpDateFlag
 0000c6  f8301012          LDRH     r1,[r0,r2,LSL #1]
-0000ca  48c1              LDR      r0,|L11.976|
+0000ca  48bf              LDR      r0,|L11.968|
 0000cc  7800              LDRB     r0,[r0,#0]  ; g_ShowUpDateFlag
 0000ce  f7fffffe          BL       BspTm1639_Show
-;;;168                //ReadDat_CD4067();
-;;;169                ReadInputDat(ApRun.Statue,BpRun.Statue);
-0000d2  f89d1004          LDRB     r1,[sp,#4]
-0000d6  f89d0008          LDRB     r0,[sp,#8]
-0000da  f7fffffe          BL       ReadInputDat
-;;;170                DisplaySendDat();
-0000de  f7fffffe          BL       DisplaySendDat
-;;;171    			KeyDat = bsp_GetKey();
-0000e2  f7fffffe          BL       bsp_GetKey
-0000e6  4605              MOV      r5,r0
-;;;172    			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
-0000e8  2d00              CMP      r5,#0
-0000ea  d030              BEQ      |L11.334|
-;;;173    			{
-;;;174    				switch (KeyDat)
-0000ec  2d0c              CMP      r5,#0xc
-0000ee  d22c              BCS      |L11.330|
-0000f0  e8dff005          TBB      [pc,r5]
-0000f4  06070b2b          DCB      0x06,0x07,0x0b,0x2b
-0000f8  0f132b17          DCB      0x0f,0x13,0x2b,0x17
-0000fc  1b2b1f25          DCB      0x1b,0x2b,0x1f,0x25
-;;;175    				{
-;;;176    					case KEY_NONE:	//无按键按下
-;;;177    						break;
-000100  e024              B        |L11.332|
-;;;178    					case KEY_1_DOWN:	//						
-;;;179    						printf("  KEY_1_DOWN!\r\n");
-000102  a0b4              ADR      r0,|L11.980|
+;;;158                ReadInputDat();     //读取A/B泵全部状态，存放在结构体中
+0000d2  f7fffffe          BL       ReadInputDat
+;;;159                DisplaySendDat();   //RS485数据发送
+0000d6  f7fffffe          BL       DisplaySendDat
+;;;160    			KeyDat = bsp_GetKey();
+0000da  f7fffffe          BL       bsp_GetKey
+0000de  4605              MOV      r5,r0
+;;;161    			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
+0000e0  2d00              CMP      r5,#0
+0000e2  d030              BEQ      |L11.326|
+;;;162    			{
+;;;163    				switch (KeyDat)
+0000e4  2d0c              CMP      r5,#0xc
+0000e6  d22c              BCS      |L11.322|
+0000e8  e8dff005          TBB      [pc,r5]
+0000ec  06070b2b          DCB      0x06,0x07,0x0b,0x2b
+0000f0  0f132b17          DCB      0x0f,0x13,0x2b,0x17
+0000f4  1b2b1f25          DCB      0x1b,0x2b,0x1f,0x25
+;;;164    				{
+;;;165    					case KEY_NONE:	//无按键按下
+;;;166    						break;
+0000f8  e024              B        |L11.324|
+;;;167    					case KEY_1_DOWN:	//						
+;;;168    						printf("  KEY_1_DOWN!\r\n");
+0000fa  a0b4              ADR      r0,|L11.972|
+0000fc  f7fffffe          BL       __2printf
+;;;169    						break;
+000100  e020              B        |L11.324|
+;;;170    					case KEY_1_UP:		//
+;;;171    						printf("  KEY_1_UP!\r\n");
+000102  a0b6              ADR      r0,|L11.988|
 000104  f7fffffe          BL       __2printf
-;;;180    						break;
-000108  e020              B        |L11.332|
-;;;181    					case KEY_1_UP:		//
-;;;182    						printf("  KEY_1_UP!\r\n");
-00010a  a0b6              ADR      r0,|L11.996|
+;;;172    						break;
+000108  e01c              B        |L11.324|
+;;;173    					case KEY_2_DOWN:	//
+;;;174    						printf("  KEY_2_DOWN!\r\n");						
+00010a  a0b8              ADR      r0,|L11.1004|
 00010c  f7fffffe          BL       __2printf
-;;;183    						break;
-000110  e01c              B        |L11.332|
-;;;184    					case KEY_2_DOWN:	//
-;;;185    						printf("  KEY_2_DOWN!\r\n");						
-000112  a0b8              ADR      r0,|L11.1012|
+;;;175    						break;
+000110  e018              B        |L11.324|
+;;;176    					case KEY_2_UP:		//
+;;;177    						printf("  KEY_2_UP!\r\n");
+000112  a0ba              ADR      r0,|L11.1020|
 000114  f7fffffe          BL       __2printf
-;;;186    						break;
-000118  e018              B        |L11.332|
-;;;187    					case KEY_2_UP:		//
-;;;188    						printf("  KEY_2_UP!\r\n");
-00011a  a0ba              ADR      r0,|L11.1028|
+;;;178    						break;
+000118  e014              B        |L11.324|
+;;;179    					case KEY_3_DOWN:	//
+;;;180    						printf("  KEY_3_DOWN!\r\n");
+00011a  a0bc              ADR      r0,|L11.1036|
 00011c  f7fffffe          BL       __2printf
-;;;189    						break;
-000120  e014              B        |L11.332|
-;;;190    					case KEY_3_DOWN:	//
-;;;191    						printf("  KEY_3_DOWN!\r\n");
-000122  a0bc              ADR      r0,|L11.1044|
+;;;181    						break;
+000120  e010              B        |L11.324|
+;;;182    					case KEY_3_UP:		//
+;;;183    						printf("  KEY_3_UP!\r\n");
+000122  a0be              ADR      r0,|L11.1052|
 000124  f7fffffe          BL       __2printf
+;;;184    						break;
+000128  e00c              B        |L11.324|
+;;;185    					case KEY_4_DOWN:	//
+;;;186                            RS485Dat_LED2_ON();
+00012a  f7fffffe          BL       RS485Dat_LED2_ON
+;;;187    						printf("  KEY_4_DOWN!\r\n");						
+00012e  a0bf              ADR      r0,|L11.1068|
+000130  f7fffffe          BL       __2printf
+;;;188    						break;
+000134  e006              B        |L11.324|
+;;;189    					case KEY_4_UP:		//
+;;;190                            RS485Dat_LED2_OFF();
+000136  f7fffffe          BL       RS485Dat_LED2_OFF
+;;;191    						printf("  KEY_4_UP!\r\n");
+00013a  a0c0              ADR      r0,|L11.1084|
+00013c  f7fffffe          BL       __2printf
 ;;;192    						break;
-000128  e010              B        |L11.332|
-;;;193    					case KEY_3_UP:		//
-;;;194    						printf("  KEY_3_UP!\r\n");
-00012a  a0be              ADR      r0,|L11.1060|
-00012c  f7fffffe          BL       __2printf
-;;;195    						break;
-000130  e00c              B        |L11.332|
-;;;196    					case KEY_4_DOWN:	//
-;;;197                            RS485Dat_LED2_ON();
-000132  f7fffffe          BL       RS485Dat_LED2_ON
-;;;198    						printf("  KEY_4_DOWN!\r\n");						
-000136  a0bf              ADR      r0,|L11.1076|
-000138  f7fffffe          BL       __2printf
-;;;199    						break;
-00013c  e006              B        |L11.332|
-;;;200    					case KEY_4_UP:		//
-;;;201                            RS485Dat_LED2_OFF();
-00013e  f7fffffe          BL       RS485Dat_LED2_OFF
-;;;202    						printf("  KEY_4_UP!\r\n");
-000142  a0c0              ADR      r0,|L11.1092|
-000144  f7fffffe          BL       __2printf
-;;;203    						break;
-000148  e000              B        |L11.332|
-                  |L11.330|
-;;;204    					default:
-;;;205    						break;
-00014a  bf00              NOP      
-                  |L11.332|
-00014c  bf00              NOP                            ;177
-                  |L11.334|
-;;;206    				}
-;;;207    			}
-;;;208    
-;;;209    			RS485_ReceiveDat();
-00014e  f7fffffe          BL       RS485_ReceiveDat
-;;;210    			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
-000152  48c0              LDR      r0,|L11.1108|
-000154  7800              LDRB     r0,[r0,#0]  ; RS485_Count
-000156  f0000080          AND      r0,r0,#0x80
-00015a  2880              CMP      r0,#0x80
-00015c  d144              BNE      |L11.488|
-;;;211    			{
-;;;212    				RS485_Count = 0;
-00015e  2000              MOVS     r0,#0
-000160  49bc              LDR      r1,|L11.1108|
-000162  7008              STRB     r0,[r1,#0]
-;;;213                    RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
-000164  48bc              LDR      r0,|L11.1112|
-000166  7900              LDRB     r0,[r0,#4]  ; RS485Dat
-000168  f88d000c          STRB     r0,[sp,#0xc]
-00016c  48ba              LDR      r0,|L11.1112|
-00016e  7940              LDRB     r0,[r0,#5]  ; RS485Dat
-000170  f88d000d          STRB     r0,[sp,#0xd]
-;;;214                    if((RS485Dat_Key[0]!=0x00)||(RS485Dat_Key[1]!=0x00))
-000174  f89d000c          LDRB     r0,[sp,#0xc]
-000178  b910              CBNZ     r0,|L11.384|
-00017a  f89d000d          LDRB     r0,[sp,#0xd]
-00017e  b140              CBZ      r0,|L11.402|
-                  |L11.384|
-;;;215                    printf("RS485_ReceiveDat(),%02X,%02X.\r\n",RS485Dat_Key[0],RS485Dat_Key[1]);
-000180  f89d200d          LDRB     r2,[sp,#0xd]
-000184  f89d100c          LDRB     r1,[sp,#0xc]
-000188  e000              B        |L11.396|
+000140  e000              B        |L11.324|
+                  |L11.322|
+;;;193    					default:
+;;;194    						break;
+000142  bf00              NOP      
+                  |L11.324|
+000144  bf00              NOP                            ;166
+                  |L11.326|
+;;;195    				}
+;;;196    			}
+;;;197    
+;;;198    			RS485_ReceiveDat();
+000146  f7fffffe          BL       RS485_ReceiveDat
+;;;199    			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
+00014a  48c0              LDR      r0,|L11.1100|
+00014c  7800              LDRB     r0,[r0,#0]  ; RS485_Count
+00014e  f0000080          AND      r0,r0,#0x80
+000152  2880              CMP      r0,#0x80
+000154  d144              BNE      |L11.480|
+;;;200    			{
+;;;201    				RS485_Count = 0;
+000156  2000              MOVS     r0,#0
+000158  49bc              LDR      r1,|L11.1100|
+00015a  7008              STRB     r0,[r1,#0]
+;;;202                    RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
+00015c  48bc              LDR      r0,|L11.1104|
+00015e  7900              LDRB     r0,[r0,#4]  ; RS485Dat
+000160  f88d0004          STRB     r0,[sp,#4]
+000164  48ba              LDR      r0,|L11.1104|
+000166  7940              LDRB     r0,[r0,#5]  ; RS485Dat
+000168  f88d0005          STRB     r0,[sp,#5]
+;;;203                    if((RS485Dat_Key[0]!=0x00)||(RS485Dat_Key[1]!=0x00))
+00016c  f89d0004          LDRB     r0,[sp,#4]
+000170  b910              CBNZ     r0,|L11.376|
+000172  f89d0005          LDRB     r0,[sp,#5]
+000176  b140              CBZ      r0,|L11.394|
+                  |L11.376|
+;;;204                    printf("RS485_ReceiveDat(),%02X,%02X.\r\n",RS485Dat_Key[0],RS485Dat_Key[1]);
+000178  f89d2005          LDRB     r2,[sp,#5]
+00017c  f89d1004          LDRB     r1,[sp,#4]
+000180  e000              B        |L11.388|
+                  |L11.386|
+000182  e0f8              B        |L11.886|
+                  |L11.388|
+000184  a0b3              ADR      r0,|L11.1108|
+000186  f7fffffe          BL       __2printf
                   |L11.394|
-00018a  e0f8              B        |L11.894|
-                  |L11.396|
-00018c  a0b3              ADR      r0,|L11.1116|
-00018e  f7fffffe          BL       __2printf
-                  |L11.402|
-;;;216                    if((RS485Dat_Key[1]&0x01)==0x01){;}       //系统复位
-000192  f89d000d          LDRB     r0,[sp,#0xd]
-000196  f0000001          AND      r0,r0,#1
-00019a  bb28              CBNZ     r0,|L11.488|
-;;;217                    else if((RS485Dat_Key[1]&0x08)==0x08){RunMode=1;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主一备二
-00019c  f89d000d          LDRB     r0,[sp,#0xd]
-0001a0  f0000008          AND      r0,r0,#8
-0001a4  2808              CMP      r0,#8
-0001a6  d106              BNE      |L11.438|
-0001a8  2401              MOVS     r4,#1
-0001aa  2000              MOVS     r0,#0
-0001ac  f88d000c          STRB     r0,[sp,#0xc]
-0001b0  f88d000d          STRB     r0,[sp,#0xd]
-0001b4  e018              B        |L11.488|
-                  |L11.438|
-;;;218                    else if((RS485Dat_Key[1]&0x10)==0x10){RunMode=0;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //手动模式
-0001b6  f89d000d          LDRB     r0,[sp,#0xd]
-0001ba  f0000010          AND      r0,r0,#0x10
-0001be  2810              CMP      r0,#0x10
-0001c0  d106              BNE      |L11.464|
-0001c2  2400              MOVS     r4,#0
-0001c4  2000              MOVS     r0,#0
-0001c6  f88d000c          STRB     r0,[sp,#0xc]
-0001ca  f88d000d          STRB     r0,[sp,#0xd]
-0001ce  e00b              B        |L11.488|
-                  |L11.464|
-;;;219                    else if((RS485Dat_Key[1]&0x20)==0x20){RunMode=2;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主二备一
-0001d0  f89d000d          LDRB     r0,[sp,#0xd]
-0001d4  f0000020          AND      r0,r0,#0x20
-0001d8  2820              CMP      r0,#0x20
-0001da  d105              BNE      |L11.488|
-0001dc  2402              MOVS     r4,#2
-0001de  2000              MOVS     r0,#0
-0001e0  f88d000c          STRB     r0,[sp,#0xc]
-0001e4  f88d000d          STRB     r0,[sp,#0xd]
-                  |L11.488|
-;;;220    			}
-;;;221                if(RunMode==0)      //手动模式,直接操作继电器输出
-0001e8  2c00              CMP      r4,#0
-0001ea  d176              BNE      |L11.730|
-;;;222                {
-;;;223                    RS485Dat_LED15_OFF();RS485Dat_LED16_ON();RS485Dat_LED17_OFF();
-0001ec  f7fffffe          BL       RS485Dat_LED15_OFF
-0001f0  f7fffffe          BL       RS485Dat_LED16_ON
-0001f4  f7fffffe          BL       RS485Dat_LED17_OFF
-;;;224                    if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
-0001f8  f89d000d          LDRB     r0,[sp,#0xd]
-0001fc  f0000002          AND      r0,r0,#2
-000200  2802              CMP      r0,#2
-000202  d10c              BNE      |L11.542|
-;;;225                    {   
-;;;226                        ApRun.Statue=Stop;
-000204  2000              MOVS     r0,#0
-000206  f88d0008          STRB     r0,[sp,#8]
-;;;227                        KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
-00020a  2001              MOVS     r0,#1
-00020c  f7fffffe          BL       KMOFF_Show
-000210  2002              MOVS     r0,#2
-000212  f7fffffe          BL       KMOFF_Show
-000216  2004              MOVS     r0,#4
-000218  f7fffffe          BL       KMOFF_Show
-00021c  e06e              B        |L11.764|
-                  |L11.542|
-;;;228                    }  
-;;;229                    else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
-00021e  f89d000c          LDRB     r0,[sp,#0xc]
-000222  f0000001          AND      r0,r0,#1
-000226  b158              CBZ      r0,|L11.576|
-;;;230                    {   
-;;;231                        ApRun.Statue=Slow;     
-000228  2001              MOVS     r0,#1
-00022a  f88d0008          STRB     r0,[sp,#8]
-;;;232                        KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
-00022e  f7fffffe          BL       KMON_Show
-000232  2002              MOVS     r0,#2
-000234  f7fffffe          BL       KMON_Show
-000238  2004              MOVS     r0,#4
-00023a  f7fffffe          BL       KMOFF_Show
-00023e  e05d              B        |L11.764|
-                  |L11.576|
-;;;233                    }  
-;;;234                    else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
-000240  f89d000d          LDRB     r0,[sp,#0xd]
-000244  f0000004          AND      r0,r0,#4
-000248  2804              CMP      r0,#4
-00024a  d10c              BNE      |L11.614|
-;;;235                    {   
-;;;236                        ApRun.Statue=HighSpeed;
-00024c  2002              MOVS     r0,#2
-00024e  f88d0008          STRB     r0,[sp,#8]
-;;;237                        KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
-000252  2001              MOVS     r0,#1
-000254  f7fffffe          BL       KMON_Show
-000258  2002              MOVS     r0,#2
-00025a  f7fffffe          BL       KMOFF_Show
-00025e  2004              MOVS     r0,#4
-000260  f7fffffe          BL       KMON_Show
-000264  e04a              B        |L11.764|
-                  |L11.614|
-;;;238                    }  
-;;;239                    else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
-000266  f89d000d          LDRB     r0,[sp,#0xd]
-00026a  f0000040          AND      r0,r0,#0x40
-00026e  2840              CMP      r0,#0x40
-000270  d10c              BNE      |L11.652|
-;;;240                    {   
-;;;241                        BpRun.Statue=Stop;     
-000272  2000              MOVS     r0,#0
-000274  f88d0004          STRB     r0,[sp,#4]
-;;;242                        KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
-000278  2008              MOVS     r0,#8
-00027a  f7fffffe          BL       KMOFF_Show
-00027e  2010              MOVS     r0,#0x10
-000280  f7fffffe          BL       KMOFF_Show
-000284  2020              MOVS     r0,#0x20
-000286  f7fffffe          BL       KMOFF_Show
-00028a  e037              B        |L11.764|
-                  |L11.652|
-;;;243                    }  
-;;;244                    else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
-00028c  f89d000c          LDRB     r0,[sp,#0xc]
-000290  f0000002          AND      r0,r0,#2
-000294  2802              CMP      r0,#2
-000296  d10c              BNE      |L11.690|
-;;;245                    {   
-;;;246                        BpRun.Statue=Slow;     
-000298  2001              MOVS     r0,#1
-00029a  f88d0004          STRB     r0,[sp,#4]
-;;;247                        KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
-00029e  2008              MOVS     r0,#8
-0002a0  f7fffffe          BL       KMON_Show
-0002a4  2010              MOVS     r0,#0x10
-0002a6  f7fffffe          BL       KMON_Show
-0002aa  2020              MOVS     r0,#0x20
-0002ac  f7fffffe          BL       KMOFF_Show
-0002b0  e024              B        |L11.764|
-                  |L11.690|
-;;;248                    }  
-;;;249                    else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
-0002b2  f89d000d          LDRB     r0,[sp,#0xd]
-0002b6  f0000080          AND      r0,r0,#0x80
-0002ba  2880              CMP      r0,#0x80
-0002bc  d11e              BNE      |L11.764|
-;;;250                    {   
-;;;251                        BpRun.Statue=HighSpeed;
-0002be  2002              MOVS     r0,#2
-0002c0  f88d0004          STRB     r0,[sp,#4]
-;;;252                        KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
-0002c4  2008              MOVS     r0,#8
-0002c6  f7fffffe          BL       KMON_Show
-0002ca  2010              MOVS     r0,#0x10
-0002cc  f7fffffe          BL       KMOFF_Show
-0002d0  2020              MOVS     r0,#0x20
-0002d2  f7fffffe          BL       KMON_Show
-0002d6  e011              B        |L11.764|
-0002d8  e7ff              B        |L11.730|
-                  |L11.730|
-;;;253                    }                 
-;;;254                }
-;;;255                else if(RunMode==1)  //主一备二
-0002da  2c01              CMP      r4,#1
-0002dc  d106              BNE      |L11.748|
-;;;256                {
-;;;257                    RS485Dat_LED15_ON();RS485Dat_LED16_OFF();RS485Dat_LED17_OFF();
-0002de  f7fffffe          BL       RS485Dat_LED15_ON
-0002e2  f7fffffe          BL       RS485Dat_LED16_OFF
-0002e6  f7fffffe          BL       RS485Dat_LED17_OFF
-0002ea  e007              B        |L11.764|
-                  |L11.748|
-;;;258                }
-;;;259                else if(RunMode==2)  //主二备一
-0002ec  2c02              CMP      r4,#2
-0002ee  d105              BNE      |L11.764|
-;;;260                {
-;;;261                    RS485Dat_LED15_OFF();RS485Dat_LED16_OFF();RS485Dat_LED17_ON();
-0002f0  f7fffffe          BL       RS485Dat_LED15_OFF
-0002f4  f7fffffe          BL       RS485Dat_LED16_OFF
-0002f8  f7fffffe          BL       RS485Dat_LED17_ON
-                  |L11.764|
-;;;262                }
-;;;263                if(RunMode!=OldRunMode) //运行模式切换，把运行模式全部转为停止
-0002fc  42bc              CMP      r4,r7
-0002fe  d01b              BEQ      |L11.824|
-;;;264                {
-;;;265                    OldRunMode = RunMode;StartTimerFlag = 0x00;
-000300  4627              MOV      r7,r4
-000302  2000              MOVS     r0,#0
-000304  495d              LDR      r1,|L11.1148|
-000306  7008              STRB     r0,[r1,#0]
-;;;266                    ApRun.Statue = Stop;
-000308  f88d0008          STRB     r0,[sp,#8]
-;;;267                    KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
-00030c  2001              MOVS     r0,#1
-00030e  f7fffffe          BL       KMOFF_Show
-000312  2002              MOVS     r0,#2
-000314  f7fffffe          BL       KMOFF_Show
-000318  2004              MOVS     r0,#4
-00031a  f7fffffe          BL       KMOFF_Show
-;;;268                    BpRun.Statue = Stop;     
-00031e  2000              MOVS     r0,#0
-000320  f88d0004          STRB     r0,[sp,#4]
-;;;269                    KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
-000324  2008              MOVS     r0,#8
-000326  f7fffffe          BL       KMOFF_Show
-00032a  2010              MOVS     r0,#0x10
-00032c  f7fffffe          BL       KMOFF_Show
-000330  2020              MOVS     r0,#0x20
-000332  f7fffffe          BL       KMOFF_Show
-000336  e030              B        |L11.922|
-                  |L11.824|
-;;;270                }
-;;;271                else if(RunMode!=0)  //自动模式
-000338  b30c              CBZ      r4,|L11.894|
-;;;272                {
-;;;273                    if((Read_Optocoupler(8)==0)||(Read_Optocoupler(9)==0)) //远控1/远控2检测
-00033a  2008              MOVS     r0,#8
+;;;205                    if((RS485Dat_Key[1]&0x01)==0x01){;}       //系统复位
+00018a  f89d0005          LDRB     r0,[sp,#5]
+00018e  f0000001          AND      r0,r0,#1
+000192  bb28              CBNZ     r0,|L11.480|
+;;;206                    else if((RS485Dat_Key[1]&0x08)==0x08){RunMode=1;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主一备二
+000194  f89d0005          LDRB     r0,[sp,#5]
+000198  f0000008          AND      r0,r0,#8
+00019c  2808              CMP      r0,#8
+00019e  d106              BNE      |L11.430|
+0001a0  2401              MOVS     r4,#1
+0001a2  2000              MOVS     r0,#0
+0001a4  f88d0004          STRB     r0,[sp,#4]
+0001a8  f88d0005          STRB     r0,[sp,#5]
+0001ac  e018              B        |L11.480|
+                  |L11.430|
+;;;207                    else if((RS485Dat_Key[1]&0x10)==0x10){RunMode=0;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //手动模式
+0001ae  f89d0005          LDRB     r0,[sp,#5]
+0001b2  f0000010          AND      r0,r0,#0x10
+0001b6  2810              CMP      r0,#0x10
+0001b8  d106              BNE      |L11.456|
+0001ba  2400              MOVS     r4,#0
+0001bc  2000              MOVS     r0,#0
+0001be  f88d0004          STRB     r0,[sp,#4]
+0001c2  f88d0005          STRB     r0,[sp,#5]
+0001c6  e00b              B        |L11.480|
+                  |L11.456|
+;;;208                    else if((RS485Dat_Key[1]&0x20)==0x20){RunMode=2;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主二备一
+0001c8  f89d0005          LDRB     r0,[sp,#5]
+0001cc  f0000020          AND      r0,r0,#0x20
+0001d0  2820              CMP      r0,#0x20
+0001d2  d105              BNE      |L11.480|
+0001d4  2402              MOVS     r4,#2
+0001d6  2000              MOVS     r0,#0
+0001d8  f88d0004          STRB     r0,[sp,#4]
+0001dc  f88d0005          STRB     r0,[sp,#5]
+                  |L11.480|
+;;;209    			}
+;;;210                if(RunMode==0)      //手动模式,直接操作继电器输出
+0001e0  2c00              CMP      r4,#0
+0001e2  d176              BNE      |L11.722|
+;;;211                {
+;;;212                    RS485Dat_LED15_OFF();RS485Dat_LED16_ON();RS485Dat_LED17_OFF();
+0001e4  f7fffffe          BL       RS485Dat_LED15_OFF
+0001e8  f7fffffe          BL       RS485Dat_LED16_ON
+0001ec  f7fffffe          BL       RS485Dat_LED17_OFF
+;;;213                    if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
+0001f0  f89d0005          LDRB     r0,[sp,#5]
+0001f4  f0000002          AND      r0,r0,#2
+0001f8  2802              CMP      r0,#2
+0001fa  d10c              BNE      |L11.534|
+;;;214                    {   
+;;;215                        gAp.Statue=Stop;
+0001fc  2000              MOVS     r0,#0
+0001fe  499d              LDR      r1,|L11.1140|
+000200  7008              STRB     r0,[r1,#0]
+;;;216                        KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+000202  2001              MOVS     r0,#1
+000204  f7fffffe          BL       KMOFF_Show
+000208  2002              MOVS     r0,#2
+00020a  f7fffffe          BL       KMOFF_Show
+00020e  2004              MOVS     r0,#4
+000210  f7fffffe          BL       KMOFF_Show
+000214  e06e              B        |L11.756|
+                  |L11.534|
+;;;217                    }  
+;;;218                    else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
+000216  f89d0004          LDRB     r0,[sp,#4]
+00021a  f0000001          AND      r0,r0,#1
+00021e  b158              CBZ      r0,|L11.568|
+;;;219                    {   
+;;;220                        gAp.Statue=Slow;     
+000220  2001              MOVS     r0,#1
+000222  4994              LDR      r1,|L11.1140|
+000224  7008              STRB     r0,[r1,#0]
+;;;221                        KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
+000226  f7fffffe          BL       KMON_Show
+00022a  2002              MOVS     r0,#2
+00022c  f7fffffe          BL       KMON_Show
+000230  2004              MOVS     r0,#4
+000232  f7fffffe          BL       KMOFF_Show
+000236  e05d              B        |L11.756|
+                  |L11.568|
+;;;222                    }  
+;;;223                    else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
+000238  f89d0005          LDRB     r0,[sp,#5]
+00023c  f0000004          AND      r0,r0,#4
+000240  2804              CMP      r0,#4
+000242  d10c              BNE      |L11.606|
+;;;224                    {   
+;;;225                        gAp.Statue=HighSpeed;
+000244  2002              MOVS     r0,#2
+000246  498b              LDR      r1,|L11.1140|
+000248  7008              STRB     r0,[r1,#0]
+;;;226                        KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
+00024a  2001              MOVS     r0,#1
+00024c  f7fffffe          BL       KMON_Show
+000250  2002              MOVS     r0,#2
+000252  f7fffffe          BL       KMOFF_Show
+000256  2004              MOVS     r0,#4
+000258  f7fffffe          BL       KMON_Show
+00025c  e04a              B        |L11.756|
+                  |L11.606|
+;;;227                    }  
+;;;228                    else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
+00025e  f89d0005          LDRB     r0,[sp,#5]
+000262  f0000040          AND      r0,r0,#0x40
+000266  2840              CMP      r0,#0x40
+000268  d10c              BNE      |L11.644|
+;;;229                    {   
+;;;230                        gBp.Statue=Stop;     
+00026a  2000              MOVS     r0,#0
+00026c  4982              LDR      r1,|L11.1144|
+00026e  7008              STRB     r0,[r1,#0]
+;;;231                        KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+000270  2008              MOVS     r0,#8
+000272  f7fffffe          BL       KMOFF_Show
+000276  2010              MOVS     r0,#0x10
+000278  f7fffffe          BL       KMOFF_Show
+00027c  2020              MOVS     r0,#0x20
+00027e  f7fffffe          BL       KMOFF_Show
+000282  e037              B        |L11.756|
+                  |L11.644|
+;;;232                    }  
+;;;233                    else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
+000284  f89d0004          LDRB     r0,[sp,#4]
+000288  f0000002          AND      r0,r0,#2
+00028c  2802              CMP      r0,#2
+00028e  d10c              BNE      |L11.682|
+;;;234                    {   
+;;;235                        gBp.Statue=Slow;     
+000290  2001              MOVS     r0,#1
+000292  4979              LDR      r1,|L11.1144|
+000294  7008              STRB     r0,[r1,#0]
+;;;236                        KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
+000296  2008              MOVS     r0,#8
+000298  f7fffffe          BL       KMON_Show
+00029c  2010              MOVS     r0,#0x10
+00029e  f7fffffe          BL       KMON_Show
+0002a2  2020              MOVS     r0,#0x20
+0002a4  f7fffffe          BL       KMOFF_Show
+0002a8  e024              B        |L11.756|
+                  |L11.682|
+;;;237                    }  
+;;;238                    else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
+0002aa  f89d0005          LDRB     r0,[sp,#5]
+0002ae  f0000080          AND      r0,r0,#0x80
+0002b2  2880              CMP      r0,#0x80
+0002b4  d11e              BNE      |L11.756|
+;;;239                    {   
+;;;240                        gBp.Statue=HighSpeed;
+0002b6  2002              MOVS     r0,#2
+0002b8  496f              LDR      r1,|L11.1144|
+0002ba  7008              STRB     r0,[r1,#0]
+;;;241                        KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
+0002bc  2008              MOVS     r0,#8
+0002be  f7fffffe          BL       KMON_Show
+0002c2  2010              MOVS     r0,#0x10
+0002c4  f7fffffe          BL       KMOFF_Show
+0002c8  2020              MOVS     r0,#0x20
+0002ca  f7fffffe          BL       KMON_Show
+0002ce  e011              B        |L11.756|
+0002d0  e7ff              B        |L11.722|
+                  |L11.722|
+;;;242                    }                 
+;;;243                }
+;;;244                else if(RunMode==1)  //主一备二
+0002d2  2c01              CMP      r4,#1
+0002d4  d106              BNE      |L11.740|
+;;;245                {
+;;;246                    RS485Dat_LED15_ON();RS485Dat_LED16_OFF();RS485Dat_LED17_OFF();
+0002d6  f7fffffe          BL       RS485Dat_LED15_ON
+0002da  f7fffffe          BL       RS485Dat_LED16_OFF
+0002de  f7fffffe          BL       RS485Dat_LED17_OFF
+0002e2  e007              B        |L11.756|
+                  |L11.740|
+;;;247                }
+;;;248                else if(RunMode==2)  //主二备一
+0002e4  2c02              CMP      r4,#2
+0002e6  d105              BNE      |L11.756|
+;;;249                {
+;;;250                    RS485Dat_LED15_OFF();RS485Dat_LED16_OFF();RS485Dat_LED17_ON();
+0002e8  f7fffffe          BL       RS485Dat_LED15_OFF
+0002ec  f7fffffe          BL       RS485Dat_LED16_OFF
+0002f0  f7fffffe          BL       RS485Dat_LED17_ON
+                  |L11.756|
+;;;251                }
+;;;252                if(RunMode!=OldRunMode) //运行模式切换，把运行模式全部转为停止
+0002f4  42bc              CMP      r4,r7
+0002f6  d01b              BEQ      |L11.816|
+;;;253                {
+;;;254                    OldRunMode = RunMode;StartTimerFlag = 0x00;
+0002f8  4627              MOV      r7,r4
+0002fa  2000              MOVS     r0,#0
+0002fc  495f              LDR      r1,|L11.1148|
+0002fe  7008              STRB     r0,[r1,#0]
+;;;255                    gAp.Statue = Stop;
+000300  495c              LDR      r1,|L11.1140|
+000302  7008              STRB     r0,[r1,#0]
+;;;256                    KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+000304  2001              MOVS     r0,#1
+000306  f7fffffe          BL       KMOFF_Show
+00030a  2002              MOVS     r0,#2
+00030c  f7fffffe          BL       KMOFF_Show
+000310  2004              MOVS     r0,#4
+000312  f7fffffe          BL       KMOFF_Show
+;;;257                    gBp.Statue = Stop;     
+000316  2000              MOVS     r0,#0
+000318  4957              LDR      r1,|L11.1144|
+00031a  7008              STRB     r0,[r1,#0]
+;;;258                    KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+00031c  2008              MOVS     r0,#8
+00031e  f7fffffe          BL       KMOFF_Show
+000322  2010              MOVS     r0,#0x10
+000324  f7fffffe          BL       KMOFF_Show
+000328  2020              MOVS     r0,#0x20
+00032a  f7fffffe          BL       KMOFF_Show
+00032e  e030              B        |L11.914|
+                  |L11.816|
+;;;259                }
+;;;260                else if(RunMode!=0)  //自动模式
+000330  b30c              CBZ      r4,|L11.886|
+;;;261                {
+;;;262                    if((Read_Optocoupler(8)==0)||(Read_Optocoupler(9)==0)) //远控1/远控2检测
+000332  2008              MOVS     r0,#8
+000334  f7fffffe          BL       Read_Optocoupler
+000338  b118              CBZ      r0,|L11.834|
+00033a  2009              MOVS     r0,#9
 00033c  f7fffffe          BL       Read_Optocoupler
-000340  b118              CBZ      r0,|L11.842|
-000342  2009              MOVS     r0,#9
-000344  f7fffffe          BL       Read_Optocoupler
-000348  b9d0              CBNZ     r0,|L11.896|
-                  |L11.842|
-;;;274                    {
-;;;275                        if(StartTimerFlag==0x00)
-00034a  484c              LDR      r0,|L11.1148|
-00034c  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
-00034e  b948              CBNZ     r0,|L11.868|
-;;;276                        {
-;;;277                            RunStape = 1;
-000350  f04f0801          MOV      r8,#1
-;;;278                            StartTimerFlag=0xAA;        //标记进入启动，开启定时功能
-000354  20aa              MOVS     r0,#0xaa
-000356  4949              LDR      r1,|L11.1148|
-000358  7008              STRB     r0,[r1,#0]
-;;;279                            KMAutoRUN(RunMode,RunStape);//自动启动控制
-00035a  4641              MOV      r1,r8
-00035c  4620              MOV      r0,r4
-00035e  f7fffffe          BL       KMAutoRUN
-000362  e01a              B        |L11.922|
-                  |L11.868|
-;;;280                        }
-;;;281                        else if(StartTimerFlag==0xBB)   //进入第二阶段，定时时间到，该定时在定时器中实现
-000364  4845              LDR      r0,|L11.1148|
-000366  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
-000368  28bb              CMP      r0,#0xbb
-00036a  d116              BNE      |L11.922|
-;;;282                        {
-;;;283                            RunStape = 2;
-00036c  f04f0802          MOV      r8,#2
-;;;284                            StartTimerFlag=0xCC;        //标记进入高速运行
-000370  20cc              MOVS     r0,#0xcc
-000372  4942              LDR      r1,|L11.1148|
-000374  7008              STRB     r0,[r1,#0]
-;;;285                            KMAutoRUN(RunMode,RunStape);//自动启动控制                        
-000376  4641              MOV      r1,r8
-000378  4620              MOV      r0,r4
-00037a  f7fffffe          BL       KMAutoRUN
-                  |L11.894|
-00037e  e00c              B        |L11.922|
-                  |L11.896|
-;;;286                        }
-;;;287                    }
-;;;288                    else
-;;;289                    {
-;;;290                        if(StartTimerFlag==0xCC)
-000380  483e              LDR      r0,|L11.1148|
-000382  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
-000384  28cc              CMP      r0,#0xcc
-000386  d108              BNE      |L11.922|
-;;;291                        {
-;;;292                            RunStape = 0;
-000388  f04f0800          MOV      r8,#0
-;;;293                            StartTimerFlag = 0x00;
-00038c  2000              MOVS     r0,#0
-00038e  493b              LDR      r1,|L11.1148|
-000390  7008              STRB     r0,[r1,#0]
-;;;294                            KMAutoRUN(RunMode,RunStape);//自动启动控制
-000392  4641              MOV      r1,r8
-000394  4620              MOV      r0,r4
-000396  f7fffffe          BL       KMAutoRUN
-                  |L11.922|
-;;;295                        }
-;;;296                    }
-;;;297                }
-;;;298            }
-;;;299            KMOutUpdat();   //统一更新继电器输出
-00039a  f7fffffe          BL       KMOutUpdat
-                  |L11.926|
-00039e  e671              B        |L11.132|
-;;;300    
-;;;301    	}
-;;;302    }
-;;;303    
+000340  b9d0              CBNZ     r0,|L11.888|
+                  |L11.834|
+;;;263                    {
+;;;264                        if(StartTimerFlag==0x00)
+000342  484e              LDR      r0,|L11.1148|
+000344  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
+000346  b948              CBNZ     r0,|L11.860|
+;;;265                        {
+;;;266                            RunStape = 1;
+000348  f04f0801          MOV      r8,#1
+;;;267                            StartTimerFlag=0xAA;        //标记进入启动，开启定时功能
+00034c  20aa              MOVS     r0,#0xaa
+00034e  494b              LDR      r1,|L11.1148|
+000350  7008              STRB     r0,[r1,#0]
+;;;268                            KMAutoRUN(RunMode,RunStape);//自动启动控制
+000352  4641              MOV      r1,r8
+000354  4620              MOV      r0,r4
+000356  f7fffffe          BL       KMAutoRUN
+00035a  e01a              B        |L11.914|
+                  |L11.860|
+;;;269                        }
+;;;270                        else if(StartTimerFlag==0xBB)   //进入第二阶段，定时时间到，该定时在定时器中实现
+00035c  4847              LDR      r0,|L11.1148|
+00035e  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
+000360  28bb              CMP      r0,#0xbb
+000362  d116              BNE      |L11.914|
+;;;271                        {
+;;;272                            RunStape = 2;
+000364  f04f0802          MOV      r8,#2
+;;;273                            StartTimerFlag=0xCC;        //标记进入高速运行
+000368  20cc              MOVS     r0,#0xcc
+00036a  4944              LDR      r1,|L11.1148|
+00036c  7008              STRB     r0,[r1,#0]
+;;;274                            KMAutoRUN(RunMode,RunStape);//自动启动控制                        
+00036e  4641              MOV      r1,r8
+000370  4620              MOV      r0,r4
+000372  f7fffffe          BL       KMAutoRUN
+                  |L11.886|
+000376  e00c              B        |L11.914|
+                  |L11.888|
+;;;275                        }
+;;;276                    }
+;;;277                    else
+;;;278                    {
+;;;279                        if(StartTimerFlag==0xCC)
+000378  4840              LDR      r0,|L11.1148|
+00037a  7800              LDRB     r0,[r0,#0]  ; StartTimerFlag
+00037c  28cc              CMP      r0,#0xcc
+00037e  d108              BNE      |L11.914|
+;;;280                        {
+;;;281                            RunStape = 0;
+000380  f04f0800          MOV      r8,#0
+;;;282                            StartTimerFlag = 0x00;
+000384  2000              MOVS     r0,#0
+000386  493d              LDR      r1,|L11.1148|
+000388  7008              STRB     r0,[r1,#0]
+;;;283                            KMAutoRUN(RunMode,RunStape);//自动启动控制
+00038a  4641              MOV      r1,r8
+00038c  4620              MOV      r0,r4
+00038e  f7fffffe          BL       KMAutoRUN
+                  |L11.914|
+;;;284                        }
+;;;285                    }
+;;;286                }
+;;;287            }
+;;;288            KMOutUpdat();   //统一更新继电器输出
+000392  f7fffffe          BL       KMOutUpdat
+                  |L11.918|
+000396  e675              B        |L11.132|
+;;;289    
+;;;290    	}
+;;;291    }
+;;;292    
                           ENDP
 
-                  |L11.928|
-0003a0  43414e5f          DCB      "CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n",0
-0003a4  4d6f6465
-0003a8  5f496e69
-0003ac  742c4341
-0003b0  4e5f4261
-0003b4  75643a20
-0003b8  36304b62
-0003bc  70732e2e
-0003c0  2e0d0a00
-                  |L11.964|
+                  |L11.920|
+000398  43414e5f          DCB      "CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n",0
+00039c  4d6f6465
+0003a0  5f496e69
+0003a4  742c4341
+0003a8  4e5f4261
+0003ac  75643a20
+0003b0  36304b62
+0003b4  70732e2e
+0003b8  2e0d0a00
+                  |L11.956|
                           DCD      ||.conststring||
-                  |L11.968|
+                  |L11.960|
                           DCD      0x40010800
-                  |L11.972|
+                  |L11.964|
                           DCD      g_ShowDat
-                  |L11.976|
+                  |L11.968|
                           DCD      g_ShowUpDateFlag
-                  |L11.980|
-0003d4  20204b45          DCB      "  KEY_1_DOWN!\r\n",0
-0003d8  595f315f
-0003dc  444f574e
-0003e0  210d0a00
-                  |L11.996|
-0003e4  20204b45          DCB      "  KEY_1_UP!\r\n",0
-0003e8  595f315f
-0003ec  5550210d
-0003f0  0a00    
-0003f2  00                DCB      0
-0003f3  00                DCB      0
-                  |L11.1012|
-0003f4  20204b45          DCB      "  KEY_2_DOWN!\r\n",0
-0003f8  595f325f
-0003fc  444f574e
-000400  210d0a00
-                  |L11.1028|
-000404  20204b45          DCB      "  KEY_2_UP!\r\n",0
-000408  595f325f
-00040c  5550210d
-000410  0a00    
-000412  00                DCB      0
-000413  00                DCB      0
-                  |L11.1044|
-000414  20204b45          DCB      "  KEY_3_DOWN!\r\n",0
-000418  595f335f
-00041c  444f574e
-000420  210d0a00
-                  |L11.1060|
-000424  20204b45          DCB      "  KEY_3_UP!\r\n",0
-000428  595f335f
-00042c  5550210d
-000430  0a00    
-000432  00                DCB      0
-000433  00                DCB      0
-                  |L11.1076|
-000434  20204b45          DCB      "  KEY_4_DOWN!\r\n",0
-000438  595f345f
-00043c  444f574e
-000440  210d0a00
-                  |L11.1092|
-000444  20204b45          DCB      "  KEY_4_UP!\r\n",0
-000448  595f345f
-00044c  5550210d
-000450  0a00    
-000452  00                DCB      0
-000453  00                DCB      0
-                  |L11.1108|
+                  |L11.972|
+0003cc  20204b45          DCB      "  KEY_1_DOWN!\r\n",0
+0003d0  595f315f
+0003d4  444f574e
+0003d8  210d0a00
+                  |L11.988|
+0003dc  20204b45          DCB      "  KEY_1_UP!\r\n",0
+0003e0  595f315f
+0003e4  5550210d
+0003e8  0a00    
+0003ea  00                DCB      0
+0003eb  00                DCB      0
+                  |L11.1004|
+0003ec  20204b45          DCB      "  KEY_2_DOWN!\r\n",0
+0003f0  595f325f
+0003f4  444f574e
+0003f8  210d0a00
+                  |L11.1020|
+0003fc  20204b45          DCB      "  KEY_2_UP!\r\n",0
+000400  595f325f
+000404  5550210d
+000408  0a00    
+00040a  00                DCB      0
+00040b  00                DCB      0
+                  |L11.1036|
+00040c  20204b45          DCB      "  KEY_3_DOWN!\r\n",0
+000410  595f335f
+000414  444f574e
+000418  210d0a00
+                  |L11.1052|
+00041c  20204b45          DCB      "  KEY_3_UP!\r\n",0
+000420  595f335f
+000424  5550210d
+000428  0a00    
+00042a  00                DCB      0
+00042b  00                DCB      0
+                  |L11.1068|
+00042c  20204b45          DCB      "  KEY_4_DOWN!\r\n",0
+000430  595f345f
+000434  444f574e
+000438  210d0a00
+                  |L11.1084|
+00043c  20204b45          DCB      "  KEY_4_UP!\r\n",0
+000440  595f345f
+000444  5550210d
+000448  0a00    
+00044a  00                DCB      0
+00044b  00                DCB      0
+                  |L11.1100|
                           DCD      RS485_Count
-                  |L11.1112|
+                  |L11.1104|
                           DCD      RS485Dat
-                  |L11.1116|
-00045c  52533438          DCB      "RS485_ReceiveDat(),%02X,%02X.\r\n",0
-000460  355f5265
-000464  63656976
-000468  65446174
-00046c  28292c25
-000470  3032582c
-000474  25303258
-000478  2e0d0a00
+                  |L11.1108|
+000454  52533438          DCB      "RS485_ReceiveDat(),%02X,%02X.\r\n",0
+000458  355f5265
+00045c  63656976
+000460  65446174
+000464  28292c25
+000468  3032582c
+00046c  25303258
+000470  2e0d0a00
+                  |L11.1140|
+                          DCD      gAp
+                  |L11.1144|
+                          DCD      gBp
                   |L11.1148|
                           DCD      StartTimerFlag
 
