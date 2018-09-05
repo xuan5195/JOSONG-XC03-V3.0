@@ -21,6 +21,7 @@ extern CQ_FIFO_T s_gCQ;				//消息FIFO变量,结构体 */
 extern uint8_t RS485_Count;
 extern uint8_t RS485Dat[10];
 extern MotorChar gAp,gBp;  //A/B泵相关信息
+extern uint8_t Menu;
 
 void NVIC_Configuration(void)
 {
@@ -116,7 +117,6 @@ int main(void)
 {
 	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
 	uint8_t Time_250ms=0;
-	uint8_t KeyDat=0;
     uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
     uint8_t OldRunMode=0;
     uint8_t RunStape = 0;   //0低速，1高速;
@@ -154,47 +154,10 @@ int main(void)
                 {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
                 Get_InputValue();
 			}
-            BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
+            if(Menu==Menu_Idle) BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
             ReadInputDat();     //读取A/B泵全部状态，存放在结构体中
             DisplaySendDat();   //RS485数据发送
-			KeyDat = bsp_GetKey();
-			if(KeyDat!=KEY_NONE)	//按键检测及数据处理
-			{
-				switch (KeyDat)
-				{
-					case KEY_NONE:	//无按键按下
-						break;
-					case KEY_1_DOWN:	//						
-						printf("  KEY_1_DOWN!\r\n");
-						break;
-					case KEY_1_UP:		//
-						printf("  KEY_1_UP!\r\n");
-						break;
-					case KEY_2_DOWN:	//
-						printf("  KEY_2_DOWN!\r\n");						
-						break;
-					case KEY_2_UP:		//
-						printf("  KEY_2_UP!\r\n");
-						break;
-					case KEY_3_DOWN:	//
-						printf("  KEY_3_DOWN!\r\n");
-						break;
-					case KEY_3_UP:		//
-						printf("  KEY_3_UP!\r\n");
-						break;
-					case KEY_4_DOWN:	//
-                        RS485Dat_LED2_ON();
-						printf("  KEY_4_DOWN!\r\n");						
-						break;
-					case KEY_4_UP:		//
-                        RS485Dat_LED2_OFF();
-						printf("  KEY_4_UP!\r\n");
-						break;
-					default:
-						break;
-				}
-			}
-
+            SetParam();
 			RS485_ReceiveDat();
 			if( ( 0x80 & RS485_Count ) == 0x80 )	//接收到数据
 			{

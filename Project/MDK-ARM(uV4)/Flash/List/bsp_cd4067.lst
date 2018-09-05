@@ -32272,6 +32272,47 @@ N    HighSpeed,  //高速
 N    Error,      //错误
 N}Run_Statue;
 N
+Ntypedef enum
+N{
+N	Menu_Idle = 0, //待机状态 数码管循环显示 电压、电流、温度、湿度、压力、流量
+N    Menu_Work,     //水泵工作   水泵工作，只循环显示电压、电流
+N    Menu_Ua,       //电压上限
+N    Menu_Ub,       //电压下限
+N    Menu_Aa,       //电流上限
+N    Menu_Ab,       //电流下限
+N    Menu_Ca,       //温度上限
+N    Menu_Cb,       //温度下限
+N    Menu_Ha,       //湿度上限
+N    Menu_Hb,       //湿度下限
+N    Menu_Pa,       //压力上限
+N    Menu_Pb,       //压力下限
+N    Menu_Fa,       //流量上限
+N    Menu_Fb,       //流量下限
+N}MENU;
+N
+N
+Ntypedef struct 
+N{
+N	uint16_t Vol_Limit_High;	//电压上限
+N	uint16_t Vol_Limit_Low;		//电压下限
+N	
+N	uint16_t Cur_Limit_High;	//电流上限
+N	uint16_t Cur_Limit_Low;		//电流下限
+N	
+N	uint16_t Temp_Limit_High;	//温度上限
+N	uint16_t Temp_Limit_Low;	//温度下限
+N	uint16_t Humi_Limit_High;	//湿度上限
+N	uint16_t Humi_Limit_Low;	//湿度下限
+N	
+N	uint16_t Press_Limit_High;	//压力上限
+N	uint16_t Press_Limit_Low;	//压力下限
+N	uint16_t Flow_Limit_High;	//流量上限
+N	uint16_t Flow_Limit_Low;	//流量下限
+N	
+N	uint16_t Motor_WorkMode;	//启动模式，星三角、直接、自耦、风机
+N	uint16_t swVer; 			//版本号
+N}T_STMFLASH;
+N
 N#ifdef GLOBAL_APP
 S	#define APP_EXT
 N#else

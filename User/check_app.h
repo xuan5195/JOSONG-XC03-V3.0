@@ -29,6 +29,47 @@ typedef enum
     Error,      //错误
 }Run_Statue;
 
+typedef enum
+{
+	Menu_Idle = 0, //待机状态 数码管循环显示 电压、电流、温度、湿度、压力、流量
+    Menu_Work,     //水泵工作   水泵工作，只循环显示电压、电流
+    Menu_Ua,       //电压上限
+    Menu_Ub,       //电压下限
+    Menu_Aa,       //电流上限
+    Menu_Ab,       //电流下限
+    Menu_Ca,       //温度上限
+    Menu_Cb,       //温度下限
+    Menu_Ha,       //湿度上限
+    Menu_Hb,       //湿度下限
+    Menu_Pa,       //压力上限
+    Menu_Pb,       //压力下限
+    Menu_Fa,       //流量上限
+    Menu_Fb,       //流量下限
+}MENU;
+
+
+typedef struct 
+{
+	uint16_t Vol_Limit_High;	//电压上限
+	uint16_t Vol_Limit_Low;		//电压下限
+	
+	uint16_t Cur_Limit_High;	//电流上限
+	uint16_t Cur_Limit_Low;		//电流下限
+	
+	uint16_t Temp_Limit_High;	//温度上限
+	uint16_t Temp_Limit_Low;	//温度下限
+	uint16_t Humi_Limit_High;	//湿度上限
+	uint16_t Humi_Limit_Low;	//湿度下限
+	
+	uint16_t Press_Limit_High;	//压力上限
+	uint16_t Press_Limit_Low;	//压力下限
+	uint16_t Flow_Limit_High;	//流量上限
+	uint16_t Flow_Limit_Low;	//流量下限
+	
+	uint16_t Motor_WorkMode;	//启动模式，星三角、直接、自耦、风机
+	uint16_t swVer; 			//版本号
+}ParamDat;
+
 #ifdef GLOBAL_APP
 	#define APP_EXT
 #else
@@ -40,6 +81,7 @@ APP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
 
 void ReadInputDat(void);
 void KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
+void SetParam(void);
 
 
 #endif

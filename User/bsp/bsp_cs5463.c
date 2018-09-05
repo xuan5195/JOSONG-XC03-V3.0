@@ -612,14 +612,13 @@ void Get_InputValue(void)
         SetInput_IICD4051Switch(II_A);	//A相电流通道选择
         delay_us(30);					//必要延时
         printf("Channal_A,");
-//        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         TimeCount = 10;
         while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
         {
             TimeCount--;delay_ms(10);
             CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         }
-        printf("TimeCount:%d. ",TimeCount);
+        printf("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
@@ -630,7 +629,7 @@ void Get_InputValue(void)
         }
         else
         {
-//            CS546x_Init(0);
+            CS546x_Init(0);
             printf("CS546x_Init.\r\n");
         }
     }
@@ -640,14 +639,13 @@ void Get_InputValue(void)
         SetInput_IICD4051Switch(II_B);	//B相电流通道选择
         delay_us(30);					//必要延时
         printf("Channal_B,");
-//        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         TimeCount = 10;
         while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
         {
             TimeCount--;delay_ms(10);
             CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         }            
-        printf("TimeCount:%d. ",TimeCount);
+        printf("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
@@ -658,7 +656,7 @@ void Get_InputValue(void)
         }
         else
         {
-//            CS546x_Init(0);
+            CS546x_Init(0);
             printf("CS546x_Init.\r\n");
         }
     }
@@ -668,14 +666,14 @@ void Get_InputValue(void)
         SetInput_IICD4051Switch(II_C);	//C相电流通道选择
         delay_us(30);					//必要延时
         printf("Channal_C,");
-//        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
+        CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         TimeCount = 10;
         while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
         {
             TimeCount--;delay_ms(10);
             CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         }            
-        printf("TimeCount:%d. ",TimeCount);
+        printf("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
@@ -686,7 +684,7 @@ void Get_InputValue(void)
         }
         else
         {
-//            CS546x_Init(0);
+            CS546x_Init(0);
             printf("CS546x_Init.\r\n");
         }
     }

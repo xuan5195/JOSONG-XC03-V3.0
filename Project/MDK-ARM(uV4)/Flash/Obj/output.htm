@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Flash\Obj\output.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Flash\Obj\output.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Wed Sep 05 12:13:17 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060300: Last Updated: Wed Sep 05 14:54:27 2018
 <BR><P>
 <H3>Maximum Stack Usage =        140 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -588,13 +588,13 @@ Global Symbols
 <P><STRONG><a name="[80]"></a>CAN_Mode_Init</STRONG> (Thumb, 392 bytes, Stack size 72 bytes, bsp_can.o(i.CAN_Mode_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = CAN_Mode_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
-<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Init
+<BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Init
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_ITConfig
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_FilterInit
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -689,7 +689,8 @@ Global Symbols
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS5463WriteReg
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS5463CMD
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitBoard
+<BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_InputValue
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitBoard
 </UL>
 
 <P><STRONG><a name="[8c]"></a>CS546x_ResetStaReg</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, bsp_cs5463.o(i.CS546x_ResetStaReg))
@@ -831,11 +832,12 @@ Global Symbols
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS5463CMD
 </UL>
 
-<P><STRONG><a name="[99]"></a>Get_InputValue</STRONG> (Thumb, 492 bytes, Stack size 24 bytes, bsp_cs5463.o(i.Get_InputValue))
+<P><STRONG><a name="[99]"></a>Get_InputValue</STRONG> (Thumb, 516 bytes, Stack size 24 bytes, bsp_cs5463.o(i.Get_InputValue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Get_InputValue &rArr; CS546x_Get_Vrms &rArr; __aeabi_ui2d &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_us
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS546x_Init
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetInput_IICD4051Switch
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetInput_CSCD4051Switch
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CS546x_ResetStaReg
@@ -1257,11 +1259,11 @@ Global Symbols
 <P><STRONG><a name="[a4]"></a>TIM3_Int_Init</STRONG> (Thumb, 90 bytes, Stack size 32 bytes, bsp_timertim3.o(i.TIM3_Int_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = TIM3_Int_Init &rArr; NVIC_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
-<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
+<BR>[Calls]<UL><LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ITConfig
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitBoard
 </UL>
@@ -1617,13 +1619,13 @@ Local Symbols
 <P><STRONG><a name="[a6]"></a>InitHardUart</STRONG> (Thumb, 280 bytes, Stack size 24 bytes, bsp_uart_fifo.o(i.InitHardUart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = InitHardUart &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
-<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Init
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ITConfig
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ClearFlag
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bsp_InitUart
 </UL>

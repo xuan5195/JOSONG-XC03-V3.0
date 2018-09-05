@@ -90,28 +90,54 @@ void BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate)
 
 }
 
-void BspTm1639_ShowSNDat(uint8_t ShowMode,uint8_t *ShowDate)
+void BspTm1639_ShowParam(uint8_t ShowMode,uint16_t ShowDate)
 {
- 	uint8_t udat;
-	if(OldShowMode!=ShowMode)	BspTM1639_ClearALL();	//显示模式不同时，清显示
-	BspTm1639_Writebyte(MD_AUTO);	//设置为地址自动加1写显示数据
-	TM1639_STB_High();
-	if(ShowMode==0x11)		//显示卡机SN
-	{
-		BspTm1639_Writebyte(DIG0);
-		udat = (*(ShowDate+3))&0x0F;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-		udat = ((*(ShowDate+3))&0xF0)>>4;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-		udat = (*(ShowDate+2))&0x0F;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-		udat = ((*(ShowDate+2))&0xF0)>>4;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-		udat = (*(ShowDate+1))&0x0F;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-		udat = ((*(ShowDate+1))&0xF0)>>4;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-		udat = (*(ShowDate+0))&0x0F;		BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-		udat = ((*(ShowDate+0))&0xF0)>>4;	BspTm1639_Writebyte(table[udat]);	BspTm1639_Writebyte(table[udat]>>4);
-	}
-	TM1639_STB_High();
-	BspTm1639_Writebyte(LEVEL_USE);
-	TM1639_STB_High();
-	OldShowMode = ShowMode;		//保存数据  防止重复更新
+ 	uint8_t i;
+ 	if((OldShowMode==ShowMode)&&(OldShowDate==ShowDate));	//数据、模式相同不刷新
+ 	else
+ 	{
+		if(OldShowMode!=ShowMode)	BspTM1639_ClearALL();	//显示模式不同时，清显示
+ 		OldShowMode = ShowMode;		//保存数据  防止重复更新
+		OldShowDate = ShowDate;		//		
+		BspTm1639_Writebyte(MD_AUTO);	//设置为地址自动加1写显示数据
+		TM1639_STB_High();
+        switch (ShowMode)
+        {
+            case:
+                break;
+            case:
+                break;
+            default:
+                break;
+        }
+        if(ShowMode==0xA1)	//上电初始化显示值
+		{
+			BspTm1639_Writebyte(DIG0);
+			BspTm1639_Writebyte(0x0F);	BspTm1639_Writebyte(0x00);
+			for(i=0;i<2;i++)
+			{
+				BspTm1639_Writebyte(0x09);	BspTm1639_Writebyte(0x00);
+			}
+			BspTm1639_Writebyte(0x09);	BspTm1639_Writebyte(0x03);		
+		}
+		else    //显示代码
+		{
+			BspTm1639_Writebyte(DIG0);
+			BspTm1639_Writebyte(table[ShowDate%10]);		BspTm1639_Writebyte(table[ShowDate%10]>>4);
+			BspTm1639_Writebyte(table[ShowDate/10%10]);		BspTm1639_Writebyte(table[ShowDate/10%10]>>4);
+			BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
+            if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4|0x08); }  //电压U
+            else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08); }  //电流A
+            else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4|0x08); }  //温度C
+            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4|0x08); }  //湿度F
+            else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4|0x08); }  //压力P
+            else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4|0x08); }  //流量L
+		}
+		TM1639_STB_High();
+		BspTm1639_Writebyte(LEVEL_USE);
+		TM1639_STB_High();
+ 	}
+
 }
 
 

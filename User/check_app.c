@@ -142,4 +142,53 @@ void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
         }
     }
 }
+uint8_t Menu=Menu_Idle;
+//设置参数 如电压电流上下限等
+void SetParam(void)
+{
+	uint8_t KeyDat=0;
+    KeyDat = bsp_GetKey();
+    if(KeyDat!=KEY_NONE)	//按键检测及数据处理
+    {
+        switch (KeyDat)
+        {
+            case KEY_NONE:	//无按键按下
+                break;
+            case KEY_1_DOWN:	//						
+                printf("  KEY_1_DOWN!\r\n");
+                if(Menu==Menu_Fb)
+                {
+                    Menu = Menu_Idle;       //退出参考设置
+                }
+                else if(Menu!=Menu_Idle)
+                {
+                    Menu++;       //菜单模式+1
+                }
+                break;
+            case KEY_1_LONG:	//						
+                printf("  KEY_1_LONG!\r\n");
+                if(Menu==Menu_Idle)
+                {
+                    Menu = Menu_Ua;       //电压上限
+                }
+                break;
+            case KEY_2_DOWN:	//
+                printf("  KEY_2_DOWN!\r\n");						
+                break;
+            case KEY_3_DOWN:	//
+                printf("  KEY_3_DOWN!\r\n");
+                break;
+            case KEY_4_DOWN:	//
+                if(Menu!=Menu_Idle)
+                {
+                    Menu=Menu_Idle; //保存参数退出
+                }
+                printf("  KEY_4_DOWN!\r\n");						
+                break;
+            default:
+                break;
+        }
+    }
+
+}
 
