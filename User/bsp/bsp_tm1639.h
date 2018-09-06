@@ -29,7 +29,7 @@
 #define LEVEL_13	0x8E
 #define LEVEL_14	0x8F
 
-#define LEVEL_USE	LEVEL_4	//目前使用亮度 
+#define LEVEL_USE	LEVEL_10	//目前使用亮度 
 
 #define MD_WRITE	0x40
 #define MD_AUTO		MD_WRITE

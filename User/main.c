@@ -121,6 +121,7 @@ int main(void)
     uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
     uint8_t OldRunMode=0;
     uint8_t RunStape = 0;   //0低速，1高速;
+    uint8_t HumiFlag=0;     //除湿标志，0x00表示停止，0x05表示开启；
 	SystemInit();
 	
 	InitBoard();		//硬件初始化
@@ -154,6 +155,8 @@ int main(void)
                 {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
                 Get_InputValue();
 			}
+            if(Time_250ms%10==0)        RS485Dat_LED2_ON();     //主板通信指示灯
+            else if(Time_250ms%10==5)   RS485Dat_LED2_OFF();    //主板通信指示灯
             ReadInputDat();     //读取A/B泵全部状态，存放在结构体中
             DisplaySendDat();   //RS485数据发送
 			RS485_ReceiveDat();
@@ -247,6 +250,21 @@ int main(void)
                     }
                 }
             }
+            if(gParamDat[Menu_Ha]>gParamDat[Menu_Hb])   //湿度上限>下限值 开启自动除湿功能
+            {
+                if((g_ShowDat[3]>gParamDat[Menu_Ha])&&(HumiFlag==0x00))
+                {
+                    HumiFlag = 0x05;
+                    KMON_Show(AHUMIDITY);   //打开除湿
+                    printf("湿度%2d(Limit:%2d)，启动除湿设备!\r\n",g_ShowDat[3],gParamDat[Menu_Ha]);
+                }
+                if(((g_ShowDat[3]+HumiFlag)<gParamDat[Menu_Ha])&&(HumiFlag!=0x00))
+                {
+                    HumiFlag = 0x00;
+                    KMOFF_Show(AHUMIDITY);   //关闭除湿
+                    printf("湿度%2d(Limit:%2d)，关闭除湿设备.\r\n",g_ShowDat[3],gParamDat[Menu_Ha]);
+                }
+            }
         }
         KMOutUpdat();   //统一更新继电器输出
         SetParam();     //设置修改参数
@@ -307,7 +325,7 @@ void TIM3_IRQHandler(void)   //TIM3中断
             g_ShowUpDateFlag = (++g_ShowUpDateFlag)%6;  //0-1-2-3-4-5-0
         }
 		Time_count++;
-        if((Time_count%1000==750)&&(g_TM1639Flag==0))    g_TM1639Flag = 1;
+        if((Time_count%1000==700)&&(g_TM1639Flag==0))    g_TM1639Flag = 1;
         if((Time_count%1000==  1)&&(g_TM1639Flag==1))    g_TM1639Flag = 0;
         if(Time_count%1000==1)  {  if(g_KeyNoneCount>0)  g_KeyNoneCount--;  }
         if(StartTimerFlag==0xAA)    

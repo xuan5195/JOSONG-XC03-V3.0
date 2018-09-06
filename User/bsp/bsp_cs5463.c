@@ -605,32 +605,32 @@ void Get_InputValue(void)
 	static UN32 Voltage_VA,Voltage_IA;
     static u8 Channal=Channal_A;
 	u8 CS546x_Sta,TimeCount;
-    printf("CS5463检测, ");
+    printf_cs5463("CS5463检测, ");
     if(Channal==Channal_A)
     {
         SetInput_CSCD4051Switch(IV_A);	//A相电压通道选择
         SetInput_IICD4051Switch(II_A);	//A相电流通道选择
         delay_us(30);					//必要延时
-        printf("Channal_A,");
+        printf_cs5463("Channal_A,");
         TimeCount = 10;
         while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
         {
             TimeCount--;delay_ms(10);
             CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         }
-        printf("TimeCount:%2d. ",TimeCount);
+        printf_cs5463("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf("A V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf_cs5463("A V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
             CS546x_ResetStaReg();
             Channal++;
         }
         else
         {
             CS546x_Init(0);
-            printf("CS546x_Init.\r\n");
+            printf_cs5463("CS546x_Init.\r\n");
         }
     }
     else if(Channal==Channal_B)
@@ -638,26 +638,26 @@ void Get_InputValue(void)
         SetInput_CSCD4051Switch(IV_B);	//B相电压通道选择
         SetInput_IICD4051Switch(II_B);	//B相电流通道选择
         delay_us(30);					//必要延时
-        printf("Channal_B,");
+        printf_cs5463("Channal_B,");
         TimeCount = 10;
         while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
         {
             TimeCount--;delay_ms(10);
             CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         }            
-        printf("TimeCount:%2d. ",TimeCount);
+        printf_cs5463("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf_cs5463("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
             CS546x_ResetStaReg();
             Channal++;
         }
         else
         {
             CS546x_Init(0);
-            printf("CS546x_Init.\r\n");
+            printf_cs5463("CS546x_Init.\r\n");
         }
     }
     else if(Channal==Channal_C)
@@ -665,7 +665,7 @@ void Get_InputValue(void)
         SetInput_CSCD4051Switch(IV_C);	//C相电压通道选择
         SetInput_IICD4051Switch(II_C);	//C相电流通道选择
         delay_us(30);					//必要延时
-        printf("Channal_C,");
+        printf_cs5463("Channal_C,");
         CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         TimeCount = 10;
         while((0x01!=(CS546x_Sta&0x01))&&(TimeCount>0))
@@ -673,24 +673,24 @@ void Get_InputValue(void)
             TimeCount--;delay_ms(10);
             CS546x_Sta	= CS5463_GetStaReg_Val();			//检测中断产生的原因
         }            
-        printf("TimeCount:%2d. ",TimeCount);
+        printf_cs5463("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
             Voltage_VA.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf_cs5463("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
             CS546x_ResetStaReg();
             Channal=Channal_A;
         }
         else
         {
             CS546x_Init(0);
-            printf("CS546x_Init.\r\n");
+            printf_cs5463("CS546x_Init.\r\n");
         }
     }
     else
     {
-        printf("Channal Error,goto Channal_A!\r\n");
+        printf_cs5463("Channal Error,goto Channal_A!\r\n");
         Channal=Channal_A;
     }
     g_ShowDat[0] = (uint16_t)Voltage_VA.u16[0]/10;    //电压

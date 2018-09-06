@@ -189,8 +189,12 @@ void SetParam(void)
             case KEY_4_DOWN:	
                 if(Menu!=Menu_Idle)
                 {
+                    printf("电压上限:%2d.电压下限:%2d.\r\n",gParamDat[Menu_Ua],gParamDat[Menu_Ub]);
+                    printf("电流基数:%3d.电流上限:%2d.电流下限:%2d.电流变比:%2d.\r\n",gParamDat[Menu_A],gParamDat[Menu_Aa],gParamDat[Menu_Ab],gParamDat[Menu_Ac]);
+                    printf("温度上限:%2d.温度下限:%2d.湿度上限:%2d.湿度下限:%2d.\r\n",gParamDat[Menu_Ca],gParamDat[Menu_Cb],gParamDat[Menu_Ha],gParamDat[Menu_Hb]);
+                    printf("压力上限:%2d.压力下限:%2d.流量上限:%2d.流量下限:%2d.\r\n",gParamDat[Menu_Pa],gParamDat[Menu_Pb],gParamDat[Menu_Fa],gParamDat[Menu_Fb]);
                     Write_Flash_Dat();  //写Flash数据
-                    Menu=Menu_Idle;     //保存参数退出
+                    Menu = Menu_Idle;     //保存参数退出
                     printf("保存,退出菜单.\r\n");
                 }
                 break;

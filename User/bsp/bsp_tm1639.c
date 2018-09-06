@@ -92,7 +92,6 @@ void BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate)
 
 void BspTm1639_ShowParam(uint8_t ShowFlag,uint8_t ShowMode,uint16_t ShowDate)
 {
-    u8 i;
     if(ShowFlag==0) //显示
     {
         if((OldShowMode==ShowMode)&&(OldShowDate==ShowDate));	//数据、模式相同不刷新
@@ -110,6 +109,7 @@ void BspTm1639_ShowParam(uint8_t ShowFlag,uint8_t ShowMode,uint16_t ShowDate)
             {
                 BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
             }
+ShowBack:
             switch (ShowMode)
             {
                 case Menu_U:
@@ -187,10 +187,13 @@ void BspTm1639_ShowParam(uint8_t ShowFlag,uint8_t ShowMode,uint16_t ShowDate)
         BspTm1639_Writebyte(0x40);	//数据命令设置
         TM1639_STB_High();
         BspTm1639_Writebyte(DIG0);	//显示地址 起始地址
-        for(i=0;i<8;i++)	BspTm1639_Writebyte(0x00);
-        TM1639_STB_High();
-        BspTm1639_Writebyte(LEVEL_OFF);	//显示控制命令
-        TM1639_STB_High();
+        BspTm1639_Writebyte(0x00);BspTm1639_Writebyte(0x00);
+        BspTm1639_Writebyte(0x00);BspTm1639_Writebyte(0x00);
+		if((ShowMode==Menu_U)||(ShowMode==Menu_A))
+		{
+			BspTm1639_Writebyte(0x00);BspTm1639_Writebyte(0x00);
+		}
+		goto ShowBack;
     }
 }
 

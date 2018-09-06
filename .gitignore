@@ -1,2 +1,6 @@
 /Libraries
 *.o 
+*.lst
+*.txt
+*.d
+*.crf

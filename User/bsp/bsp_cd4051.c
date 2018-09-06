@@ -199,7 +199,7 @@ u8 CD4051Read_Optocoupler(uint8_t uAreaDat)
 */
 void CD4051InputChk_Pro()
 {
-	static u8 KMChk_Step=1;
+//	static u8 KMChk_Step=1;
 
 //	if(CD4051Read_Optocoupler(6)){;}  	//1号 无源应答信号
 //	if(CD4051Read_Optocoupler(7)){;}  	//2号 无源应答信号

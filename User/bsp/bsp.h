@@ -39,6 +39,12 @@
 	#define printf_debug(...)
 #endif
 
+#if 0
+	#define printf_cs5463 printf
+#else
+	#define printf_cs5463(...)
+#endif
+
 #include "bsp_timer.h"		
 #include "bsp_TimerTim3.h"
 #include "bsp_Tim2.h"

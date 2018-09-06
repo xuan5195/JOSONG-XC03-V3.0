@@ -102,6 +102,10 @@ ReReadFlash:
 		gParamDat[Menu_Pb] = datatemp[11];//压力下限
 		gParamDat[Menu_Fa] = datatemp[12];//流量上限
 		gParamDat[Menu_Fb] = datatemp[13];//流量下限
+        printf("电压上限:%2d.电压下限:%2d.\r\n",gParamDat[Menu_Ua],gParamDat[Menu_Ub]);
+        printf("电流上限:%2d.电流下限:%2d.电流基数:%3d.电流变比:%2d.\r\n",gParamDat[Menu_Aa],gParamDat[Menu_Ab],gParamDat[Menu_A],gParamDat[Menu_Ac]);
+        printf("温度上限:%2d.温度下限:%2d.湿度上限:%2d.湿度下限:%2d.\r\n",gParamDat[Menu_Ca],gParamDat[Menu_Cb],gParamDat[Menu_Ha],gParamDat[Menu_Hb]);
+        printf("压力上限:%2d.压力下限:%2d.流量上限:%2d.流量下限:%2d.\r\n",gParamDat[Menu_Pa],gParamDat[Menu_Pb],gParamDat[Menu_Fa],gParamDat[Menu_Fb]);
 	}
 }
 
