@@ -24,6 +24,7 @@ extern MotorChar gAp,gBp;  //A/B泵相关信息
 extern uint8_t Menu;
 uint8_t g_TM1639Flag;
 uint8_t g_KeyNoneCount;
+uint8_t g_ChangeFlag=0x00;
 void NVIC_Configuration(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
@@ -135,11 +136,11 @@ int main(void)
     RS485Dat_LED1_ON();	//远程通信指示灯
     RS485Dat_LED2_ON(); //主板通信指示灯	
     RS485Dat_LED12_ON();//A泵停止指示灯
-    RS485Dat_LED13_ON();//A泵停止指示灯
-    RS485Dat_LED14_ON();//A泵停止指示灯
+//    RS485Dat_LED13_ON();//A泵停止指示灯
+//    RS485Dat_LED14_ON();//A泵停止指示灯
     RS485Dat_LED18_ON();//B泵停止指示灯
-    RS485Dat_LED19_ON();//B泵停止指示灯
-    RS485Dat_LED20_ON();//B泵停止指示灯
+//    RS485Dat_LED19_ON();//B泵停止指示灯
+//    RS485Dat_LED20_ON();//B泵停止指示灯
     RS485Dat_LED16_ON();//手动模式指示灯
     while (1)
 	{
@@ -183,12 +184,12 @@ int main(void)
                 }  
                 else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
                 {   
-                    gAp.Statue=Slow;     
+                    gAp.Statue=Slow; gAp.DelayCheck_Count = 30;     
                     KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
                 }  
                 else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
                 {   
-                    gAp.Statue=HighSpeed;
+                    gAp.Statue=HighSpeed; gAp.DelayCheck_Count = 30;
                     KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
                 }  
                 else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
@@ -198,14 +199,24 @@ int main(void)
                 }  
                 else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
                 {   
-                    gBp.Statue=Slow;     
+                    gBp.Statue=Slow; gBp.DelayCheck_Count = 30;     
                     KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
                 }  
                 else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
                 {   
-                    gBp.Statue=HighSpeed;
+                    gBp.Statue=HighSpeed; gBp.DelayCheck_Count = 30;
                     KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
                 }                 
+                if(0x01==KM_ApRunningCheck())   //A泵异常，进入停止
+                {
+                    gAp.Statue=Stop;
+                    KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);                    
+                }
+                if(0x01==KM_BpRunningCheck())   //B泵异常，进入停止
+                {
+                    gBp.Statue=Stop;     
+                    KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+                }
             }
             else if(RunMode==1)  //主一备二
             {
@@ -239,13 +250,24 @@ int main(void)
                         StartTimerFlag=0xCC;        //标记进入高速运行
                         KMAutoRUN(RunMode,RunStape);//自动启动控制                        
                     }
+                    if(KM_RunningAutoCheck(RunMode)==0x01)
+                    {
+                        if(StartTimerFlag!=0x00)
+                        {
+                            RunStape = 0;
+                            StartTimerFlag = 0x00;
+                            KMAutoRUN(RunMode,RunStape);//自动启动控制
+                            if(g_ChangeFlag==0xAA)  g_ChangeFlag=0xBB;    //互投标志 第二次，直接进入停止
+                            else                    g_ChangeFlag=0xAA;    //互投标志 第一次，进入下一个动作
+                        }
+                    }                        
                 }
                 else
                 {
                     if(StartTimerFlag!=0x00)
                     {
                         RunStape = 0;
-                        StartTimerFlag = 0x00;
+                        StartTimerFlag = 0x00;  g_ChangeFlag = 0x00;
                         KMAutoRUN(RunMode,RunStape);//自动启动控制
                     }
                 }
@@ -265,6 +287,7 @@ int main(void)
                     printf("湿度%2d(Limit:%2d)，关闭除湿设备.\r\n",g_ShowDat[3],gParamDat[Menu_Ha]);
                 }
             }
+            KMOutAnswer();  //无源/有源继电器输出控制
         }
         KMOutUpdat();   //统一更新继电器输出
         SetParam();     //设置修改参数
@@ -325,6 +348,13 @@ void TIM3_IRQHandler(void)   //TIM3中断
             g_ShowUpDateFlag = (++g_ShowUpDateFlag)%6;  //0-1-2-3-4-5-0
         }
 		Time_count++;
+        if((Time_count%100)==1) //100mS中断
+        {
+            if(gAp.DelayCheck_Count>0)  gAp.DelayCheck_Count--;//延时检测时间到，进入检测
+            else                        gAp.DelayCheck_Count=0;
+            if(gBp.DelayCheck_Count>0)  gBp.DelayCheck_Count--;//延时检测时间到，进入检测
+            else                        gBp.DelayCheck_Count=0;
+        }
         if((Time_count%1000==700)&&(g_TM1639Flag==0))    g_TM1639Flag = 1;
         if((Time_count%1000==  1)&&(g_TM1639Flag==1))    g_TM1639Flag = 0;
         if(Time_count%1000==1)  {  if(g_KeyNoneCount>0)  g_KeyNoneCount--;  }

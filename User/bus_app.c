@@ -7,7 +7,7 @@
 //a.显示板业务处理，RS485通信
 //b.远程板业务处理，CAN通信
 
-uint8_t RS485Dat_LED[3];
+uint8_t RS485Dat_LED[3]={0};
 //a.显示板业务处理，RS485通信
 void DisplaySendDat(void)
 {

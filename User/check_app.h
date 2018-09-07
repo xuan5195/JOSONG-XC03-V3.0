@@ -84,7 +84,11 @@ APP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
 APP_EXT uint16_t gParamDat[Menu_Size];
 
 void ReadInputDat(void);
+void KMOutAnswer(void);
 void KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
 void SetParam(void);
+uint8_t KM_ApRunningCheck(void);//A泵运行检测
+uint8_t KM_BpRunningCheck(void);//B泵运行检测
+uint8_t KM_RunningAutoCheck(uint8_t _Mode);
 
 #endif

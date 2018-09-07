@@ -7,6 +7,7 @@
 #include "bsp.h"
 
 extern uint8_t g_KeyNoneCount;
+extern uint8_t g_ChangeFlag;
 
 void ReadInputDat(void)
 {
@@ -30,8 +31,8 @@ void ReadInputDat(void)
     gBp.KM2_Coil = Read_Input_KPDevDat(KMB2_CoilNo);//KM2线圈状态；0->正常;1->异常
     gBp.KM3_Coil = Read_Input_KPDevDat(KMB3_CoilNo);//KM3线圈状态；0->正常;1->异常
 
-    gAp.Phase_Check = Read_Optocoupler(6);  //断相/过载检测，开关信号; 0->正常; 1->异常.
-    gBp.Phase_Check = Read_Optocoupler(7);  //断相/过载检测，开关信号; 0->正常; 1->异常.
+    gAp.Phase_Check = Read_Optocoupler(6);  //A断相/过载检测,开关信号; 0->异常; 1->正常.
+    gBp.Phase_Check = Read_Optocoupler(7);  //B断相/过载检测,开关信号; 0->异常; 1->正常.
    
     if(Read_Optocoupler(4)) { RS485Dat_LED10_OFF(); }//缺水检测,正常有水 缺水指示灯OFF        
     else                    { RS485Dat_LED10_ON();  }//缺水检测,异常缺水 缺水指示灯ON    
@@ -40,7 +41,7 @@ void ReadInputDat(void)
 
     if((gAp.Power_Statue==0)&&(gBp.Power_Statue==0)){   RS485Dat_LED4_ON();     } //动力电指示灯
     else                                            {   RS485Dat_LED4_OFF();    }
-    if((gAp.Phase_Check==0)&&(gBp.Phase_Check==0))  {   RS485Dat_LED9_ON();     } //断相/过载 指示灯
+    if((gAp.Phase_Check==0)||(gBp.Phase_Check==0))  {   RS485Dat_LED9_ON();     } //断相/过载 指示灯
     else                                            {   RS485Dat_LED9_OFF();    }
 
     if(gAp.Statue==Stop)    //停止状态
@@ -99,8 +100,30 @@ void ReadInputDat(void)
     }     
 }
 
+//无源/有源继电器输出控制
+void KMOutAnswer(void)
+{
+    if((gAp.Statue == Stop)&&(gBp.Statue == Stop))
+    {
+        KMOFF_Show(ALARMOUT1);  KMOFF_Show(ALARMOUT2);
+    }
+    else
+    {
+        KMON_Show(ALARMOUT1);  KMON_Show(ALARMOUT2);
+    }
+}
+
 void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
 {
+    if(g_ChangeFlag==0xAA)  //进入互投
+    {
+        if(_Mode==1)    _Mode=2;
+        else            _Mode=1;
+    }
+    else if(g_ChangeFlag==0xBB)  //互投过一次，直接退出
+    {
+        _Mode = 0;  //改为0，不进行启动动作
+    }
     if(_Mode==1)    //主一备二
     {
         if(_Step==0)
@@ -108,17 +131,18 @@ void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
             printf("主一备二，停止.\r\n");
             gAp.Statue = Stop;
             KMOFF_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //停止
+            KMOFF_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //停止
         }
         else if(_Step==1)
         {
             printf("主一备二，低速.\r\n");
-            gAp.Statue = Slow;
+            gAp.Statue = Slow;  gAp.DelayCheck_Count = 30;
             KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //低速运行
         }
         else if(_Step==2)
         {
             printf("主一备二，高速.\r\n");
-            gAp.Statue = HighSpeed;
+            gAp.Statue = HighSpeed; gAp.DelayCheck_Count = 30;
             KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMON_Show(AKM3RUN);    //高速运行
         }
     }
@@ -128,22 +152,109 @@ void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
         {
             printf("主二备一，停止.\r\n");
             gBp.Statue = Stop;
-            KMOFF_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //停止运行
+            KMOFF_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //停止
+            KMOFF_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //停止
         }
         else if(_Step==1)
         {
             printf("主二备一，低速.\r\n");
-            gBp.Statue = Slow;
+            gBp.Statue = Slow; gBp.DelayCheck_Count = 30;
             KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //低速运行
         }
         else if(_Step==2)
         {
             printf("主二备一，高速.\r\n");
-            gBp.Statue = HighSpeed;
+            gBp.Statue = HighSpeed; gBp.DelayCheck_Count = 30;
             KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMON_Show(BKM3RUN);    //高速运行
         }
     }
 }
+
+//A泵运行检测
+uint8_t KM_ApRunningCheck(void)
+{
+    if(gAp.Statue==Slow)    //A泵低速
+    {
+        if(gAp.DelayCheck_Count==0)
+        {
+            if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
+                &&(gAp.Work_Check==0)&&(gAp.Phase_Check==1))  
+                    return 0x00;    //正常运行
+            else    return 0x01;    //异常运行
+        }
+    }
+    else if(gAp.Statue==HighSpeed)    //A泵高速
+    {
+        if(gAp.DelayCheck_Count==0)
+        {
+            if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
+                &&(gAp.Work_Check==0)&&(gAp.Phase_Check==1))  
+                    return 0x00;
+            else    return 0x01;
+        }
+    }
+    return 0x02;    //未检测
+}
+
+//B泵运行检测
+uint8_t KM_BpRunningCheck(void)
+{
+    if(gBp.Statue==Slow)    //B泵低速
+    {
+        if(gBp.DelayCheck_Count==0)
+        {
+            if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
+                &&(gBp.Work_Check==0)&&(gBp.Phase_Check==1))  
+                    return 0x00;    //正常运行
+            else    return 0x01;    //异常运行
+        }
+    }
+    else if(gBp.Statue==HighSpeed)    //B泵高速
+    {
+        if(gBp.DelayCheck_Count==0)
+        {
+            if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
+                &&(gBp.Work_Check==0)&&(gBp.Phase_Check==1))  
+                    return 0x00;
+            else    return 0x01;
+        }
+    }
+    return 0x02;    //未检测
+}
+
+//自动模式下，A/B泵检测
+uint8_t KM_RunningAutoCheck(uint8_t _Mode)
+{
+    if(g_ChangeFlag==0xAA)  //进入互投
+    {
+        if(_Mode==1)    _Mode=2;
+        else            _Mode=1;
+    }
+    else if(g_ChangeFlag==0xBB)  //互投过一次，直接退出
+    {
+        _Mode = 0;  //改为0，不进行启动动作
+    }
+    if(_Mode==1)    //主一备二模式
+    {
+        if(0x01==KM_ApRunningCheck())   
+        {
+            printf("A泵异常.\r\n");
+            return 0x01;
+        }//A泵异常，进入停止
+        return 0x00; 
+    }
+    else if(_Mode==2)    //主二备一模式
+    {
+        if(0x01==KM_BpRunningCheck())   
+        {
+            printf("B泵异常.\r\n");
+            return 0x01;
+        }//B泵异常，进入停止
+        return 0x00; 
+    }
+    return 0x00; 
+}
+
 uint8_t Menu=Menu_Idle;
 //设置参数 如电压电流上下限等
 void SetParam(void)
