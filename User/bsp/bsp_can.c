@@ -6,12 +6,6 @@
 #include "bsp_tm1639.h"	
 #include "bsp.h"
 
-extern uint8_t g_RxMessage[8];	//CAN接收数据
-extern uint8_t g_RxMessFlag;	//CAN接收数据 标志
-extern uint8_t PutOutMemoryBuf(uint8_t *_Date);	//清第一个缓存
-
-extern void Delay (uint16_t nCount);
-
 
 //CAN初始化
 //tsjw:重新同步跳跃时间单元.范围:1~3; CAN_SJW_1tq	 CAN_SJW_2tq CAN_SJW_3tq CAN_SJW_4tq
@@ -121,16 +115,9 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
   	CanRxMsg RxMessage;
-	int i=0;
     CAN_Receive(CAN1, 0, &RxMessage);
-	if(g_RxMessFlag != 0xAA)
 	{
-		for(i=0;i<8;i++)	
-		{
-			//printf("%02X",RxMessage.Data[i]);
-			g_RxMessage[i] = RxMessage.Data[i];
-		}
-		g_RxMessFlag = 0xAA;
+        bsp_PutCQ((uint8_t *)RxMessage.Data);
 	}
 }
 #endif
@@ -144,12 +131,7 @@ u8 Can_Send_Msg(u8* msg,u8 len)
 	u8 mbox;
 	u16 i=0;
 	CanTxMsg TxMessage;
-	if(msg[0]==0xB3)	
-		TxMessage.StdId=0x100;			// 标准标识符为0
-	else if(msg[0]==0xC2)	
-		TxMessage.StdId=0x100;			// 标准标识符为0
-	else				
-		TxMessage.StdId=0x200|msg[1];	// 标准标识符为0
+	TxMessage.StdId=0x100;			// 标准标识符为0
 	TxMessage.ExtId=0x1800F001;			// 设置扩展标示符（29位）
 	TxMessage.IDE=0;		// 不使用扩展标识符
 	TxMessage.RTR=0;		// 消息类型：CAN_RTR_Data为数据帧;CAN_RTR_Remote为远程帧
@@ -180,18 +162,16 @@ void Package_Send(u8 _mode,u8 *Package_Dat)
 {
 	uint8_t res;
 	uint8_t Package_SendBuf[8]={0x00};//发送缓冲区
-	switch (_mode)
-    {
-    	case 0xB3:	//未注册数据包
-			Package_SendBuf[0] = 0xB3;
-			break;
-    	default:
-    		break;
-    }
+    Package_SendBuf[0] = _mode;
+    Package_SendBuf[1] = Package_Dat[0];
+    Package_SendBuf[2] = Package_Dat[1];
+    Package_SendBuf[3] = Package_Dat[2];
+    Package_SendBuf[4] = Package_Dat[3];
+//    printf("<<CanTxMsg:%02X %02X %02X %02X %02X.",Package_SendBuf[0],\
+    Package_SendBuf[1],Package_SendBuf[2],Package_SendBuf[3],Package_SendBuf[4]);
 	res = Can_Send_Msg(Package_SendBuf,8);//发送8个字节
-    res = res;
-//	if(res)	{printf(" F, ");}	
-//	else 	{printf(" S, ");}	
+//	if(res)	{printf("Send Fail!\r\n");}	
+//	else 	{printf("Send Succeed.\r\n");}	
 }
 
 

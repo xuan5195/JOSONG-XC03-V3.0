@@ -2,6 +2,7 @@
 #include "bsp_cs5463.h"		
 #include "delay.h"
 #include "bsp.h"
+#include "math.h"
 
 static UN32 CS546x_Buff;					//CS5463缓冲区
 PhaseHandle Board_Phase;
@@ -602,8 +603,9 @@ extern uint16_t g_ShowDat[6];
 //Channal 检测通道
 void Get_InputValue(void)
 {
-	static UN32 Voltage_VA,Voltage_IA;
+	static UN32 Voltage_VA,Voltage_VB,Voltage_VC,Voltage_IA/*,Voltage_IB,Voltage_IC,Tmp_II*/;
     static u8 Channal=Channal_A;
+	u32 u32Date=0;
 	u8 CS546x_Sta,TimeCount;
     printf_cs5463("CS5463检测, ");
     if(Channal==Channal_A)
@@ -648,9 +650,9 @@ void Get_InputValue(void)
         printf_cs5463("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
-            Voltage_VA.u32 = CS546x_Get_Vrms(); 
+            Voltage_VB.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf_cs5463("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf_cs5463("B V:%3d.%dV , I:%3dmA.\r\n",Voltage_VB.u16[0]/10,Voltage_VB.u16[0]%10,Voltage_IA.u32);
             CS546x_ResetStaReg();
             Channal++;
         }
@@ -676,9 +678,9 @@ void Get_InputValue(void)
         printf_cs5463("TimeCount:%2d. ",TimeCount);
         if(TimeCount>0)
         {
-            Voltage_VA.u32 = CS546x_Get_Vrms(); 
+            Voltage_VC.u32 = CS546x_Get_Vrms(); 
             Voltage_IA.u32 = CS546x_Get_Irms(); 	//读有效电流值
-            printf_cs5463("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VA.u16[0]/10,Voltage_VA.u16[0]%10,Voltage_IA.u32);
+            printf_cs5463("C V:%3d.%dV , I:%3dmA.\r\n",Voltage_VC.u16[0]/10,Voltage_VC.u16[0]%10,Voltage_IC.u32);
             CS546x_ResetStaReg();
             Channal=Channal_A;
         }
@@ -693,8 +695,11 @@ void Get_InputValue(void)
         printf_cs5463("Channal Error,goto Channal_A!\r\n");
         Channal=Channal_A;
     }
-    g_ShowDat[0] = (uint16_t)Voltage_VA.u16[0]/10;    //电压
-    g_ShowDat[1] = (uint16_t)Voltage_IA.u32;          //电压
+//  g_ShowDat[0] = (uint16_t)Voltage_VA.u16[0]/10;    //电压
+//	g_ShowDat[1] = (uint16_t)Voltage_IA.u32;          	//电流
+    u32Date = (u32)((Voltage_VA.u16[0]+Voltage_VB.u16[0]+Voltage_VC.u16[0])/3.0*(sqrt(3)));	//数据整合处理计算三相电电压
+    g_ShowDat[0] = (uint16_t)u32Date/10;				//电压
+	g_ShowDat[1] = (uint16_t)Voltage_IA.u32;          	//电流
 }
 
 

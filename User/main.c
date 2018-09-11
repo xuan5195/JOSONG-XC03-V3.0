@@ -11,20 +11,22 @@ void Delay (uint16_t nCount);
 
 uint8_t g_RxMessage[8]={0};	//CAN接收数据
 uint8_t g_RxMessFlag=0;		//CAN接收数据 标志
-uint8_t OutFlag=0;	//放水标志,上电标志
-uint8_t InPutCount=0;		//输入脉冲计数
+uint8_t OutFlag=0;	        //放水标志,上电标志
+uint8_t InPutCount=0;		    //输入脉冲计数
 uint8_t g_ShowUpDateFlag=0;		//显示更新标志
 uint32_t g_RunningTime=0;		//运行时间
+uint16_t g_CANShowLED;          //用于存储CAN板子上LED显示
 uint16_t g_ShowDat[6]={0};
 uint8_t StartTimerFlag = 0x00;  //用于自动启动切换定时标志量
-extern CQ_FIFO_T s_gCQ;				//消息FIFO变量,结构体 */
-extern uint8_t RS485_Count;
-extern uint8_t RS485Dat[10];
-extern MotorChar gAp,gBp;  //A/B泵相关信息
-extern uint8_t Menu;
 uint8_t g_TM1639Flag;
 uint8_t g_KeyNoneCount;
 uint8_t g_ChangeFlag=0x00;
+extern CQ_FIFO_T s_gCQ;			//消息FIFO变量,结构体
+extern uint8_t RS485_Count;
+extern uint8_t RS485Dat[10];
+extern MotorChar gAp,gBp;  //A\B泵相关信息
+extern uint8_t Menu;
+
 void NVIC_Configuration(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
@@ -120,9 +122,12 @@ int main(void)
 	uint8_t DHT_Dat[5]={0},RS485Dat_Key[2]={0};
 	uint8_t Time_250ms=0;
     uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
-    uint8_t OldRunMode=0;
+    uint8_t OldRunMode=0,OldStartFlag=0;
+    uint8_t OlineSrart=0;   //远程启动标志
     uint8_t RunStape = 0;   //0低速，1高速;
     uint8_t HumiFlag=0;     //除湿标志，0x00表示停止，0x05表示开启；
+//    uint8_t Package_Dat[8]={0};
+	uint8_t canbuf[8]={0};  //CAN数据缓存
 	SystemInit();
 	
 	InitBoard();		//硬件初始化
@@ -131,17 +136,14 @@ int main(void)
 	
     printf("-------------------------------------------------------------------\r\n");
 	bsp_StartTimer(1, 200);			//定时器1周期 200毫秒
-	KMOFF_Show(ALARMALL);
-	HC595_E1_ON();HC595_E2_ON();
     RS485Dat_LED1_ON();	//远程通信指示灯
     RS485Dat_LED2_ON(); //主板通信指示灯	
     RS485Dat_LED12_ON();//A泵停止指示灯
-//    RS485Dat_LED13_ON();//A泵停止指示灯
-//    RS485Dat_LED14_ON();//A泵停止指示灯
     RS485Dat_LED18_ON();//B泵停止指示灯
-//    RS485Dat_LED19_ON();//B泵停止指示灯
-//    RS485Dat_LED20_ON();//B泵停止指示灯
     RS485Dat_LED16_ON();//手动模式指示灯
+    RS485Dat_LED6_ON(); //主三相电
+	KMOFF_Show(ALARMALL);KMOutUpdat();
+	HC595_E1_ON();HC595_E2_ON();
     while (1)
 	{
 		CPU_IDLE();
@@ -158,6 +160,7 @@ int main(void)
 			}
             if(Time_250ms%10==0)        RS485Dat_LED2_ON();     //主板通信指示灯
             else if(Time_250ms%10==5)   RS485Dat_LED2_OFF();    //主板通信指示灯
+            if(Time_250ms%2==0)         CanSendDat();           //CAN数据发送
             ReadInputDat();     //读取A/B泵全部状态，存放在结构体中
             DisplaySendDat();   //RS485数据发送
 			RS485_ReceiveDat();
@@ -236,7 +239,7 @@ int main(void)
             }
             else if(RunMode!=0)  //自动模式
             {
-                if((Read_Optocoupler(8)==0)||(Read_Optocoupler(9)==0)) //远控1/远控2检测
+                if((Read_Optocoupler(8)==0)||(Read_Optocoupler(9)==0)||(OlineSrart == 0xAA)) //远控1/远控2检测
                 {
                     if(StartTimerFlag==0x00)
                     {
@@ -293,6 +296,23 @@ int main(void)
         SetParam();     //设置修改参数
         if(Menu==Menu_Idle) BspTm1639_Show(g_ShowUpDateFlag,g_ShowDat[g_ShowUpDateFlag]);
         else                BspTm1639_ShowParam(g_TM1639Flag,Menu,gParamDat[Menu]);
+        if(bsp_GetCQ((uint8_t *)canbuf)!=CQ_NONE)//接收到有数据
+        {
+			printf(">>CanRxMsg:%02X %02X %02X%02X%02X%02X%02X%02X.\r\n",canbuf[0],canbuf[1],canbuf[2],canbuf[3],canbuf[4],canbuf[5],canbuf[6],canbuf[7]);
+            if     (canbuf[0]==0x01){RunMode=1;}  //主一备二
+            else if(canbuf[0]==0x02){RunMode=0;}  //手动模式
+            else if(canbuf[0]==0x03){RunMode=2;}  //主二备一
+            if((OldStartFlag==0x00)&&(canbuf[1]==0x55))
+            {   //远程板,急启按键按下
+                OldStartFlag=0xAA;  printf("远程板,急启按键按下!\r\n");
+                OlineSrart = 0xAA;  RS485Dat_LED3_ON();
+            }  
+            else if((OldStartFlag==0xAA)&&(canbuf[1]!=0x55))
+            {
+                OldStartFlag=0x00;  printf("远程板,急启按键松开!\r\n");
+                OlineSrart = 0x00;  RS485Dat_LED3_OFF();
+            }
+        }
 	}
 }
 
@@ -310,8 +330,9 @@ static void InitBoard(void)
 	/* 初始化systick定时器，并启动定时中断 */
 	bsp_InitTimer(); 
 	delay_init();
-	delay_ms(500);
+	delay_ms(200);
 	Init_GPIO();				//输出初始化
+    CPU_IDLE();delay_ms(200);
 	bsp_InitKey();
 	bsp_InitUart(); 	    	//初始化串口+RS485
 	printf("\r\nStarting Up...\r\nJOSONG-XS03 V3.0...\r\n");
@@ -327,7 +348,8 @@ static void InitBoard(void)
 	Bsp_CS5463_Config();
 	CS546x_Init(0);
     Read_Flash_Dat();   //读出Flash数据
-    delay_ms(500);
+    CPU_IDLE();
+    delay_ms(200);
 	TIM3_Int_Init(99,720-1);  	//以100khz的频率计数，0.01ms中断，计数到100 *0.01ms 为1ms 
 //	TIM2_Cap_Init(0xFFFF,72-1);	//以1Mhz的频率计数 
  	Adc_Init();		  		    //ADC初始化

@@ -76,12 +76,12 @@ void BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate)
 			BspTm1639_Writebyte(table[ShowDate%10]);		BspTm1639_Writebyte(table[ShowDate%10]>>4);
 			BspTm1639_Writebyte(table[ShowDate/10%10]);		BspTm1639_Writebyte(table[ShowDate/10%10]>>4);
 			BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
-            if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4|0x08); }  //电压U
-            else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08); }  //电流A
-            else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4|0x08); }  //温度C
-            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4|0x08); }  //湿度H
-            else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4|0x08); }  //压力P
-            else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4|0x08); }  //流量L
+            if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4); }  //电压U
+            else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4); }  //电流A
+            else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4); }  //温度C
+            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4); }  //湿度H
+            else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4); }  //压力P
+            else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4); }  //流量L
 		}
 		TM1639_STB_High();
 		BspTm1639_Writebyte(LEVEL_USE);
@@ -113,62 +113,62 @@ ShowBack:
             switch (ShowMode)
             {
                 case Menu_U:
-                    BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4|0x08);//U
+                    BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4);//U
                     break;
                 case Menu_A:
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//A
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//A
                     break;
                 case Menu_Ua:
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//A
-                    BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4|0x08);//U
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//A
+                    BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4);//U
                     break;
                 case Menu_Ub:
-                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4|0x08);//b
-                    BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4|0x08);//U
+                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
+                    BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4);//U
                     break;
                 case Menu_Aa:
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//A
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//A
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//A
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//A
                     break;
                 case Menu_Ab:
-                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4|0x08);//b
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//A
+                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//A
                     break;
                 case Menu_Ac:
-                    BspTm1639_Writebyte(Table_S[ 3]); BspTm1639_Writebyte(Table_S[ 3]>>4|0x08);//C
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//A
+                    BspTm1639_Writebyte(Table_S[ 3]); BspTm1639_Writebyte(Table_S[ 3]>>4);//C
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//A
                     break;
                 case Menu_Ca:
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//A
-                    BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4|0x08);//C
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//A
+                    BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4);//C
                     break;
                 case Menu_Cb:
-                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4|0x08);//b
-                    BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4|0x08);//C
+                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
+                    BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4);//C
                     break;
                 case Menu_Ha:
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//a
-                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4|0x08);//H
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//a
+                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4);//H
                     break;
                 case Menu_Hb:
-                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4|0x08);//b
-                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4|0x08);//H
+                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
+                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4);//H
                     break;
                 case Menu_Pa:
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//a
-                    BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4|0x08);//P
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//a
+                    BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4);//P
                     break;
                 case Menu_Pb:
-                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4|0x08);//b
-                    BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4|0x08);//P
+                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
+                    BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4);//P
                     break;
                 case Menu_Fa:
-                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4|0x08);//a
-                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4|0x08);//F
+                    BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//a
+                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4);//F
                     break;
                 case Menu_Fb:
-                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4|0x08);//b
-                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4|0x08);//F
+                    BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
+                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4);//F
                     break;            
                 default:
                     break;

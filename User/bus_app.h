@@ -44,4 +44,9 @@ void RS485Dat_LED17_OFF(void);
 void RS485Dat_LED18_OFF(void); 
 void RS485Dat_LED19_OFF(void); 
 void RS485Dat_LED20_OFF(void); 
+
+
+void CanSendDat(void);
+
 #endif
+

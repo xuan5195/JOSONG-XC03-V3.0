@@ -29,7 +29,7 @@
 #define ALARMOUT1	0x0100		//无源应答
 #define ALARMOUT2	0x0200		//有源应答
 #define ALARMOUT3   0x0400		//三音报警器输出
-#define ALARMALL    0x0FFF		
+#define ALARMALL    0xFFFF		
 
 
 void bsp_HC595_Config(void);
