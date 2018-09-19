@@ -46,7 +46,7 @@ void RS485Dat_LED19_OFF(void);
 void RS485Dat_LED20_OFF(void); 
 
 
-void CanSendDat(void);
+void CanSendDat(uint8_t _ShowMode);
 
 #endif
 

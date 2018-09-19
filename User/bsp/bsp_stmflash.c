@@ -3,7 +3,7 @@
 #include "bsp.h"
 
 #define FLASH_SAVE_ADD		0x0800FC00		//Flash存储起始地址 为Flash最后一页，大小为1K
- 
+
 //读取指定地址的半字(16位数据)
 //faddr:读地址(此地址必须为2的倍数!!)
 //返回值:对应数据.
@@ -102,10 +102,16 @@ ReReadFlash:
 		gParamDat[Menu_Pb] = datatemp[11];//压力下限
 		gParamDat[Menu_Fa] = datatemp[12];//流量上限
 		gParamDat[Menu_Fb] = datatemp[13];//流量下限
-        printf("电压上限:%2d.电压下限:%2d.\r\n",gParamDat[Menu_Ua],gParamDat[Menu_Ub]);
-        printf("电流上限:%2d.电流下限:%2d.电流基数:%3d.电流变比:%2d.\r\n",gParamDat[Menu_Aa],gParamDat[Menu_Ab],gParamDat[Menu_A],gParamDat[Menu_Ac]);
-        printf("温度上限:%2d.温度下限:%2d.湿度上限:%2d.湿度下限:%2d.\r\n",gParamDat[Menu_Ca],gParamDat[Menu_Cb],gParamDat[Menu_Ha],gParamDat[Menu_Hb]);
-        printf("压力上限:%2d.压力下限:%2d.流量上限:%2d.流量下限:%2d.\r\n",gParamDat[Menu_Pa],gParamDat[Menu_Pb],gParamDat[Menu_Fa],gParamDat[Menu_Fb]);
+        gParamDat[Menu_StartMode] = datatemp[14];//启动模式 0x00->星三角;直接；自耦;风机.
+        printf("STMFLASH_Read：\r\n");
+        printf("   电压:(Limit:%2d-%2d).\r\n",gParamDat[Menu_Ub],gParamDat[Menu_Ua]);
+        printf("   电流:(Limit:%2d-%2d).  基数:%3d.    变比:%2d.\r\n",gParamDat[Menu_Ab],gParamDat[Menu_Aa],gParamDat[Menu_A],gParamDat[Menu_Ac]);
+        printf("   温度:(Limit:%2d-%2d).  湿度:(Limit:%2d-%2d).\r\n",gParamDat[Menu_Cb],gParamDat[Menu_Ca],gParamDat[Menu_Hb],gParamDat[Menu_Ha]);
+        printf("   压力:(Limit:%2d-%2d).  流量:(Limit:%2d-%2d).\r\n",gParamDat[Menu_Pb],gParamDat[Menu_Pa],gParamDat[Menu_Fb],gParamDat[Menu_Fa]);
+        if(gParamDat[Menu_StartMode]==0x00)        {   printf("   启动模式：HH33 星三角.\r\n");}
+        else if(gParamDat[Menu_StartMode]==0x01)   {   printf("   启动模式：HH11 直接.\r\n");}
+        else if(gParamDat[Menu_StartMode]==0x02)   {   printf("   启动模式：HH44 自耦.\r\n");}
+        else if(gParamDat[Menu_StartMode]==0x03)   {   printf("   启动模式：HHFJ 风机.\r\n");}
 	}
 }
 
@@ -126,6 +132,7 @@ void Write_Flash_Dat(void)
 	datatemp[11] = gParamDat[Menu_Pb];//压力下限
 	datatemp[12] = gParamDat[Menu_Fa];//流量上限
 	datatemp[13] = gParamDat[Menu_Fb];//流量下限
+	datatemp[14] = gParamDat[Menu_StartMode];//启动模式 0x00->星三角;直接；自耦;风机.
 	datatemp[18] = 0xAA;	//使用标志
 	STMFLASH_WriteHword(FLASH_SAVE_ADD,(u16 *)datatemp,20);
 }

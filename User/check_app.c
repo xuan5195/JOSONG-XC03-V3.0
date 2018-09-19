@@ -7,9 +7,10 @@
 #include "bsp.h"
 
 extern uint8_t g_KeyNoneCount;
-extern uint8_t g_ChangeFlag;
+extern uint8_t g_ChangeFlag;//互投标志
 
-void ReadInputDat(void)
+//_StartMode:启动模式，星三角、直接、自耦、风机
+void ReadInputDat(uint8_t _StartMode)
 {
     gAp.KM1_Point = Read_Optocoupler(KMA1_PointNo);//KM1触点状态 NC常闭触点 0->闭合；1->断开
     gAp.KM2_Point = Read_Optocoupler(KMA2_PointNo);//KM2触点状态 NC常闭触点 0->闭合；1->断开
@@ -44,60 +45,154 @@ void ReadInputDat(void)
     if((gAp.Phase_Check==0)||(gBp.Phase_Check==0))  {   RS485Dat_LED9_ON();     } //断相/过载 指示灯
     else                                            {   RS485Dat_LED9_OFF();    }
 
-    if(gAp.Statue==Stop)    //停止状态
+    switch (_StartMode)
     {
-        if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0))
-        {
-            RS485Dat_LED12_ON();RS485Dat_LED13_OFF();RS485Dat_LED14_OFF();
-        }
-        if( (gAp.KM1_Point==0)&&(gAp.KM2_Point==0x00)&&(gAp.KM3_Point==0x00)&&
-            (gAp.KM1_Coil==0)&&(gAp.KM2_Coil==0x00)&&(gAp.KM3_Coil==0x00)&&(gAp.Power_Statue==0))    	
-                {   RS485Dat_LED7_OFF();    } //主一故障指示灯
-        else    {   RS485Dat_LED7_ON();     }
+    	case HH33:  //星三角模式
+    	case HHFJ:  //风机模式
+            if(gAp.Statue==Stop)    //停止状态
+            {
+                if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0))
+                {
+                    RS485Dat_LED12_ON();RS485Dat_LED13_OFF();RS485Dat_LED14_OFF();
+                }
+                if( (gAp.KM1_Point==0)&&(gAp.KM2_Point==0x00)&&(gAp.KM3_Point==0x00)&&
+                    (gAp.KM1_Coil==0)&&(gAp.KM2_Coil==0x00)&&(gAp.KM3_Coil==0x00)&&(gAp.Power_Statue==0))    	
+                        {   RS485Dat_LED7_OFF();    } //主一故障指示灯
+                else    {   RS485Dat_LED7_ON();     }
+            }
+            else if(gAp.Statue==Slow)    //低速状态
+            {
+                if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0))
+                {
+                    RS485Dat_LED12_OFF();RS485Dat_LED13_ON();RS485Dat_LED14_OFF();
+                }
+            }
+            else if(gAp.Statue==Fast)    //高速状态
+            {
+                if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1))
+                {
+                    RS485Dat_LED12_OFF();RS485Dat_LED13_OFF();RS485Dat_LED14_ON();
+                }
+            }    
+            if(gBp.Statue==Stop)    //停止状态
+            {
+                if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0))
+                {
+                    RS485Dat_LED18_ON();RS485Dat_LED19_OFF();RS485Dat_LED20_OFF();
+                }
+                if( (gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)&&
+                    (gBp.KM1_Coil==0)&&(gBp.KM2_Coil==0)&&(gBp.KM3_Coil==0)&&(gBp.Power_Statue==0) )    	
+                        {   RS485Dat_LED8_OFF();    } //主二故障指示灯
+                else    {   RS485Dat_LED8_ON();     }
+            }
+            else if(gBp.Statue==Slow)    //低速状态
+            {
+                if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0))
+                {
+                    RS485Dat_LED18_OFF();RS485Dat_LED19_ON();RS485Dat_LED20_OFF();
+                }               
+            }
+            else if(gBp.Statue==Fast)    //高速状态
+            {
+                if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1))
+                {
+                    RS485Dat_LED18_OFF();RS485Dat_LED19_OFF();RS485Dat_LED20_ON();
+                }
+            }     
+    		break;
+    	case HH11:  //直启
+            if(gAp.Statue==Stop)    //停止状态
+            {
+                if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0))
+                {
+                    RS485Dat_LED12_ON();RS485Dat_LED13_OFF();RS485Dat_LED14_OFF();
+                }
+                if( (gAp.KM1_Point==0)&&(gAp.KM2_Point==0x00)&&(gAp.KM3_Point==0x00)&&
+                    (gAp.KM1_Coil==0)&&(gAp.KM2_Coil==0x00)&&(gAp.KM3_Coil==0x00)&&(gAp.Power_Statue==0))    	
+                        {   RS485Dat_LED7_OFF();    } //主一故障指示灯
+                else    {   RS485Dat_LED7_ON();     }
+            }
+            else
+            {
+                if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0))
+                {
+                    RS485Dat_LED12_OFF();RS485Dat_LED13_OFF();RS485Dat_LED14_ON();
+                }
+            }    
+            if(gBp.Statue==Stop)    //停止状态
+            {
+                if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0))
+                {
+                    RS485Dat_LED18_ON();RS485Dat_LED19_OFF();RS485Dat_LED20_OFF();
+                }
+                if( (gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)&&
+                    (gBp.KM1_Coil==0)&&(gBp.KM2_Coil==0)&&(gBp.KM3_Coil==0)&&(gBp.Power_Statue==0) )    	
+                        {   RS485Dat_LED8_OFF();    } //主二故障指示灯
+                else    {   RS485Dat_LED8_ON();     }
+            }
+            else
+            {
+                if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0))
+                {
+                    RS485Dat_LED18_OFF();RS485Dat_LED19_OFF();RS485Dat_LED20_ON();
+                }
+            }     
+    		break;
+    	case HH44:  //自耦
+            if(gAp.Statue==Stop)    //停止状态
+            {
+                if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0))
+                {
+                    RS485Dat_LED12_ON();RS485Dat_LED13_OFF();RS485Dat_LED14_OFF();
+                }
+                if( (gAp.KM1_Point==0)&&(gAp.KM2_Point==0x00)&&(gAp.KM3_Point==0x00)&&
+                    (gAp.KM1_Coil==0)&&(gAp.KM2_Coil==0x00)&&(gAp.KM3_Coil==0x00)&&(gAp.Power_Statue==0))    	
+                        {   RS485Dat_LED7_OFF();    } //主一故障指示灯
+                else    {   RS485Dat_LED7_ON();     }
+            }
+            else if(gAp.Statue==Slow)    //低速状态
+            {
+                if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0))
+                {
+                    RS485Dat_LED12_OFF();RS485Dat_LED13_ON();RS485Dat_LED14_OFF();
+                }
+            }
+            else if(gAp.Statue==Fast)    //高速状态
+            {
+                if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1))
+                {
+                    RS485Dat_LED12_OFF();RS485Dat_LED13_OFF();RS485Dat_LED14_ON();
+                }
+            }    
+            if(gBp.Statue==Stop)    //停止状态
+            {
+                if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0))
+                {
+                    RS485Dat_LED18_ON();RS485Dat_LED19_OFF();RS485Dat_LED20_OFF();
+                }
+                if( (gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)&&
+                    (gBp.KM1_Coil==0)&&(gBp.KM2_Coil==0)&&(gBp.KM3_Coil==0)&&(gBp.Power_Statue==0) )    	
+                        {   RS485Dat_LED8_OFF();    } //主二故障指示灯
+                else    {   RS485Dat_LED8_ON();     }
+            }
+            else if(gBp.Statue==Slow)    //低速状态
+            {
+                if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0))
+                {
+                    RS485Dat_LED18_OFF();RS485Dat_LED19_ON();RS485Dat_LED20_OFF();
+                }               
+            }
+            else if(gBp.Statue==Fast)    //高速状态
+            {
+                if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1))
+                {
+                    RS485Dat_LED18_OFF();RS485Dat_LED19_OFF();RS485Dat_LED20_ON();
+                }
+            }     
+    		break;
+    	default:
+    		break;
     }
-    else if(gAp.Statue==Slow)    //低速状态
-    {
-        if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0))
-        {
-            RS485Dat_LED12_OFF();RS485Dat_LED13_ON();RS485Dat_LED14_OFF();
-        }
-    }
-    else if(gAp.Statue==HighSpeed)    //高速状态
-    {
-        if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1))
-        {
-            RS485Dat_LED12_OFF();RS485Dat_LED13_OFF();RS485Dat_LED14_ON();
-        }
-    }    
-    if(gBp.Statue==Stop)    //停止状态
-    {
-        if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0))
-        {
-            RS485Dat_LED18_ON();RS485Dat_LED19_OFF();RS485Dat_LED20_OFF();
-        }
-        if( (gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)&&
-            (gBp.KM1_Coil==0)&&(gBp.KM2_Coil==0)&&(gBp.KM3_Coil==0)&&(gBp.Power_Statue==0) )    	
-                {   RS485Dat_LED8_OFF();    } //主二故障指示灯
-        else    {   RS485Dat_LED8_ON();     }
-    }
-    else if(gBp.Statue==Slow)    //低速状态
-    {
-        if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0))
-        {
-            RS485Dat_LED18_OFF();RS485Dat_LED19_ON();RS485Dat_LED20_OFF();
-        }
-//        if(gBp.DelayCheck_Count==0) //延时检测时间到，进入检测
-//        {
-//            if(gBp.Work_Check==1)   //工作检测失败，转为
-//        }                
-    }
-    else if(gBp.Statue==HighSpeed)    //高速状态
-    {
-        if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1))
-        {
-            RS485Dat_LED18_OFF();RS485Dat_LED19_OFF();RS485Dat_LED20_ON();
-        }
-    }     
 }
 
 //无源/有源继电器输出控制
@@ -112,8 +207,12 @@ void KMOutAnswer(void)
         KMON_Show(ALARMOUT1);  KMON_Show(ALARMOUT2);
     }
 }
-
-void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
+/*
+//只适用于自动模式
+//_Mode:运行模式 主一备二/主二备一 -->互投
+//_StartMode:启动模式，星三角、直接、自耦、风机
+//_Step:0->停止,1->低速,2->高速
+void KMRUN_Auto(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode)	//自动启动控制
 {
     if(g_ChangeFlag==0xAA)  //进入互投
     {
@@ -129,21 +228,17 @@ void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
         if(_Step==0)
         {
             printf("主一备二，停止.\r\n");
-            gAp.Statue = Stop;
-            KMOFF_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //停止
-            KMOFF_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //停止
+            KM_RunMode(_StartMode,0x01);
         }
         else if(_Step==1)
         {
             printf("主一备二，低速.\r\n");
-            gAp.Statue = Slow;  gAp.DelayCheck_Count = 30;
-            KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //低速运行
+            KM_RunMode(_StartMode,0x02);
         }
         else if(_Step==2)
         {
             printf("主一备二，高速.\r\n");
-            gAp.Statue = HighSpeed; gAp.DelayCheck_Count = 30;
-            KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMON_Show(AKM3RUN);    //高速运行
+            KM_RunMode(_StartMode,0x03);
         }
     }
     else if(_Mode==2)    //主二备一
@@ -151,79 +246,197 @@ void KMAutoRUN(uint8_t _Mode,uint8_t _Step)//自动启动控制
         if(_Step==0)
         {
             printf("主二备一，停止.\r\n");
-            gBp.Statue = Stop;
-            KMOFF_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMOFF_Show(AKM3RUN);    //停止
-            KMOFF_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //停止
+            KM_RunMode(_StartMode,0x10);
         }
         else if(_Step==1)
         {
             printf("主二备一，低速.\r\n");
-            gBp.Statue = Slow; gBp.DelayCheck_Count = 30;
-            KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);    //低速运行
+            KM_RunMode(_StartMode,0x20);
         }
         else if(_Step==2)
         {
             printf("主二备一，高速.\r\n");
-            gBp.Statue = HighSpeed; gBp.DelayCheck_Count = 30;
-            KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMON_Show(BKM3RUN);    //高速运行
+            KM_RunMode(_StartMode,0x30);
         }
     }
 }
 
-//A泵运行检测
-uint8_t KM_ApRunningCheck(void)
+
+
+//只适用于手动模式
+//_No:A/B泵 1->A; 2->B.
+//_StartMode:启动模式，星三角、直接、自耦、风机
+//_Step:0->停止,1->低速,2->高速
+void KMRUN_User(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode)	//自动启动控制
 {
-    if(gAp.Statue==Slow)    //A泵低速
+    if(_Mode==1)    //A泵
     {
-        if(gAp.DelayCheck_Count==0)
+        if(_Step==0)
         {
-            if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
-                &&(gAp.Work_Check==0)&&(gAp.Phase_Check==1))  
-                    return 0x00;    //正常运行
-            else    return 0x01;    //异常运行
+            printf("手动操作,A泵，停止.\r\n");
+            KM_RunMode(_StartMode,0x01);
+        }
+        else if(_Step==1)
+        {
+            printf("手动操作,A泵，低速.\r\n");
+            KM_RunMode(_StartMode,0x02);
+        }
+        else if(_Step==2)
+        {
+            printf("手动操作,A泵，高速.\r\n");
+            KM_RunMode(_StartMode,0x03);
         }
     }
-    else if(gAp.Statue==HighSpeed)    //A泵高速
+    else if(_Mode==2)    //B泵
     {
-        if(gAp.DelayCheck_Count==0)
+        if(_Step==0)
         {
-            if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
-                &&(gAp.Work_Check==0)&&(gAp.Phase_Check==1))  
-                    return 0x00;
-            else    return 0x01;
+            printf("手动操作,B泵，停止.\r\n");
+            KM_RunMode(_StartMode,0x10);
+        }
+        else if(_Step==1)
+        {
+            printf("手动操作,B泵，低速.\r\n");
+            KM_RunMode(_StartMode,0x20);
+        }
+        else if(_Step==2)
+        {
+            printf("手动操作,B泵，高速.\r\n");
+            KM_RunMode(_StartMode,0x30);
         }
     }
-    return 0x02;    //未检测
+}
+*/
+//A泵运行检测
+uint8_t KM_ApRunningCheck(uint8_t _StartMode)
+{
+	uint8_t uTemp=0;
+	switch (_StartMode)
+	{
+		case HHFJ:	//风机
+		case HH33:	//星三角
+			if(gAp.Statue==Slow)    	//A泵低速
+			{
+				if(gAp.DelayCheck_Count==0)
+				{
+					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
+				}
+			}
+			else if(gAp.Statue==Fast)	//A泵高速
+			{
+				if(gAp.DelayCheck_Count==0)
+				{
+					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
+				}
+			}
+			break;
+		case HH11:	//直接
+			if(gAp.Statue==Slow)    //A泵低速
+			{
+				if(gAp.DelayCheck_Count==0)
+				{
+					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0)\
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
+				}
+			}
+			break;
+		case HH44:	//自耦
+			if(gAp.Statue==Slow)    	//A泵低速
+			{
+				if(gAp.DelayCheck_Count==0)
+				{
+					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
+				}
+			}
+			else if(gAp.Statue==Fast)	//A泵高速
+			{
+				if(gAp.DelayCheck_Count==0)
+				{
+					if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
+				}
+			}
+			break;
+		default:
+			break;
+	}
+    return uTemp;    //检测结果
 }
 
 //B泵运行检测
-uint8_t KM_BpRunningCheck(void)
+uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 {
-    if(gBp.Statue==Slow)    //B泵低速
-    {
-        if(gBp.DelayCheck_Count==0)
-        {
-            if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
-                &&(gBp.Work_Check==0)&&(gBp.Phase_Check==1))  
-                    return 0x00;    //正常运行
-            else    return 0x01;    //异常运行
-        }
-    }
-    else if(gBp.Statue==HighSpeed)    //B泵高速
-    {
-        if(gBp.DelayCheck_Count==0)
-        {
-            if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
-                &&(gBp.Work_Check==0)&&(gBp.Phase_Check==1))  
-                    return 0x00;
-            else    return 0x01;
-        }
-    }
-    return 0x02;    //未检测
+	uint8_t uTemp=0;
+	switch (_StartMode)
+	{
+		case HHFJ:	//风机
+		case HH33:	//星三角
+			if(gBp.Statue==Slow)    	//B泵低速
+			{
+				if(gBp.DelayCheck_Count==0)
+				{
+					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
+					else    uTemp = uTemp|0x10;    //异常运行
+				}
+			}
+			else if(gBp.Statue==Fast)	//B泵高速
+			{
+				if(gBp.DelayCheck_Count==0)
+				{
+					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
+					else    uTemp = uTemp|0x10;    //异常运行
+				}
+			}
+			break;
+		case HH11:	//直接
+			if(gBp.Statue==Slow)    //B泵低速
+			{
+				if(gBp.DelayCheck_Count==0)
+				{
+					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)\
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
+					else    uTemp = uTemp|0x10;    //异常运行
+				}
+			}
+			break;
+		case HH44:	//自耦
+			if(gBp.Statue==Slow)    	//B泵低速
+			{
+				if(gBp.DelayCheck_Count==0)
+				{
+					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
+					else    uTemp = uTemp|0x10;    //异常运行
+				}
+			}
+			else if(gBp.Statue==Fast)	//B泵高速
+			{
+				if(gBp.DelayCheck_Count==0)
+				{
+					if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
+					else    uTemp = uTemp|0x10;    //异常运行
+				}
+			}
+			break;
+		default:
+			break;
+	}
+    return uTemp;    //检测结果
 }
 
 //自动模式下，A/B泵检测
-uint8_t KM_RunningAutoCheck(uint8_t _Mode)
+uint8_t KM_RunningAutoCheck(uint8_t _Mode,uint8_t _StartMode)
 {
     if(g_ChangeFlag==0xAA)  //进入互投
     {
@@ -236,7 +449,7 @@ uint8_t KM_RunningAutoCheck(uint8_t _Mode)
     }
     if(_Mode==1)    //主一备二模式
     {
-        if(0x01==KM_ApRunningCheck())   
+        if(0x01==KM_ApRunningCheck(_StartMode))   
         {
             printf("A泵异常.\r\n");
             return 0x01;
@@ -245,7 +458,7 @@ uint8_t KM_RunningAutoCheck(uint8_t _Mode)
     }
     else if(_Mode==2)    //主二备一模式
     {
-        if(0x01==KM_BpRunningCheck())   
+        if(0x01==KM_BpRunningCheck(_StartMode))   
         {
             printf("B泵异常.\r\n");
             return 0x01;
@@ -255,7 +468,7 @@ uint8_t KM_RunningAutoCheck(uint8_t _Mode)
     return 0x00; 
 }
 
-uint8_t Menu=Menu_Idle;
+uint8_t Menu=Menu_Idle,g_ShowMode=Show_UV;
 //设置参数 如电压电流上下限等
 void SetParam(void)
 {
@@ -268,7 +481,7 @@ void SetParam(void)
             case KEY_NONE:	//无按键按下
                 break;
             case KEY_1_DOWN:							
-                if(Menu==Menu_Fb)
+                if(Menu==Menu_StartMode)
                 {
                     Menu = Menu_Ua;       //电压上限
                 }
@@ -276,37 +489,47 @@ void SetParam(void)
                 {
                     Menu++;	//菜单模式+1
                 }
+                else if(Menu==Menu_Idle)    //空闲模式
+                {
+                    g_ShowMode = (g_ShowMode+1)%3;  //0-1-2-0
+                }
                 break;
             case KEY_1_LONG:							
                 if(Menu==Menu_Idle)
                 {
-                    printf("进入设置菜单.\r\n");
+                    printf("进入设置菜单.\r\n------------------------\r\n");
                     Menu = Menu_Ua;       //电压上限
                 }
                 break;
             case KEY_2_DOWN:
                 gParamDat[Menu]++;
-                if(Menu==Menu_A)    //电流最大值600A
-                {   if(gParamDat[Menu]>600)  gParamDat[Menu]=600; }
+                if(Menu==Menu_StartMode)
+                {   if(gParamDat[Menu]>3)   gParamDat[Menu] = 3;    }
+                else if(Menu==Menu_A)    //电流最大值600A
+                {   if(gParamDat[Menu]>600) gParamDat[Menu]=600; }
                 else if((Menu==Menu_Ua)||(Menu==Menu_Ub)||(Menu==Menu_Aa)||(Menu==Menu_Ab))
                 {   if(gParamDat[Menu]>10)  gParamDat[Menu]=10; }
                 else //if((Menu==Menu_Ca)||(Menu==Menu_Cb)||(Menu==Menu_Ha)||(Menu==Menu_Hb))
                 {   if(gParamDat[Menu]>99)  gParamDat[Menu]=99; }
                 break;
             case KEY_3_DOWN:	
-                gParamDat[Menu]--;
                 if(gParamDat[Menu]==0)  gParamDat[Menu]=0;
+                else                    gParamDat[Menu]--;
                 break;
             case KEY_4_DOWN:	
                 if(Menu!=Menu_Idle)
                 {
-                    printf("电压上限:%2d.电压下限:%2d.\r\n",gParamDat[Menu_Ua],gParamDat[Menu_Ub]);
-                    printf("电流基数:%3d.电流上限:%2d.电流下限:%2d.电流变比:%2d.\r\n",gParamDat[Menu_A],gParamDat[Menu_Aa],gParamDat[Menu_Ab],gParamDat[Menu_Ac]);
-                    printf("温度上限:%2d.温度下限:%2d.湿度上限:%2d.湿度下限:%2d.\r\n",gParamDat[Menu_Ca],gParamDat[Menu_Cb],gParamDat[Menu_Ha],gParamDat[Menu_Hb]);
-                    printf("压力上限:%2d.压力下限:%2d.流量上限:%2d.流量下限:%2d.\r\n",gParamDat[Menu_Pa],gParamDat[Menu_Pb],gParamDat[Menu_Fa],gParamDat[Menu_Fb]);
+                    printf("   电压(Limit:%2d-%2d).\r\n",gParamDat[Menu_Ub],gParamDat[Menu_Ua]);
+                    printf("   电流(Limit:%2d-%2d).  基数:%2d.  变比:%2d.\r\n",gParamDat[Menu_Ab],gParamDat[Menu_Aa],gParamDat[Menu_A],gParamDat[Menu_Ac]);
+                    printf("   温度(Limit:%2d-%2d).  湿度(Limit:%2d-%2d).\r\n",gParamDat[Menu_Cb],gParamDat[Menu_Ca],gParamDat[Menu_Hb],gParamDat[Menu_Ha]);
+                    printf("   压力(Limit:%2d-%2d).  流量(Limit:%2d-%2d).\r\n",gParamDat[Menu_Pb],gParamDat[Menu_Pa],gParamDat[Menu_Fb],gParamDat[Menu_Fa]);
+                    if(gParamDat[Menu_StartMode]==0x00)        {   printf("   启动模式：HH33 星三角.\r\n");}
+                    else if(gParamDat[Menu_StartMode]==0x01)   {   printf("   启动模式：HH11 直接.\r\n");}
+                    else if(gParamDat[Menu_StartMode]==0x02)   {   printf("   启动模式：HH44 自耦.\r\n");}
+                    else if(gParamDat[Menu_StartMode]==0x03)   {   printf("   启动模式：HHFJ 风机.\r\n");}
                     Write_Flash_Dat();  //写Flash数据
                     Menu = Menu_Idle;     //保存参数退出
-                    printf("保存,退出菜单.\r\n");
+                    printf("保存,退出菜单.\r\n------------------------\r\n");
                 }
                 break;
             default:
@@ -321,4 +544,262 @@ void SetParam(void)
         printf("不保存,退出菜单.\r\n");
     }
 }
+
+
+//_StartMode:启动模式，星三角、直接、自耦、风机
+//_RunDat:运行方式，停止/低速/高速
+void KM_RunMode(uint8_t _RunMode,uint8_t _StartMode,uint8_t _RunDat)
+{
+	switch (_StartMode)
+	{
+		case HH33:	//星三角
+			if((_RunDat&0x0F)==0x01)		//A泵停止        
+			{   
+				gAp.Statue=Stop;
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;	gAp.SlowTimer_Count=0;}
+				KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+			}  
+			else if((_RunDat&0x0F)==0x02)   //A泵低速
+			{   
+				gAp.Statue=Slow;      
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;gAp.DelayCheck_Count = 30;gAp.SlowTimer_Count=80;}
+				KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
+			}  
+			else if((_RunDat&0x0F)==0x04)   //A泵高速
+			{   
+				gAp.Statue=Fast; 
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;gAp.DelayCheck_Count = 30;gAp.SlowTimer_Count=250;}
+				KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
+			}  
+			if((_RunDat&0xF0)==0x10)   		//B泵停止
+			{   
+				gBp.Statue=Stop;     
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;	gBp.SlowTimer_Count=0;}
+				KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+			}  
+			else if((_RunDat&0xF0)==0x20)   //B泵低速
+			{   
+				gBp.Statue=Slow;      
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;gBp.DelayCheck_Count = 30;gBp.SlowTimer_Count=80;}
+				KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
+			}  
+			else if((_RunDat&0xF0)==0x40)   //B泵高速 
+			{   
+				gBp.Statue=Fast; 
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;gBp.DelayCheck_Count = 30;gBp.SlowTimer_Count=250;}
+				KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
+			}                 
+			break;
+		case HH11:	//直接
+			if((_RunDat&0x0F)==0x01)		//A泵停止        
+			{   
+				gAp.Statue=Stop;
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;	gAp.SlowTimer_Count=0;}
+				KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+			}  
+			else if((_RunDat&0x0F)==0x02)   //A泵KM1
+			{   
+				gAp.Statue=Fast; 
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;gAp.DelayCheck_Count = 30;gAp.SlowTimer_Count=250;}
+				KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
+			}  
+			if((_RunDat&0xF0)==0x10)   		//B泵停止
+			{   
+				gBp.Statue=Stop;     
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;	gBp.SlowTimer_Count=0;}
+				KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+			}  
+			else if((_RunDat&0xF0)==0x20)   //B泵KM1
+			{   
+				gBp.Statue=Fast; 
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;gBp.DelayCheck_Count = 30;gBp.SlowTimer_Count=250;}
+				KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
+			}  
+			break;
+		case HH44:	//自耦
+			if((_RunDat&0x0F)==0x01)		//A泵停止        
+			{   
+				gAp.Statue=Stop;
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;	gAp.SlowTimer_Count=0;}
+				KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+			}  
+			else if((_RunDat&0x0F)==0x02)   //A泵低速
+			{   
+				gAp.Statue=Slow;      
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;gAp.DelayCheck_Count = 30;gAp.SlowTimer_Count=80;}
+				KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
+			}  
+			else if((_RunDat&0x0F)==0x04)   //A泵高速
+			{   
+				gAp.Statue=Fast; 
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;gAp.DelayCheck_Count = 30;gAp.SlowTimer_Count=250;}
+				KMOFF_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
+			}  
+			if((_RunDat&0xF0)==0x10)   		//B泵停止
+			{   
+				gBp.Statue=Stop;     
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;	gBp.SlowTimer_Count=0;}
+				KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+			}  
+			else if((_RunDat&0xF0)==0x20)   //B泵低速
+			{   
+				gBp.Statue=Slow;      
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;gBp.DelayCheck_Count = 30;gBp.SlowTimer_Count=80;}
+				KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
+			}  
+			else if((_RunDat&0xF0)==0x40)   //B泵高速 
+			{   
+				gBp.Statue=Fast; 
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;gBp.DelayCheck_Count = 30;gBp.SlowTimer_Count=250;}
+				KMOFF_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
+			}                 
+			break;
+		case HHFJ:	//风机
+			if((_RunDat&0x0F)==0x01)		//A泵停止        
+			{   
+				gAp.Statue=Stop;
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;	gAp.SlowTimer_Count=0;}
+				KMOFF_Show(AKM1RUN);KMOFF_Show(AKM2RUN);KMOFF_Show(AKM3RUN);
+			}  
+			else if((_RunDat&0x0F)==0x02)   //A泵低速
+			{   
+				gAp.Statue=Slow;      
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;gAp.DelayCheck_Count = 30;if(_RunMode==0)gAp.SlowTimer_Count=250;else gAp.SlowTimer_Count=80;}
+				KMON_Show(AKM1RUN); KMON_Show(AKM2RUN); KMOFF_Show(AKM3RUN);
+			}  
+			else if((_RunDat&0x0F)==0x04)   //A泵高速
+			{   
+				gAp.Statue=Fast; 
+				if(gAp.Statue!=gAp.OldStatue)	
+				{	gAp.OldStatue=gAp.Statue;gAp.DelayCheck_Count = 30;gAp.SlowTimer_Count=250;}
+				KMON_Show(AKM1RUN); KMOFF_Show(AKM2RUN);KMON_Show(AKM3RUN); 
+			}  
+			if((_RunDat&0xF0)==0x10)   		//B泵停止
+			{   
+				gBp.Statue=Stop;     
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;	gBp.SlowTimer_Count=0;}
+				KMOFF_Show(BKM1RUN);KMOFF_Show(BKM2RUN);KMOFF_Show(BKM3RUN);
+			}  
+			else if((_RunDat&0xF0)==0x20)   //B泵低速
+			{   
+				gBp.Statue=Slow;      
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;gBp.DelayCheck_Count = 30;if(_RunMode==0)gBp.SlowTimer_Count=250;else gBp.SlowTimer_Count=80;}
+				KMON_Show(BKM1RUN); KMON_Show(BKM2RUN); KMOFF_Show(BKM3RUN);
+			}  
+			else if((_RunDat&0xF0)==0x40)   //B泵高速 
+			{   
+				gBp.Statue=Fast; 
+				if(gBp.Statue!=gBp.OldStatue)	
+				{	gBp.OldStatue=gBp.Statue;gBp.DelayCheck_Count = 30;gBp.SlowTimer_Count=250;}
+				KMON_Show(BKM1RUN); KMOFF_Show(BKM2RUN);KMON_Show(BKM3RUN); 
+			}                 
+			break;
+		default:
+			break;
+	}
+}
+
+//_RunMode:自动/手动
+//_StartMode:启动模式，星三角、直接、自耦、风机
+//_RunDat:运行方式，停止/低速/高速
+//uint8_t g_ChangeFlag=0;//互投标志
+uint8_t KMStart_Pro(uint8_t _RunMode,uint8_t _RunDat,uint8_t _StartMode)
+{
+	if(g_ChangeFlag==0xAA)//互投标志
+	{
+		if(_RunMode==1)	{_RunMode=2;if((_RunDat==0x12)||(_RunDat==0x11))_RunDat=0x21;if(_RunDat==0x14)_RunDat=0x41; }
+		else			{_RunMode=1;if((_RunDat==0x21)||(_RunDat==0x11))_RunDat=0x12;if(_RunDat==0x41)_RunDat=0x14; }
+	}
+
+	KM_RunMode(_RunMode,_StartMode,_RunDat);	//_StartMode:启动模式;_RunDat:运行方式，停止/低速/高速
+	if(_RunMode==0)	//手动
+	{
+		if((_RunDat&0x0F)!=0x01)	//A泵动作中
+		{
+			if(0x01==KM_ApRunningCheck(_StartMode))//A泵异常，进入停止
+			{
+				_RunDat = (_RunDat&0xF0)|0x01;
+				printf("A泵异常，停止.0x%02X.\r\n",_RunDat);	
+                gAp.ErrorFlag=1;
+			}
+			else
+			{
+				if(gAp.SlowTimer_Count==0)	_RunDat = (_RunDat&0xF0)|0x04;	//转入高速
+			}
+		}
+		if((_RunDat&0xF0)!=0x10)	//B泵动作中
+		{
+			if(0x01==KM_BpRunningCheck(_StartMode))//B泵异常，进入停止
+			{
+				_RunDat = (_RunDat&0x0F)|0x10;
+				printf("B泵异常，停止.0x%02X.\r\n",_RunDat);				
+                gBp.ErrorFlag=1;
+			}
+			else
+			{
+				if(gBp.SlowTimer_Count==0)	_RunDat = (_RunDat&0x0F)|0x40;	//转入高速
+			}
+		}		
+	}
+	else if(_RunMode==1)	//自动 主一备二
+	{
+		if((_RunDat&0x0F)!=0x01)	//A泵动作中
+		{
+			if(0x01==KM_ApRunningCheck(_StartMode))//A泵异常，进入停止
+			{
+				_RunDat = (_RunDat&0xF0)|0x01;
+				printf("A泵异常，停止.0x%02X.\r\n",_RunDat);				
+                gAp.ErrorFlag=1;
+				if(g_ChangeFlag==0x00)	{	g_ChangeFlag=0xAA;	printf("互投切换.  ");}//互投标志
+				else					{	g_ChangeFlag=0xBB;	printf("已互投，错误退出!\r\n");}//互投标志
+			}
+			else
+			{
+				if(gAp.SlowTimer_Count==0)	_RunDat = (_RunDat&0xF0)|0x04;	//转入高速
+			}
+		}
+	}
+	else if(_RunMode==2)	//自动 主二备一
+	{
+		if((_RunDat&0xF0)!=0x10)	//B泵动作中
+		{
+			if(0x01==KM_BpRunningCheck(_StartMode))//B泵异常，进入停止
+			{
+				_RunDat = (_RunDat&0x0F)|0x10;
+                gBp.ErrorFlag=1;
+				printf("B泵异常，停止.0x%02X.\r\n",_RunDat);				
+				if(g_ChangeFlag==0x00)	{	g_ChangeFlag=0xAA;	printf("互投切换.  ");}//互投标志
+				else					{	g_ChangeFlag=0xBB;	printf("已互投，错误退出!\r\n");}//互投标志
+			}
+			else
+			{
+				if(gBp.SlowTimer_Count==0)	_RunDat = (_RunDat&0x0F)|0x40;	//转入高速
+			}
+		}		
+	}
+	return _RunDat;
+}
+
+
+
 

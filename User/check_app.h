@@ -5,8 +5,9 @@
 
 typedef struct 
 {
-	uint8_t Statue;         //运行状态 0->Stop; 1->Slow; 2->HighSpeed; 3->Error
+	uint8_t Statue;         //运行状态 0->Stop; 1->Slow; 2->Fast; 3->Error
 	uint8_t OldStatue;      //记录上一次状态
+	uint8_t StartT_Flag;    //用于手动启动时延时标志
 	uint8_t Power_Statue;   //动力电状态，220V脉冲检测 0->正常; 1->异常.
 	uint8_t Work_Check;     //工作检测，220V脉冲检测   0->正常; 1->异常.
 	uint8_t Phase_Check;    //断相/过载检测，开关信号  0->正常; 1->异常.
@@ -16,8 +17,9 @@ typedef struct
 	uint8_t KM1_Coil;       //KM1线圈状态 0->正常; 1->异常.
 	uint8_t KM2_Coil;       //KM2线圈状态 0->正常; 1->异常.
 	uint8_t KM3_Coil;       //KM3线圈状态 0->正常; 1->异常.
-	uint16_t Timer_Count;	//水泵低速延时时间计数 递减方式	
-	uint16_t DelayCheck_Count;	//延时异常检测时间计数 递减方式	
+	uint8_t ErrorFlag;      //错误标志 0->正常; 1->异常.只用于启动后故障数据保存
+	uint16_t SlowTimer_Count;	//水泵低速延时时间计数 递减方式	
+	uint16_t DelayCheck_Count;	//延时异常检测时间计数 递减方式	    
 }MotorChar; //电机特性结构体
 
 
@@ -25,7 +27,7 @@ typedef enum
 {
 	Stop = 0,   //停止
     Slow,       //低速
-    HighSpeed,  //高速
+    Fast,       //高速
     Error,      //错误
 }Run_Statue;
 
@@ -48,9 +50,24 @@ typedef enum
     Menu_Pb,       //压力下限
     Menu_Fa,       //流量上限
     Menu_Fb,       //流量下限
+    Menu_StartMode,//启动模式
     Menu_Size      //长度使用
 }MENU;
 
+typedef enum
+{
+	Show_UV = 0, //循环显示 电压、电流
+    Show_CF,     //循环显示 温度、湿度
+    Show_PL      //循环显示 压力、流量
+}SHOW;
+
+typedef enum
+{
+	HH33 = 0, //星三角
+    HH11,     //直接
+    HH44,     //自耦
+    HHFJ      //风机
+}MotorMode;
 
 typedef struct 
 {
@@ -83,12 +100,16 @@ typedef struct
 APP_EXT MotorChar gAp,gBp;  //A/B泵相关信息
 APP_EXT uint16_t gParamDat[Menu_Size];
 
-void ReadInputDat(void);
+void ReadInputDat(uint8_t _StartMode);
 void KMOutAnswer(void);
-void KMAutoRUN(uint8_t _Mode,uint8_t _Step);//自动启动控制
+void KMRUN_Auto(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode);//自动启动控制
+void KMRUN_User(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode);//手动启动控制
 void SetParam(void);
-uint8_t KM_ApRunningCheck(void);//A泵运行检测
-uint8_t KM_BpRunningCheck(void);//B泵运行检测
-uint8_t KM_RunningAutoCheck(uint8_t _Mode);
+uint8_t KM_ApRunningCheck(uint8_t _StartMode);//A泵运行检测
+uint8_t KM_BpRunningCheck(uint8_t _StartMode);//B泵运行检测
+uint8_t KM_RunningAutoCheck(uint8_t _Mode,uint8_t _StartMode);
+void KM_RunMode(uint8_t _RunMode,uint8_t _StartMode,uint8_t _RunDat);
+uint8_t KM_RunningCheck(uint8_t _Auto,uint8_t _StartMode,uint8_t _RunDat);
+uint8_t KMStart_Pro(uint8_t _RunMode,uint8_t _RunDat,uint8_t _StartMode);
 
 #endif

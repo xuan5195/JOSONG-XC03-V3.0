@@ -76,20 +76,21 @@ void BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate)
 			BspTm1639_Writebyte(table[ShowDate%10]);		BspTm1639_Writebyte(table[ShowDate%10]>>4);
 			BspTm1639_Writebyte(table[ShowDate/10%10]);		BspTm1639_Writebyte(table[ShowDate/10%10]>>4);
 			BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
-            if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4); }  //电压U
-            else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4); }  //电流A
-            else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4); }  //温度C
-            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4); }  //湿度H
-            else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4); }  //压力P
-            else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4); }  //流量L
+            if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4); BspTm1639_Writebyte(0x01); }  //电压U
+            else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4); BspTm1639_Writebyte(0x02); }  //电流A
+            else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4); BspTm1639_Writebyte(0x04); }  //温度C
+            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4); BspTm1639_Writebyte(0x04); }  //湿度H
+            else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4); BspTm1639_Writebyte(0x08); }  //压力P
+            else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4); BspTm1639_Writebyte(0x08); }  //流量L
 		}
 		TM1639_STB_High();
 		BspTm1639_Writebyte(LEVEL_USE);
 		TM1639_STB_High();
  	}
-
 }
 
+//参数设置，显示。
+//ShowFlag：闪烁使用；
 void BspTm1639_ShowParam(uint8_t ShowFlag,uint8_t ShowMode,uint16_t ShowDate)
 {
     if(ShowFlag==0) //显示
@@ -103,11 +104,38 @@ void BspTm1639_ShowParam(uint8_t ShowFlag,uint8_t ShowMode,uint16_t ShowDate)
             BspTm1639_Writebyte(MD_AUTO);	//设置为地址自动加1写显示数据
             TM1639_STB_High();
             BspTm1639_Writebyte(DIG0);
-            BspTm1639_Writebyte(table[ShowDate%10]);		BspTm1639_Writebyte(table[ShowDate%10]>>4);
-            BspTm1639_Writebyte(table[ShowDate/10%10]);		BspTm1639_Writebyte(table[ShowDate/10%10]>>4);
-            if((ShowMode==Menu_U)||(ShowMode==Menu_A))
+            if(ShowMode==Menu_StartMode)
             {
-                BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
+                switch (ShowDate)
+                {
+                    case HH33:
+                        BspTm1639_Writebyte(table[3]);		BspTm1639_Writebyte(table[3]>>4);
+                        BspTm1639_Writebyte(table[3]);		BspTm1639_Writebyte(table[3]>>4);
+                        break;
+                    case HH11:
+                        BspTm1639_Writebyte(table[1]);		BspTm1639_Writebyte(table[1]>>4);
+                        BspTm1639_Writebyte(table[1]);		BspTm1639_Writebyte(table[1]>>4);
+                        break;
+                    case HH44:
+                        BspTm1639_Writebyte(table[4]);		BspTm1639_Writebyte(table[4]>>4);
+                        BspTm1639_Writebyte(table[4]);		BspTm1639_Writebyte(table[4]>>4);
+                        break;
+                    case HHFJ:
+                        BspTm1639_Writebyte(Table_S[11]);		BspTm1639_Writebyte(Table_S[11]>>4);
+                        BspTm1639_Writebyte(Table_S[ 6]);		BspTm1639_Writebyte(Table_S[ 6]>>4);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                BspTm1639_Writebyte(table[ShowDate%10]);		BspTm1639_Writebyte(table[ShowDate%10]>>4);
+                BspTm1639_Writebyte(table[ShowDate/10%10]);		BspTm1639_Writebyte(table[ShowDate/10%10]>>4);
+                if((ShowMode==Menu_U)||(ShowMode==Menu_A))
+                {
+                    BspTm1639_Writebyte(table[ShowDate/100]);		BspTm1639_Writebyte(table[ShowDate/100]>>4);
+                }
             }
 ShowBack:
             switch (ShowMode)
@@ -169,6 +197,10 @@ ShowBack:
                 case Menu_Fb:
                     BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
                     BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4);//F
+                    break;            
+                case Menu_StartMode:
+                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4);//H
+                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4);//H
                     break;            
                 default:
                     break;

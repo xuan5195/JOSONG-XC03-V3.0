@@ -75,19 +75,19 @@ void KMOutUpdat(void)
     {
         u16Temp = (~Old_LedShowDat)&(~g_LedShowDat);
         u16Temp = (~u16Temp);//让继电器先松开，然后再吸合新的
-        printf("u16Temp: %04X.  ",u16Temp);
+//        printf("u16Temp: %04X.  ",u16Temp);
         BspLed_Show(u16Temp);
         Old_LedShowDat=g_LedShowDat;
         if(u16Temp!=g_LedShowDat)
         {
-            printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
+//            printf("g_LedShowDat: %04X...\r\n",g_LedShowDat);
             CPU_IDLE();delay_ms(200);
             BspLed_Show(g_LedShowDat);
         }
-        else
-        {
-            printf("..\r\n");
-        }
+//        else
+//        {
+//            printf("..\r\n");
+//        }
     }
 #else
     if(Old_LedShowDat!=g_LedShowDat)

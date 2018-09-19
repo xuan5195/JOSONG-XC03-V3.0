@@ -167,9 +167,11 @@ void Package_Send(u8 _mode,u8 *Package_Dat)
     Package_SendBuf[2] = Package_Dat[1];
     Package_SendBuf[3] = Package_Dat[2];
     Package_SendBuf[4] = Package_Dat[3];
+    Package_SendBuf[5] = Package_Dat[4];
 //    printf("<<CanTxMsg:%02X %02X %02X %02X %02X.",Package_SendBuf[0],\
     Package_SendBuf[1],Package_SendBuf[2],Package_SendBuf[3],Package_SendBuf[4]);
 	res = Can_Send_Msg(Package_SendBuf,8);//·¢ËÍ8¸ö×Ö½Ú
+    res = res;
 //	if(res)	{printf("Send Fail!\r\n");}	
 //	else 	{printf("Send Succeed.\r\n");}	
 }
