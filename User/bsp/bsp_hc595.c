@@ -10,7 +10,7 @@ static void HC595_Delay(u16 z)
 	u8 x;
 	while(z--)
 	{
-		for(x=10;x>0;x--);
+		for(x=50;x>0;x--);
 	}
 }
 

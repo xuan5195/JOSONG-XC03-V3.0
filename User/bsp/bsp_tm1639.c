@@ -79,7 +79,7 @@ void BspTm1639_Show(uint8_t ShowMode,uint16_t ShowDate)
             if(ShowMode==0x00)      {BspTm1639_Writebyte(Table_S[22]); BspTm1639_Writebyte(Table_S[22]>>4); BspTm1639_Writebyte(0x01); }  //电压U
             else if(ShowMode==0x01) {BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4); BspTm1639_Writebyte(0x02); }  //电流A
             else if(ShowMode==0x02) {BspTm1639_Writebyte(Table_S[ 2]); BspTm1639_Writebyte(Table_S[ 2]>>4); BspTm1639_Writebyte(0x04); }  //温度C
-            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4); BspTm1639_Writebyte(0x04); }  //湿度H
+            else if(ShowMode==0x03) {BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4); BspTm1639_Writebyte(0x04); }  //湿度F
             else if(ShowMode==0x04) {BspTm1639_Writebyte(Table_S[17]); BspTm1639_Writebyte(Table_S[17]>>4); BspTm1639_Writebyte(0x08); }  //压力P
             else if(ShowMode==0x05) {BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4); BspTm1639_Writebyte(0x08); }  //流量L
 		}
@@ -176,11 +176,11 @@ ShowBack:
                     break;
                 case Menu_Ha:
                     BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//a
-                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4);//H
+                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4);//F
                     break;
                 case Menu_Hb:
                     BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
-                    BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4);//H
+                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4);//F
                     break;
                 case Menu_Pa:
                     BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//a
@@ -192,11 +192,11 @@ ShowBack:
                     break;
                 case Menu_Fa:
                     BspTm1639_Writebyte(Table_S[ 0]); BspTm1639_Writebyte(Table_S[ 0]>>4);//a
-                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4);//F
+                    BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4);//L
                     break;
                 case Menu_Fb:
                     BspTm1639_Writebyte(Table_S[ 1]); BspTm1639_Writebyte(Table_S[ 1]>>4);//b
-                    BspTm1639_Writebyte(Table_S[ 6]); BspTm1639_Writebyte(Table_S[ 6]>>4);//F
+                    BspTm1639_Writebyte(Table_S[13]); BspTm1639_Writebyte(Table_S[13]>>4);//L
                     break;            
                 case Menu_StartMode:
                     BspTm1639_Writebyte(Table_S[ 8]); BspTm1639_Writebyte(Table_S[ 8]>>4);//H

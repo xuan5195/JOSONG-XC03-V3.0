@@ -42,7 +42,7 @@ void ReadInputDat(uint8_t _StartMode)
 
     if((gAp.Power_Statue==0)&&(gBp.Power_Statue==0)){   RS485Dat_LED4_ON();     } //动力电指示灯
     else                                            {   RS485Dat_LED4_OFF();    }
-    if((gAp.Phase_Check==0)||(gBp.Phase_Check==0))  {   RS485Dat_LED9_ON();     } //断相/过载 指示灯
+    if((gAp.Phase_Check==1)||(gBp.Phase_Check==1))  {   RS485Dat_LED9_ON();     } //断相/过载 指示灯
     else                                            {   RS485Dat_LED9_OFF();    }
 
     switch (_StartMode)
@@ -207,106 +207,6 @@ void KMOutAnswer(void)
         KMON_Show(ALARMOUT1);  KMON_Show(ALARMOUT2);
     }
 }
-/*
-//只适用于自动模式
-//_Mode:运行模式 主一备二/主二备一 -->互投
-//_StartMode:启动模式，星三角、直接、自耦、风机
-//_Step:0->停止,1->低速,2->高速
-void KMRUN_Auto(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode)	//自动启动控制
-{
-    if(g_ChangeFlag==0xAA)  //进入互投
-    {
-        if(_Mode==1)    _Mode=2;
-        else            _Mode=1;
-    }
-    else if(g_ChangeFlag==0xBB)  //互投过一次，直接退出
-    {
-        _Mode = 0;  //改为0，不进行启动动作
-    }
-    if(_Mode==1)    //主一备二
-    {
-        if(_Step==0)
-        {
-            printf("主一备二，停止.\r\n");
-            KM_RunMode(_StartMode,0x01);
-        }
-        else if(_Step==1)
-        {
-            printf("主一备二，低速.\r\n");
-            KM_RunMode(_StartMode,0x02);
-        }
-        else if(_Step==2)
-        {
-            printf("主一备二，高速.\r\n");
-            KM_RunMode(_StartMode,0x03);
-        }
-    }
-    else if(_Mode==2)    //主二备一
-    {
-        if(_Step==0)
-        {
-            printf("主二备一，停止.\r\n");
-            KM_RunMode(_StartMode,0x10);
-        }
-        else if(_Step==1)
-        {
-            printf("主二备一，低速.\r\n");
-            KM_RunMode(_StartMode,0x20);
-        }
-        else if(_Step==2)
-        {
-            printf("主二备一，高速.\r\n");
-            KM_RunMode(_StartMode,0x30);
-        }
-    }
-}
-
-
-
-//只适用于手动模式
-//_No:A/B泵 1->A; 2->B.
-//_StartMode:启动模式，星三角、直接、自耦、风机
-//_Step:0->停止,1->低速,2->高速
-void KMRUN_User(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode)	//自动启动控制
-{
-    if(_Mode==1)    //A泵
-    {
-        if(_Step==0)
-        {
-            printf("手动操作,A泵，停止.\r\n");
-            KM_RunMode(_StartMode,0x01);
-        }
-        else if(_Step==1)
-        {
-            printf("手动操作,A泵，低速.\r\n");
-            KM_RunMode(_StartMode,0x02);
-        }
-        else if(_Step==2)
-        {
-            printf("手动操作,A泵，高速.\r\n");
-            KM_RunMode(_StartMode,0x03);
-        }
-    }
-    else if(_Mode==2)    //B泵
-    {
-        if(_Step==0)
-        {
-            printf("手动操作,B泵，停止.\r\n");
-            KM_RunMode(_StartMode,0x10);
-        }
-        else if(_Step==1)
-        {
-            printf("手动操作,B泵，低速.\r\n");
-            KM_RunMode(_StartMode,0x20);
-        }
-        else if(_Step==2)
-        {
-            printf("手动操作,B泵，高速.\r\n");
-            KM_RunMode(_StartMode,0x30);
-        }
-    }
-}
-*/
 //A泵运行检测
 uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 {
@@ -320,7 +220,7 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				if(gAp.DelayCheck_Count==0)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
-						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
 					else    uTemp = 0x01;    //异常运行
 				}
 			}
@@ -329,7 +229,7 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				if(gAp.DelayCheck_Count==0)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
-						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
 					else    uTemp = 0x01;    //异常运行
 				}
 			}
@@ -340,7 +240,7 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				if(gAp.DelayCheck_Count==0)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0)\
-						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
 					else    uTemp = 0x01;    //异常运行
 				}
 			}
@@ -351,7 +251,7 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				if(gAp.DelayCheck_Count==0)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
-						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
 					else    uTemp = 0x01;    //异常运行
 				}
 			}
@@ -360,7 +260,7 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				if(gAp.DelayCheck_Count==0)
 				{
 					if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
-						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==1));    //正常运行  
+						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
 					else    uTemp = 0x01;    //异常运行
 				}
 			}
@@ -384,8 +284,8 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				if(gBp.DelayCheck_Count==0)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
-						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
-					else    uTemp = uTemp|0x10;    //异常运行
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
 				}
 			}
 			else if(gBp.Statue==Fast)	//B泵高速
@@ -393,8 +293,8 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				if(gBp.DelayCheck_Count==0)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
-						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
-					else    uTemp = uTemp|0x10;    //异常运行
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
 				}
 			}
 			break;
@@ -404,8 +304,8 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				if(gBp.DelayCheck_Count==0)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)\
-						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
-					else    uTemp = uTemp|0x10;    //异常运行
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
 				}
 			}
 			break;
@@ -415,8 +315,8 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				if(gBp.DelayCheck_Count==0)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
-						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
-					else    uTemp = uTemp|0x10;    //异常运行
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
 				}
 			}
 			else if(gBp.Statue==Fast)	//B泵高速
@@ -424,8 +324,8 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				if(gBp.DelayCheck_Count==0)
 				{
 					if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
-						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==1));    //正常运行  
-					else    uTemp = uTemp|0x10;    //异常运行
+						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
+					else    uTemp = 0x01;    //异常运行
 				}
 			}
 			break;
@@ -435,40 +335,8 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
     return uTemp;    //检测结果
 }
 
-//自动模式下，A/B泵检测
-uint8_t KM_RunningAutoCheck(uint8_t _Mode,uint8_t _StartMode)
-{
-    if(g_ChangeFlag==0xAA)  //进入互投
-    {
-        if(_Mode==1)    _Mode=2;
-        else            _Mode=1;
-    }
-    else if(g_ChangeFlag==0xBB)  //互投过一次，直接退出
-    {
-        _Mode = 0;  //改为0，不进行启动动作
-    }
-    if(_Mode==1)    //主一备二模式
-    {
-        if(0x01==KM_ApRunningCheck(_StartMode))   
-        {
-            printf("A泵异常.\r\n");
-            return 0x01;
-        }//A泵异常，进入停止
-        return 0x00; 
-    }
-    else if(_Mode==2)    //主二备一模式
-    {
-        if(0x01==KM_BpRunningCheck(_StartMode))   
-        {
-            printf("B泵异常.\r\n");
-            return 0x01;
-        }//B泵异常，进入停止
-        return 0x00; 
-    }
-    return 0x00; 
-}
 
-uint8_t Menu=Menu_Idle,g_ShowMode=Show_UV;
+uint8_t Menu=Menu_Idle,g_ShowMode=Show_U;
 //设置参数 如电压电流上下限等
 void SetParam(void)
 {
@@ -489,9 +357,11 @@ void SetParam(void)
                 {
                     Menu++;	//菜单模式+1
                 }
-                else if(Menu==Menu_Idle)    //空闲模式
+                break;
+            case KEY_1_UP:							
+                if(Menu==Menu_Idle)    //空闲模式
                 {
-                    g_ShowMode = (g_ShowMode+1)%3;  //0-1-2-0
+                    g_ShowMode = (g_ShowMode+1)%4;  //0-1-2-3-0
                 }
                 break;
             case KEY_1_LONG:							

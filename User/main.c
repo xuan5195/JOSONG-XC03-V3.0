@@ -127,9 +127,12 @@ int main(void)
     uint8_t RunMode = 0;    //0手动模式(默认)，1主一备二，2主二备一;
     uint8_t RunDate = 0x11; //运行数据，低四位为A泵,高四位为B泵 0x1停止，0x2低速，0x4高速;
     uint8_t OldRunMode=0,OldStartFlag=0;
-    uint8_t OlineSrart=0;   //远程启动标志
+    static uint8_t OlineSrart=0;   //远程启动标志
     uint8_t HumiFlag=0;     //除湿标志，0x00表示停止，0x05表示开启；
 	uint8_t canbuf[8]={0};  //CAN数据缓存
+    uint8_t ApMode_HHFJ=0,BpMode_HHFJ=0;    //只用于风机时，低速按键
+    uint8_t CAN_ReceFlag=100; //CAN接收到数据计算，接收到数据为清0，每隔0.2秒加1.
+//    u16 ADCDat=0,uTemp=0;	
 	SystemInit();
 	
 	InitBoard();		//硬件初始化
@@ -159,9 +162,21 @@ int main(void)
                 if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0)
                 {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
                 Get_InputValue();
+//                ADCDat = Read_AdcDat1();    uTemp = ADCDat*3240/4096;
+//                printf("Adc_Init(),IN1:%d(%dmV). ",ADCDat,uTemp);
+//                ADCDat = Read_AdcDat2();    uTemp = ADCDat*3240/4096;
+//                printf("IN2:%d(%dmV)...\r\n",ADCDat,uTemp);
 			}
-            if(Time_250ms%10==0)        RS485Dat_LED2_ON();     //主板通信指示灯
-            else if(Time_250ms%10==5)   RS485Dat_LED2_OFF();    //主板通信指示灯
+            if(CAN_ReceFlag<50)
+            {
+                CAN_ReceFlag++;
+                if(Time_250ms%10==0)        RS485Dat_LED1_ON();     //远程通信指示灯
+                else if(Time_250ms%10==5)   RS485Dat_LED1_OFF();    //远程通信指示灯
+            }
+            else
+            {
+                RS485Dat_LED1_OFF();    //远程通信指示灯
+            }
             if(Time_250ms%2==0)         CanSendDat(g_ShowMode); //CAN数据发送
             ReadInputDat(gParamDat[Menu_StartMode]);     //读取A/B泵全部状态，存放在结构体中
             DisplaySendDat();   //RS485数据发送
@@ -184,57 +199,56 @@ int main(void)
                 RS485Dat_LED15_OFF();RS485Dat_LED16_ON();RS485Dat_LED17_OFF();
 				if(gParamDat[Menu_StartMode]==HHFJ)	//风机模式，低速按键有效
 				{
-					if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
+					if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
 					{
-						RunDate = (RunDate&0xF0)|0x01;
-						printf("手动操作,A泵，停止.0x%02X.\r\n",RunDate);
-					}
-					else if((RS485Dat_Key[0]&0x01)==0x01)   //A泵低速
-					{   
-						RunDate = (RunDate&0xF0)|0x02;
-						printf("手动操作,A泵，低速.0x%02X.\r\n",RunDate);
-					}
-					else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
-					{   
-						RunDate = (RunDate&0xF0)|0x04;
-						printf("手动操作,A泵，高速.0x%02X.\r\n",RunDate);
-					}				
-					else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
-					{   
-						RunDate = (RunDate&0x0F)|0x10;
-						printf("手动操作,B泵，停止.0x%02X.\r\n",RunDate);
+                        if((RunDate&0x0F)==0x01)
+                        {
+                            RunDate = (RunDate&0xF0)|0x02; ApMode_HHFJ = 0xAA;
+                            printf("手动操作,A泵,风机模式,低速.0x%02X.\r\n",RunDate);
+                        }
 					}
 					else if((RS485Dat_Key[0]&0x02)==0x02)   //B泵低速
 					{   
-						RunDate = (RunDate&0x0F)|0x20;
-						printf("手动操作,B泵，低速.0x%02X.\r\n",RunDate);
-					}
-					else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
-					{   
-						RunDate = (RunDate&0x0F)|0x40;
-						printf("手动操作,B泵，高速.0x%02X.\r\n",RunDate);
+                        if((RunDate&0xF0)==0x10)
+                        {
+                            RunDate = (RunDate&0x0F)|0x20; BpMode_HHFJ = 0xAA;
+                            printf("手动操作,B泵,风机模式,低速.0x%02X.\r\n",RunDate);
+                        }
 					}
 				}
-				else	
 				{
 					if((RS485Dat_Key[1]&0x02)==0x02)//A泵停止        
 					{
-						RunDate = (RunDate&0xF0)|0x01;
+						RunDate = (RunDate&0xF0)|0x01;ApMode_HHFJ = 0;
 						printf("手动操作,A泵，停止.0x%02X.\r\n",RunDate);
 					}
 					else if((RS485Dat_Key[1]&0x04)==0x04)   //A泵高速
 					{   
-						RunDate = (RunDate&0xF0)|0x02;
+						if(ApMode_HHFJ==0xAA)	//A泵 手动低速后再按高速
+						{
+							RunDate = (RunDate&0xF0)|0x04;ApMode_HHFJ = 0xBB;
+						}
+						else if((RunDate&0x0F)==0x01)
+						{
+							RunDate = (RunDate&0xF0)|0x02;ApMode_HHFJ = 0;
+						}
 						printf("手动操作,A泵，启动.0x%02X.\r\n",RunDate);
 					}				
 					else if((RS485Dat_Key[1]&0x40)==0x40)   //B泵停止
 					{   
-						RunDate = (RunDate&0x0F)|0x10;
+						RunDate = (RunDate&0x0F)|0x10;BpMode_HHFJ = 0;
 						printf("手动操作,B泵，停止.0x%02X.\r\n",RunDate);
 					}
 					else if((RS485Dat_Key[1]&0x80)==0x80)   //B泵高速 
 					{   
-						RunDate = (RunDate&0x0F)|0x20;
+						if(BpMode_HHFJ==0xAA)	//B泵 手动低速后再按高速
+						{
+							RunDate = (RunDate&0x0F)|0x40;BpMode_HHFJ = 0xBB;
+						}
+						else if((RunDate&0xF0)==0x10)
+						{
+							RunDate = (RunDate&0x0F)|0x20;BpMode_HHFJ = 0;
+						}
 						printf("手动操作,B泵，启动.0x%02X.\r\n",RunDate);
 					}
 				}					
@@ -250,6 +264,7 @@ int main(void)
             if(RunMode!=OldRunMode) //运行模式切换，把运行模式全部转为停止
             {
                 OldRunMode = RunMode;
+                ApMode_HHFJ = 0;BpMode_HHFJ = 0;
                 RunDate = 0x11;
                 printf(">>运行模式切换,全部转为停止.0x%02X.  ",RunDate);
                 if(RunMode==0)      {   printf("手动模式.\r\n");    }
@@ -285,7 +300,8 @@ int main(void)
             }
 			else
 			{
-				if(gParamDat[Menu_StartMode]!=HHFJ)	//不是 风机模式，低速-高速自动跳转
+				if((ApMode_HHFJ == 0xAA)||(ApMode_HHFJ == 0xBB));   //A水泵                    
+                else //低速-高速自动跳转
 				{
 					if((RunDate&0x0F)!=0x01)	
 					{
@@ -299,7 +315,7 @@ int main(void)
 						{
 							gAp.StartT_Flag=0xCC;
 							RunDate = (RunDate&0xF0)|0x04;
-                            printf("切换高速.\r\n");
+                            printf("切换高速.0x%02X.\r\n",RunDate);
 						}
 						
 					}
@@ -308,7 +324,10 @@ int main(void)
 						gAp.StartT_Flag=0x00;
 						RunDate = (RunDate&0xF0)|0x01;
 					}
-					
+				}
+				if((BpMode_HHFJ == 0xAA)||(BpMode_HHFJ == 0xBB));   //B水泵                    
+                else //低速-高速自动跳转
+				{
 					if((RunDate&0xF0)!=0x10)	
 					{
 						if(gBp.StartT_Flag==0x00)
@@ -321,7 +340,7 @@ int main(void)
 						{
 							gBp.StartT_Flag=0xCC;
 							RunDate = (RunDate&0x0F)|0x40;
-                            printf("切换高速.\r\n");
+                            printf("切换高速.0x%02X.\r\n",RunDate);
 						}
 						
 					}
@@ -354,7 +373,8 @@ int main(void)
         SetParam();     //设置修改参数
         if(Menu==Menu_Idle)
         {
-            if(g_ShowMode == Show_UV)       { BspTm1639_Show(g_ShowUpDateFlag+0,g_ShowDat[g_ShowUpDateFlag+0]);}   //循环显示 电压、电流
+            if(g_ShowMode == Show_U)        { BspTm1639_Show(0,g_ShowDat[0]);}   //循环显示 电压、电流
+            if(g_ShowMode == Show_I)        { BspTm1639_Show(1,g_ShowDat[1]);}   //循环显示 电压、电流
             else if(g_ShowMode == Show_CF)  { BspTm1639_Show(g_ShowUpDateFlag+2,g_ShowDat[g_ShowUpDateFlag+2]);}   //循环显示 温度、湿度
             else if(g_ShowMode == Show_PL)  { BspTm1639_Show(g_ShowUpDateFlag+4,g_ShowDat[g_ShowUpDateFlag+4]);}   //循环显示 压力、流量
         }
@@ -362,6 +382,7 @@ int main(void)
         if(bsp_GetCQ((uint8_t *)canbuf)!=CQ_NONE)//接收到有数据
         {
 			//printf(">>CanRxMsg:%02X %02X %02X%02X%02X%02X%02X%02X.\r\n",canbuf[0],canbuf[1],canbuf[2],canbuf[3],canbuf[4],canbuf[5],canbuf[6],canbuf[7]);
+            CAN_ReceFlag = 0;
             if     (canbuf[0]==0x01){RunMode=1;}  //主一备二
             else if(canbuf[0]==0x02){RunMode=0;}  //手动模式
             else if(canbuf[0]==0x03){RunMode=2;}  //主二备一
@@ -388,7 +409,8 @@ int main(void)
 *********************************************************************************************************
 */
 static void InitBoard(void)
-{	
+{
+    u16 ADCDat=0,uTemp=0;	
 	RCC_Configuration();
 	/* 初始化systick定时器，并启动定时中断 */
 	bsp_InitTimer(); 
@@ -416,6 +438,10 @@ static void InitBoard(void)
 	TIM3_Int_Init(99,720-1);  	//以100khz的频率计数，0.01ms中断，计数到100 *0.01ms 为1ms 
 //	TIM2_Cap_Init(0xFFFF,72-1);	//以1Mhz的频率计数 
  	Adc_Init();		  		    //ADC初始化
+    ADCDat = Read_AdcDat1();    uTemp = ADCDat*3300/4096;
+	printf("Adc_Init(),IN1:%d(%dmV). ",ADCDat,uTemp);
+    ADCDat = Read_AdcDat2();    uTemp = ADCDat*3300/4096;
+	printf("IN2:%d(%dmV)...\r\n",ADCDat,uTemp);
 	bsp_InitCQVar();
 }
 
@@ -491,7 +517,7 @@ void TIM3_IRQHandler(void)   //TIM3中断
 		}		
 		SysTick_ISR();	//这个函数在bsp_timer.c中 
 		if((Time_count%10)==0)			bsp_KeyScan();	//每10ms扫描按键一次
-		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  	//清除TIMx更新中断标志 					
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);  	//清除TIMx更新中断标志 					
 	}
 }
 

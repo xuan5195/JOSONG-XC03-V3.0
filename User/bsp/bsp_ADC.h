@@ -7,5 +7,8 @@ void Adc_Init(void);
 u16  Get_Adc(u8 ch); 
 u16 Get_Adc_Average(u8 ch,u8 times); 
 u8 Read_Rand(void);	//产生随时数
+u16 Read_AdcDat1(void);
+u16 Read_AdcDat2(void);
 
 #endif
+

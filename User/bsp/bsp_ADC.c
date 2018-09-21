@@ -8,25 +8,29 @@ void  Adc_Init(void)
 	ADC_InitTypeDef ADC_InitStructure; 
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |RCC_APB2Periph_ADC1	, ENABLE );	  //使能ADC1通道时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC|RCC_APB2Periph_ADC1	, ENABLE );	  //使能ADC1通道时钟
  
 
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);   //设置ADC分频因子6 72M/6=12,ADC最大时间不能超过14M
 
-	//PA1 作为模拟通道输入引脚                         
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	//PB0 作为模拟通道输入引脚                         
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;		//模拟输入引脚
-	GPIO_Init(GPIOA, &GPIO_InitStructure);	
+	GPIO_Init(GPIOB, &GPIO_InitStructure);	
+	//PC5 作为模拟通道输入引脚                         
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;		//模拟输入引脚
+	GPIO_Init(GPIOC, &GPIO_InitStructure);	
 
 	ADC_DeInit(ADC1);  //复位ADC1 
 
 	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;	//ADC工作模式:ADC1和ADC2工作在独立模式
-	ADC_InitStructure.ADC_ScanConvMode = DISABLE;	//模数转换工作在单通道模式
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE;	    //模数转换工作在单通道模式
 	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;	//模数转换工作在单次转换模式
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;	//转换由软件而不是外部触发启动
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;	//ADC数据右对齐
-	ADC_InitStructure.ADC_NbrOfChannel = 1;	//顺序进行规则转换的ADC通道的数目
-	ADC_Init(ADC1, &ADC_InitStructure);	//根据ADC_InitStruct中指定的参数初始化外设ADCx的寄存器   
+	ADC_InitStructure.ADC_NbrOfChannel = 2;	//顺序进行规则转换的ADC通道的数目
+	ADC_Init(ADC1, &ADC_InitStructure);	    //根据ADC_InitStruct中指定的参数初始化外设ADCx的寄存器   
 
   
 	ADC_Cmd(ADC1, ENABLE);	//使能指定的ADC1	
@@ -60,12 +64,27 @@ u16 Get_Adc_Average(u8 ch,u8 times)
 u8 Read_Rand(void)	//产生随时数
 {
   	u8	uTemp=0;
-	u16 TempADC_value=0;
+//	u16 TempADC_value=0;
 //	TempADC_value = Get_Adc(ADC_Channel_1);	
 //	uTemp = TempADC_value%5;	//0-50随机数
 //	TempADC_value = Get_Adc(ADC_Channel_1);	
 //	uTemp = TempADC_value%10 + uTemp*10;
-	TempADC_value = Get_Adc(ADC_Channel_1);	
-	uTemp = TempADC_value%50;
+//	TempADC_value = Get_Adc(ADC_Channel_1);	
+//	uTemp = TempADC_value%50;
 	return uTemp;
 }
+u16 Read_AdcDat1(void)
+{
+	u16 TempADC_value=0;
+    TempADC_value = Get_Adc_Average(ADC_Channel_8,20);
+    //TempADC_value = Get_Adc(ADC_Channel_8);
+	return TempADC_value;
+}
+u16 Read_AdcDat2(void)
+{
+	u16 TempADC_value=0;
+    TempADC_value = Get_Adc_Average(ADC_Channel_15,20);
+    //TempADC_value = Get_Adc(ADC_Channel_15);
+	return TempADC_value;
+}
+

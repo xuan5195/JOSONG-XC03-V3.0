@@ -56,9 +56,10 @@ typedef enum
 
 typedef enum
 {
-	Show_UV = 0, //循环显示 电压、电流
-    Show_CF,     //循环显示 温度、湿度
-    Show_PL      //循环显示 压力、流量
+	Show_U = 0,     //循环显示 电压
+	Show_I,         //循环显示 电流
+    Show_CF,        //循环显示 温度、湿度
+    Show_PL         //循环显示 压力、流量
 }SHOW;
 
 typedef enum
@@ -102,12 +103,9 @@ APP_EXT uint16_t gParamDat[Menu_Size];
 
 void ReadInputDat(uint8_t _StartMode);
 void KMOutAnswer(void);
-void KMRUN_Auto(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode);//自动启动控制
-void KMRUN_User(uint8_t _Mode,uint8_t _Step,uint8_t _StartMode);//手动启动控制
 void SetParam(void);
 uint8_t KM_ApRunningCheck(uint8_t _StartMode);//A泵运行检测
 uint8_t KM_BpRunningCheck(uint8_t _StartMode);//B泵运行检测
-uint8_t KM_RunningAutoCheck(uint8_t _Mode,uint8_t _StartMode);
 void KM_RunMode(uint8_t _RunMode,uint8_t _StartMode,uint8_t _RunDat);
 uint8_t KM_RunningCheck(uint8_t _Auto,uint8_t _StartMode,uint8_t _RunDat);
 uint8_t KMStart_Pro(uint8_t _RunMode,uint8_t _RunDat,uint8_t _StartMode);

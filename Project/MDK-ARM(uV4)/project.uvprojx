@@ -80,7 +80,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
-            <RunUserProg2>1</RunUserProg2>
+            <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>CopyHex_Flash.bat</UserProg1Name>
             <UserProg2Name>C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe --bin -o ..\MDK-ARM(uV4)\Flash\Obj\Project.bin  ..\MDK-ARM(uV4)\Flash\Obj\output.axf</UserProg2Name>
             <UserProg1Dos16Mode>1</UserProg1Dos16Mode>

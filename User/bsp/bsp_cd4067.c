@@ -96,7 +96,7 @@ static void SetInput_CD4067Switch(uint8_t uSetDat)
 *				  因而需要跳过这段不导通时间
 *********************************************************************************************************
 */
-u8 Count[4]={10,10,10,10},OldState[4]={0};
+u8 Count[4]={3,3,3,3},OldState[4]={0};
 u8 Read_InputDevDat(uint8_t _no)  
 {
 	if(_no<4) 
@@ -105,7 +105,7 @@ u8 Read_InputDevDat(uint8_t _no)
         BspInput_CD4067_Delay_us(20);
         if(Read_InputData()==0)
         {
-            Count[_no] = 10; OldState[_no] = 0;
+            Count[_no] = 3; OldState[_no] = 0;
             return OldState[_no];
         }
 		else   //高电平，需要进一步处理,正常是低电平
@@ -113,22 +113,22 @@ u8 Read_InputDevDat(uint8_t _no)
             if(Count[_no]>0)
             {
                 BspInput_CD4067_Delay_ms(3);
-                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                if(Read_InputData()==0) {   Count[_no] = 3;OldState[_no] =0;return OldState[_no]; }
                 BspInput_CD4067_Delay_ms(3);
-                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                if(Read_InputData()==0) {   Count[_no] = 3;OldState[_no] =0;return OldState[_no]; }
                 BspInput_CD4067_Delay_ms(3);
-                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                if(Read_InputData()==0) {   Count[_no] = 3;OldState[_no] =0;return OldState[_no]; }
                 BspInput_CD4067_Delay_ms(5);
-                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                if(Read_InputData()==0) {   Count[_no] = 3;OldState[_no] =0;return OldState[_no]; }
                 BspInput_CD4067_Delay_ms(5);
-                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                if(Read_InputData()==0) {   Count[_no] = 3;OldState[_no] =0;return OldState[_no]; }
                 BspInput_CD4067_Delay_ms(5);
-                if(Read_InputData()==0) {   Count[_no] = 10;OldState[_no] =0;return OldState[_no]; }
+                if(Read_InputData()==0) {   Count[_no] = 3;OldState[_no] =0;return OldState[_no]; }
                 else                    {   Count[_no]--;    return OldState[_no];            }
             }
             else
             {
-                Count[_no] = 10; OldState[_no] = 1;
+                Count[_no] = 3; OldState[_no] = 1;
                 return OldState[_no];
             }
 		}       
@@ -136,6 +136,12 @@ u8 Read_InputDevDat(uint8_t _no)
 	return 0xEF;
 }
 
+u8 Read_50HzDat(uint8_t _no)  
+{
+    SetInput_CD4067Switch(_no);
+    BspInput_CD4067_Delay_us(1);   
+    return Read_InputData();
+}
 
 /*
 *********************************************************************************************************
@@ -155,7 +161,7 @@ u8 Read_Optocoupler(uint8_t uAreaDat)  //
 	return Read_InputData();
 }
 
-
+/*
 void ReadDat_CD4067(void)
 {
     uint8_t ApPowerDat=0,BpPowerDat=0;
@@ -191,5 +197,5 @@ void ReadDat_CD4067(void)
 //    else				   //箱内进水检测，异常，主机自动手动不能启动水泵
 
 }
-
+*/
 
