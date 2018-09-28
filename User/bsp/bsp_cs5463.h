@@ -127,6 +127,6 @@ u8 CS5463_GetStaReg_Val(void);
 u8 CS5463_GetStatusReg(void);
 u32 CS546x_Get_Irms(void);
 u32 CS546x_Get_Vrms(void);
-void Get_InputValue(void);
+uint8_t Get_PowerValue(uint8_t _channal,uint32_t *_ValueDat);
 		 				    
 #endif

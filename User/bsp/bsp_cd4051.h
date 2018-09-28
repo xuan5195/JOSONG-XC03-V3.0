@@ -3,14 +3,25 @@
 
 #include "stm32f10x.h"		
 
-#define IV_A	2
-#define IV_B	1
-#define IV_C	0
-#define II_A	0
-#define II_B	1
-#define II_C	2
+//#define IV_A	2
+//#define IV_B	1
+//#define IV_C	0
+//#define II_A	0
+//#define II_B	1
+//#define II_C	2
 
-//三相电流输入选择
+enum
+{
+	IV_A=0,		
+	IV_B,		
+	IV_C		
+};
+enum
+{
+	II_A=0,		
+	II_B,		
+	II_C		
+};//三相电流输入选择
 #define Iutput_CSCD4051A_High()   	GPIO_SetBits(GPIOB, GPIO_Pin_6) 	   		
 #define Iutput_CSCD4051A_Low()  	GPIO_ResetBits(GPIOB, GPIO_Pin_6) 	   		
 

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "math.h"
 
 static void InitBoard(void);
 void Delay (uint16_t nCount);
@@ -131,25 +132,48 @@ int main(void)
     uint8_t HumiFlag=0;     //除湿标志，0x00表示停止，0x05表示开启；
 	uint8_t canbuf[8]={0};  //CAN数据缓存
     uint8_t ApMode_HHFJ=0,BpMode_HHFJ=0;    //只用于风机时，低速按键
-    uint8_t CAN_ReceFlag=100; //CAN接收到数据计算，接收到数据为清0，每隔0.2秒加1.
+    uint8_t CAN_ReceFlag=100;   //CAN接收到数据计算，接收到数据为清0，每隔0.2秒加1.
+    uint8_t ReadChannel=0;      //读电压电流通道
+    uint32_t PowerDat[3][2]={0};    //电压电流缓存
+    uint8_t ReadCount=0;      //成功读取电压次数，当值大于5时，换算电压电流值，否则使用老数据
+	uint32_t u32Date=0;
 //    u16 ADCDat=0,uTemp=0;	
 	SystemInit();
 	
 	InitBoard();		//硬件初始化
 	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS1_4tq,CAN_BS2_3tq,75,CAN_Mode_Normal);	//CAN初始化正常模式,波特率60Kbps  //则波特率为:36M/((1+2+1)*150)= 60Kbps CAN_Normal_Init(1,2,1,150,1);   
 	//printf("CAN_Mode_Init,CAN_Baud: 60Kbps...\r\n");	
-    printf("-------------------------------------------------------------------\r\n");
-	bsp_StartTimer(1, 200);			//定时器1周期 200毫秒
     RS485Dat_LED1_ON();	//远程通信指示灯
     RS485Dat_LED2_ON(); //主板通信指示灯	
     RS485Dat_LED12_ON();//A泵停止指示灯
     RS485Dat_LED18_ON();//B泵停止指示灯
     RS485Dat_LED16_ON();//手动模式指示灯
     RS485Dat_LED6_ON(); //主三相电
+	delay_ms(1000);
+	if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0)
+	{   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
+    delay_ms(1000);
+    if(Get_PowerValue(ReadChannel,(uint32_t *)PowerDat[ReadChannel])==0)
+	{	ReadChannel = (ReadChannel+1)%3;	if(ReadCount<10)    ReadCount++;	}
+    delay_ms(100);
+    if(Get_PowerValue(ReadChannel,(uint32_t *)PowerDat[ReadChannel])==0)
+	{	ReadChannel = (ReadChannel+1)%3;	if(ReadCount<10)    ReadCount++;	}
+    delay_ms(100);
+    if(Get_PowerValue(ReadChannel,(uint32_t *)PowerDat[ReadChannel])==0)
+	{	ReadChannel = (ReadChannel+1)%3;	if(ReadCount<10)    ReadCount++;	}
+	if(ReadCount>=3) //开始计算电压值
+	{
+		u32Date = (u32)((PowerDat[0][0]+PowerDat[1][0]+PowerDat[2][0])/3.0*(sqrt(3)));	//数据整合处理计算三相电电压
+		g_ShowDat[0] = (uint16_t)u32Date/10;				//电压
+		g_ShowDat[1] = (uint16_t)(PowerDat[0][1]+PowerDat[1][1]+PowerDat[2][1])/3;  //电流
+	}
+	printf("    %3dV,%3dmA.  (%d).\r\n",g_ShowDat[0],g_ShowDat[1],ReadCount);
     delay_ms(10);
+	bsp_StartTimer(1, 200);			//定时器1周期 200毫秒
 	KMOFF_Show(ALARMALL);KMOutUpdat();
 	HC595_E1_ON();HC595_E2_ON();
-    while (1)
+    printf("-------------------------------------------------------------------\r\n");
+    while(1)
 	{
 		CPU_IDLE();
 		if ( bsp_CheckTimer(1) )	//软定时器
@@ -161,12 +185,29 @@ int main(void)
 				Time_250ms=0;
                 if(DHT11_Read_Data((uint8_t *)DHT_Dat)==0)
                 {   g_ShowDat[2] = DHT_Dat[2]; g_ShowDat[3] = DHT_Dat[0];   }
-                Get_InputValue();
-//                ADCDat = Read_AdcDat1();    uTemp = ADCDat*3240/4096;
-//                printf("Adc_Init(),IN1:%d(%dmV). ",ADCDat,uTemp);
-//                ADCDat = Read_AdcDat2();    uTemp = ADCDat*3240/4096;
-//                printf("IN2:%d(%dmV)...\r\n",ADCDat,uTemp);
-			}
+                if(Get_PowerValue(ReadChannel,(uint32_t *)PowerDat[ReadChannel])==0)
+                {
+                    if(ReadCount<10)    ReadCount++;
+                    ReadChannel = (ReadChannel+1)%3;    //0-1-2-0
+                    if(ReadChannel==0)
+                    {
+                        printf("        [0]:%3d.%dV,%3dmA.",PowerDat[0][0]/10,PowerDat[0][0]%10,PowerDat[0][1]);
+                        printf("    [1]:%3d.%dV,%3dmA.",PowerDat[1][0]/10,PowerDat[1][0]%10,PowerDat[1][1]);
+                        printf("    [2]:%3d.%dV,%3dmA.",PowerDat[2][0]/10,PowerDat[2][0]%10,PowerDat[2][1]);
+                        if(ReadCount>5) //开始计算电压值
+                        {
+                            u32Date = (u32)((PowerDat[0][0]+PowerDat[1][0]+PowerDat[2][0])/3.0*(sqrt(3)));	//数据整合处理计算三相电电压
+                            g_ShowDat[0] = (uint16_t)u32Date/10;				//电压
+                            g_ShowDat[1] = (uint16_t)(PowerDat[0][1]+PowerDat[1][1]+PowerDat[2][1])/3;  //电流
+                        }
+                        printf("    %3dV,%3dmA.  (%d).\r\n",g_ShowDat[0],g_ShowDat[1],ReadCount);
+                    }
+                }
+                else
+                {
+                    CS546x_Init(0);ReadCount=0; //读电压值失败
+                }
+            }
             if(CAN_ReceFlag<50)
             {
                 CAN_ReceFlag++;
@@ -187,7 +228,6 @@ int main(void)
                 RS485Dat_Key[0] = RS485Dat[4];  RS485Dat_Key[1] = RS485Dat[5];  //获取按键值
                 if((RS485Dat_Key[0]!=0x00)||(RS485Dat_Key[1]!=0x00))
                 {
-                    //printf("RS485_ReceiveDat(),%02X,%02X.\r\n",RS485Dat_Key[0],RS485Dat_Key[1]);
                     if((RS485Dat_Key[1]&0x01)==0x01){NVIC_SystemReset();}       //系统复位
                     else if((RS485Dat_Key[1]&0x08)==0x08){RunMode=1;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //主一备二
                     else if((RS485Dat_Key[1]&0x10)==0x10){RunMode=0;RS485Dat_Key[0]=0;RS485Dat_Key[1]=0;}  //手动模式
@@ -423,6 +463,8 @@ static void InitBoard(void)
 	printf("\r\nStarting Up...\r\nJOSONG-XS03 V3.0...\r\n");
 	printf("VersionNo: %02X...\r\n",VERSION);
 	printf("SystemCoreClock: %d...\r\n",SystemCoreClock);
+	Bsp_CS5463_Config();
+	CS546x_Init(0);
 	delay_ms(100);
 	BspTm1639_Config();	        //TM1639初始化
 	BspTm1639_Show(0xA1,0x00);	//上电初始化显示
@@ -430,8 +472,6 @@ static void InitBoard(void)
 	bsp_HC595_Config();			//HC595初始化 用于继电器输出
 	BspInput_CD4067_Config();	//CD4067初始化 用于信号采集
 	BspInput_CD4051_Config();	//CD4051*3
-	Bsp_CS5463_Config();
-	CS546x_Init(0);
     Read_Flash_Dat();   //读出Flash数据
     CPU_IDLE();
     delay_ms(200);
@@ -467,7 +507,7 @@ void TIM3_IRQHandler(void)   //TIM3中断
             if(gBp.DelayCheck_Count>0)  gBp.DelayCheck_Count--;//延时检测时间到，进入检测
             else                        gBp.DelayCheck_Count=0;
             if((gAp.SlowTimer_Count>0)&&(gAp.SlowTimer_Count<200))   gAp.SlowTimer_Count--;//低速运行时间
-            if((gBp.SlowTimer_Count>0)&&(gAp.SlowTimer_Count<200))   gBp.SlowTimer_Count--;//低速运行时间
+            if((gBp.SlowTimer_Count>0)&&(gBp.SlowTimer_Count<200))   gBp.SlowTimer_Count--;//低速运行时间
         }
         if((Time_count%1000==700)&&(g_TM1639Flag==0))    g_TM1639Flag = 1;
         if((Time_count%1000==  1)&&(g_TM1639Flag==1))    g_TM1639Flag = 0;
@@ -497,7 +537,7 @@ void TIM3_IRQHandler(void)   //TIM3中断
 				if(gApTime_Sec>6)	gAp.StartT_Flag = 0xBB;
 			}
 		}
-		else if(gBp.StartT_Flag==0x00)
+		else if(gAp.StartT_Flag==0x00)
 		{
 			gApTime_Count=0;gApTime_Sec=0;
 		}

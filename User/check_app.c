@@ -221,7 +221,21 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
 						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gAp.KM1_Point==1)    printf("     A泵, KM1触点,正常.\r\n");
+                        else                    printf("     A泵, KM1触点,异常.\r\n");
+                        if(gAp.KM2_Point==1)    printf("     A泵, KM2触点,正常.\r\n");
+                        else                    printf("     A泵, KM2触点,异常.\r\n");
+                        if(gAp.KM3_Point==0)    printf("     A泵, KM3触点,正常.\r\n");
+                        else                    printf("     A泵, KM3触点,异常.\r\n");
+                        if(gAp.Work_Check==0)   printf("     A泵,工作检测,正常.\r\n");
+                        else                    printf("     A泵,工作检测,异常.\r\n");
+                        if(gAp.Phase_Check==0)  printf("     A泵,过载检测,正常.\r\n");
+                        else                    printf("     A泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			else if(gAp.Statue==Fast)	//A泵高速
@@ -230,7 +244,21 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
 						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gAp.KM1_Point==1)    printf("     A泵, KM1触点,正常.\r\n");
+                        else                    printf("     A泵, KM1触点,异常.\r\n");
+                        if(gAp.KM2_Point==0)    printf("     A泵, KM2触点,正常.\r\n");
+                        else                    printf("     A泵, KM2触点,异常.\r\n");
+                        if(gAp.KM3_Point==1)    printf("     A泵, KM3触点,正常.\r\n");
+                        else                    printf("     A泵, KM3触点,异常.\r\n");
+                        if(gAp.Work_Check==0)   printf("     A泵,工作检测,正常.\r\n");
+                        else                    printf("     A泵,工作检测,异常.\r\n");
+                        if(gAp.Phase_Check==0)  printf("     A泵,过载检测,正常.\r\n");
+                        else                    printf("     A泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			break;
@@ -241,7 +269,21 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==0)\
 						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gAp.KM1_Point==1)    printf("     A泵, KM1触点,正常.\r\n");
+                        else                    printf("     A泵, KM1触点,异常.\r\n");
+                        if(gAp.KM2_Point==0)    printf("     A泵, KM2触点,正常.\r\n");
+                        else                    printf("     A泵, KM2触点,异常.\r\n");
+                        if(gAp.KM3_Point==0)    printf("     A泵, KM3触点,正常.\r\n");
+                        else                    printf("     A泵, KM3触点,异常.\r\n");
+                        if(gAp.Work_Check==0)   printf("     A泵,工作检测,正常.\r\n");
+                        else                    printf("     A泵,工作检测,异常.\r\n");
+                        if(gAp.Phase_Check==0)  printf("     A泵,过载检测,正常.\r\n");
+                        else                    printf("     A泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			break;
@@ -252,7 +294,21 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				{
 					if((gAp.KM1_Point==1)&&(gAp.KM2_Point==1)&&(gAp.KM3_Point==0)\
 						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gAp.KM1_Point==1)    printf("     A泵, KM1触点,正常.\r\n");
+                        else                    printf("     A泵, KM1触点,异常.\r\n");
+                        if(gAp.KM2_Point==1)    printf("     A泵, KM2触点,正常.\r\n");
+                        else                    printf("     A泵, KM2触点,异常.\r\n");
+                        if(gAp.KM3_Point==0)    printf("     A泵, KM3触点,正常.\r\n");
+                        else                    printf("     A泵, KM3触点,异常.\r\n");
+                        if(gAp.Work_Check==0)   printf("     A泵,工作检测,正常.\r\n");
+                        else                    printf("     A泵,工作检测,异常.\r\n");
+                        if(gAp.Phase_Check==0)  printf("     A泵,过载检测,正常.\r\n");
+                        else                    printf("     A泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			else if(gAp.Statue==Fast)	//A泵高速
@@ -261,7 +317,21 @@ uint8_t KM_ApRunningCheck(uint8_t _StartMode)
 				{
 					if((gAp.KM1_Point==0)&&(gAp.KM2_Point==0)&&(gAp.KM3_Point==1)\
 						&&(gAp.Work_Check==0)&&(gAp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gAp.KM1_Point==0)    printf("     A泵, KM1触点,正常.\r\n");
+                        else                    printf("     A泵, KM1触点,异常.\r\n");
+                        if(gAp.KM2_Point==0)    printf("     A泵, KM2触点,正常.\r\n");
+                        else                    printf("     A泵, KM2触点,异常.\r\n");
+                        if(gAp.KM3_Point==1)    printf("     A泵, KM3触点,正常.\r\n");
+                        else                    printf("     A泵, KM3触点,异常.\r\n");
+                        if(gAp.Work_Check==0)   printf("     A泵,工作检测,正常.\r\n");
+                        else                    printf("     A泵,工作检测,异常.\r\n");
+                        if(gAp.Phase_Check==0)  printf("     A泵,过载检测,正常.\r\n");
+                        else                    printf("     A泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			break;
@@ -285,7 +355,21 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
 						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gBp.KM1_Point==1)    printf("     B泵, KM1触点,正常.\r\n");
+                        else                    printf("     B泵, KM1触点,异常.\r\n");
+                        if(gBp.KM2_Point==1)    printf("     B泵, KM2触点,正常.\r\n");
+                        else                    printf("     B泵, KM2触点,异常.\r\n");
+                        if(gBp.KM3_Point==0)    printf("     B泵, KM3触点,正常.\r\n");
+                        else                    printf("     B泵, KM3触点,异常.\r\n");
+                        if(gBp.Work_Check==0)   printf("     B泵,工作检测,正常.\r\n");
+                        else                    printf("     B泵,工作检测,异常.\r\n");
+                        if(gBp.Phase_Check==0)  printf("     B泵,过载检测,正常.\r\n");
+                        else                    printf("     B泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			else if(gBp.Statue==Fast)	//B泵高速
@@ -294,7 +378,21 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
 						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gBp.KM1_Point==1)    printf("     B泵, KM1触点,正常.\r\n");
+                        else                    printf("     B泵, KM1触点,异常.\r\n");
+                        if(gBp.KM2_Point==0)    printf("     B泵, KM2触点,正常.\r\n");
+                        else                    printf("     B泵, KM2触点,异常.\r\n");
+                        if(gBp.KM3_Point==1)    printf("     B泵, KM3触点,正常.\r\n");
+                        else                    printf("     B泵, KM3触点,异常.\r\n");
+                        if(gBp.Work_Check==0)   printf("     B泵,工作检测,正常.\r\n");
+                        else                    printf("     B泵,工作检测,异常.\r\n");
+                        if(gBp.Phase_Check==0)  printf("     B泵,过载检测,正常.\r\n");
+                        else                    printf("     B泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			break;
@@ -305,7 +403,21 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==0)\
 						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gBp.KM1_Point==1)    printf("     B泵, KM1触点,正常.\r\n");
+                        else                    printf("     B泵, KM1触点,异常.\r\n");
+                        if(gBp.KM2_Point==0)    printf("     B泵, KM2触点,正常.\r\n");
+                        else                    printf("     B泵, KM2触点,异常.\r\n");
+                        if(gBp.KM3_Point==0)    printf("     B泵, KM3触点,正常.\r\n");
+                        else                    printf("     B泵, KM3触点,异常.\r\n");
+                        if(gBp.Work_Check==0)   printf("     B泵,工作检测,正常.\r\n");
+                        else                    printf("     B泵,工作检测,异常.\r\n");
+                        if(gBp.Phase_Check==0)  printf("     B泵,过载检测,正常.\r\n");
+                        else                    printf("     B泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			break;
@@ -316,7 +428,21 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				{
 					if((gBp.KM1_Point==1)&&(gBp.KM2_Point==1)&&(gBp.KM3_Point==0)\
 						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gBp.KM1_Point==1)    printf("     B泵, KM1触点,正常.\r\n");
+                        else                    printf("     B泵, KM1触点,异常.\r\n");
+                        if(gBp.KM2_Point==1)    printf("     B泵, KM2触点,正常.\r\n");
+                        else                    printf("     B泵, KM2触点,异常.\r\n");
+                        if(gBp.KM3_Point==0)    printf("     B泵, KM3触点,正常.\r\n");
+                        else                    printf("     B泵, KM3触点,异常.\r\n");
+                        if(gBp.Work_Check==0)   printf("     B泵,工作检测,正常.\r\n");
+                        else                    printf("     B泵,工作检测,异常.\r\n");
+                        if(gBp.Phase_Check==0)  printf("     B泵,过载检测,正常.\r\n");
+                        else                    printf("     B泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			else if(gBp.Statue==Fast)	//B泵高速
@@ -325,7 +451,21 @@ uint8_t KM_BpRunningCheck(uint8_t _StartMode)
 				{
 					if((gBp.KM1_Point==0)&&(gBp.KM2_Point==0)&&(gBp.KM3_Point==1)\
 						&&(gBp.Work_Check==0)&&(gBp.Phase_Check==0));    //正常运行  
-					else    uTemp = 0x01;    //异常运行
+					else
+                    {
+                        printf("\r\n");
+                        if(gBp.KM1_Point==0)    printf("     B泵, KM1触点,正常.\r\n");
+                        else                    printf("     B泵, KM1触点,异常.\r\n");
+                        if(gBp.KM2_Point==0)    printf("     B泵, KM2触点,正常.\r\n");
+                        else                    printf("     B泵, KM2触点,异常.\r\n");
+                        if(gBp.KM3_Point==1)    printf("     B泵, KM3触点,正常.\r\n");
+                        else                    printf("     B泵, KM3触点,异常.\r\n");
+                        if(gBp.Work_Check==0)   printf("     B泵,工作检测,正常.\r\n");
+                        else                    printf("     B泵,工作检测,异常.\r\n");
+                        if(gBp.Phase_Check==0)  printf("     B泵,过载检测,正常.\r\n");
+                        else                    printf("     B泵,过载检测,异常.\r\n");
+                        uTemp = 0x01;    //异常运行
+                    }
 				}
 			}
 			break;
@@ -606,7 +746,7 @@ uint8_t KMStart_Pro(uint8_t _RunMode,uint8_t _RunDat,uint8_t _StartMode)
 	{
 		if((_RunDat&0x0F)!=0x01)	//A泵动作中
 		{
-			if(0x01==KM_ApRunningCheck(_StartMode))//A泵异常，进入停止
+			if(0x00!=KM_ApRunningCheck(_StartMode))//A泵异常，进入停止
 			{
 				_RunDat = (_RunDat&0xF0)|0x01;
 				printf("A泵异常，停止.0x%02X.\r\n",_RunDat);	
@@ -619,7 +759,7 @@ uint8_t KMStart_Pro(uint8_t _RunMode,uint8_t _RunDat,uint8_t _StartMode)
 		}
 		if((_RunDat&0xF0)!=0x10)	//B泵动作中
 		{
-			if(0x01==KM_BpRunningCheck(_StartMode))//B泵异常，进入停止
+			if(0x00!=KM_BpRunningCheck(_StartMode))//B泵异常，进入停止
 			{
 				_RunDat = (_RunDat&0x0F)|0x10;
 				printf("B泵异常，停止.0x%02X.\r\n",_RunDat);				
@@ -635,7 +775,7 @@ uint8_t KMStart_Pro(uint8_t _RunMode,uint8_t _RunDat,uint8_t _StartMode)
 	{
 		if((_RunDat&0x0F)!=0x01)	//A泵动作中
 		{
-			if(0x01==KM_ApRunningCheck(_StartMode))//A泵异常，进入停止
+			if(0x00!=KM_ApRunningCheck(_StartMode))//A泵异常，进入停止
 			{
 				_RunDat = (_RunDat&0xF0)|0x01;
 				printf("A泵异常，停止.0x%02X.\r\n",_RunDat);				
@@ -653,7 +793,7 @@ uint8_t KMStart_Pro(uint8_t _RunMode,uint8_t _RunDat,uint8_t _StartMode)
 	{
 		if((_RunDat&0xF0)!=0x10)	//B泵动作中
 		{
-			if(0x01==KM_BpRunningCheck(_StartMode))//B泵异常，进入停止
+			if(0x00!=KM_BpRunningCheck(_StartMode))//B泵异常，进入停止
 			{
 				_RunDat = (_RunDat&0x0F)|0x10;
                 gBp.ErrorFlag=1;

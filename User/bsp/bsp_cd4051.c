@@ -37,13 +37,13 @@ void SetInput_CSCD4051Switch(uint8_t uSetDat)	//ÈýÏàµçÑ¹²É¼¯Ñ¡Ôñ¿Ú ÔÚCS5463ÖÐÊ¹Ó
 {
     switch (uSetDat)
     {
-        case IV_C:
+        case IV_A:
             Iutput_CSCD4051A_Low();	Iutput_CSCD4051B_Low();	
             break;
         case IV_B:
             Iutput_CSCD4051A_High();	Iutput_CSCD4051B_Low();	
             break;
-        case IV_A:
+        case IV_C:
             Iutput_CSCD4051A_Low();	Iutput_CSCD4051B_High();	
             break;
        default:

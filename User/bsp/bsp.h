@@ -39,7 +39,7 @@
 	#define printf_debug(...)
 #endif
 
-#if 0
+#if 1
 	#define printf_cs5463 printf
 #else
 	#define printf_cs5463(...)
